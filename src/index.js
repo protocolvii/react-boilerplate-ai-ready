@@ -1,5 +1,6 @@
 /* eslint-disable import/no-import-module-exports */
 import React from 'react';
+import './assets/css/main.css';
 import { createRoot } from 'react-dom/client';
 import configureStore from './store';
 import Root from './containers/Root';

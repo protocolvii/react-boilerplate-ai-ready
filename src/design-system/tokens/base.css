@@ -1,0 +1,81 @@
+/* 全局语义 Token：状态色独立于品牌 preset。 */
+:root {
+  --font-body: 'Inter Variable', 'Inter', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  --font-data: 'SFMono-Regular', consolas, 'Liberation Mono', monospace;
+  --motion-easing: cubic-bezier(0.2, 0, 0, 1);
+  --border-width: 1px;
+  --shadow-overlay: 0 12px 40px rgb(0 0 0 / 14%);
+  --text-caption: 0.75rem;
+  --text-body: 0.875rem;
+  --text-title: clamp(1.25rem, 2vw, 1.75rem);
+  --density-control-height: 2.25rem;
+  --density-panel-space: 1.5rem;
+  --density-row-space: 0.75rem;
+  --density-gap: 1rem;
+  --control-height: var(--density-control-height);
+  --panel-space: calc(var(--density-panel-space) * var(--preset-space-scale, 1));
+  --table-cell-space: var(--density-row-space);
+  --layout-gap: calc(var(--density-gap) * var(--preset-space-scale, 1));
+  --status-success: oklch(44.792% 0.10832 151.328deg);
+  --status-success-foreground: oklch(44.792% 0.10832 151.328deg);
+  --status-success-background: oklch(97.877% 0.02214 160.244deg);
+  --status-warning: oklch(47.619% 0.10337 61.907deg);
+  --status-warning-foreground: oklch(47.619% 0.10337 61.907deg);
+  --status-warning-background: oklch(98.688% 0.0214 95.277deg);
+  --status-error: oklch(50.542% 0.19049 27.518deg);
+  --status-error-foreground: oklch(50.542% 0.19049 27.518deg);
+  --status-error-background: oklch(97.053% 0.01295 17.38deg);
+  --status-info: oklch(48.82% 0.21717 264.376deg);
+  --status-info-foreground: oklch(48.82% 0.21717 264.376deg);
+  --status-info-background: oklch(97.048% 0.01418 254.604deg);
+  --status-neutral: oklch(44.553% 0.03745 257.281deg);
+  --status-neutral-foreground: oklch(44.553% 0.03745 257.281deg);
+  --status-neutral-background: oklch(96.826% 0.00685 247.896deg);
+}
+
+:root.dark {
+  --status-success: oklch(87.116% 0.13627 154.449deg);
+  --status-success-foreground: oklch(87.116% 0.13627 154.449deg);
+  --status-success-background: oklch(26.461% 0.03748 169.194deg);
+  --status-warning: oklch(92.428% 0.11513 95.746deg);
+  --status-warning-foreground: oklch(92.428% 0.11513 95.746deg);
+  --status-warning-background: oklch(27.169% 0.03771 82.193deg);
+  --status-error: oklch(80.769% 0.10349 19.571deg);
+  --status-error-foreground: oklch(80.769% 0.10349 19.571deg);
+  --status-error-background: oklch(25.608% 0.0463 12.107deg);
+  --status-info: oklch(80.907% 0.0956 251.813deg);
+  --status-info-foreground: oklch(80.907% 0.0956 251.813deg);
+  --status-info-background: oklch(28.171% 0.05535 254.678deg);
+  --status-neutral: oklch(86.898% 0.01985 252.894deg);
+  --status-neutral-foreground: oklch(86.898% 0.01985 252.894deg);
+  --status-neutral-background: oklch(30.852% 0.03931 262.042deg);
+}
+
+:root[data-density='comfortable'] {
+  --density-control-height: 2.75rem;
+  --density-panel-space: 2rem;
+  --density-row-space: 1rem;
+  --density-gap: 1.5rem;
+}
+
+:root[data-density='compact'] {
+  --density-control-height: 2rem;
+  --density-panel-space: 1rem;
+  --density-row-space: 0.5rem;
+  --density-gap: 0.75rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

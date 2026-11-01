@@ -10,6 +10,7 @@ import postcssNested from 'postcss-nested';
 import { createConfig } from './src/config.js';
 import { sourceConventions } from './vite/source-conventions.mjs';
 import { mockApi } from './vite/mock-api.mjs';
+import { getAppearanceBootstrapScript } from './src/design-system/appearance/settings.js';
 
 const htmlEntry = fileURLToPath(new URL('./index.html', import.meta.url));
 const htmlTemplate = fileURLToPath(new URL('./src/template/index.html', import.meta.url));
@@ -66,7 +67,10 @@ export default defineConfig(({ command, mode, isPreview }) => {
         },
         transformIndexHtml: {
           order: 'pre',
-          handler: html => html.replaceAll('%APP_TITLE%', escapeHtml(config.app.title))
+          handler: html => ({
+            html: html.replaceAll('%APP_TITLE%', escapeHtml(config.app.title)),
+            tags: [{ tag: 'script', children: getAppearanceBootstrapScript(), injectTo: 'head-prepend' }]
+          })
         }
       }
     ],
