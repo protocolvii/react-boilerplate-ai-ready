@@ -13,52 +13,44 @@ const Shell = ({ children, kind }) => (
     <MainPage>{children}</MainPage>
   </div>
 );
-export function StandardAdminLayout({ children }) {
-  return <Shell kind="standard-admin">{children}</Shell>;
-}
-export function WorkspaceLayout({ children, tools }) {
+function AdaptiveLayout({ kind, children, tools, alerts }) {
   const [toolsOpen, setToolsOpen] = useState(true);
+  const showTools = kind === 'workspace' && tools;
+  const aside = kind === 'monitoring' ? alerts : showTools && toolsOpen ? tools : null;
   return (
-    <Shell kind="workspace">
-      <div className="ds-workspace">
+    <Shell kind={kind}>
+      <div className={kind === 'standard-admin' ? 'min-w-0' : kind === 'workspace' ? 'ds-workspace' : 'ds-monitoring'}>
         <div className="min-w-0 flex-1">
-          {tools && (
+          {showTools && (
             <div className="ds-layout-toolbar">
-              <Button variant="ghost" size="sm" onClick={() => setToolsOpen(value => !value)} aria-expanded={toolsOpen} aria-controls="workspace-tools">
+              <Button variant="ghost" size="sm" onClick={() => setToolsOpen(value => !value)} aria-expanded={toolsOpen} aria-controls="layout-tools">
                 {toolsOpen ? <PanelRightClose /> : <PanelRightOpen />}工具面板
               </Button>
             </div>
           )}
           {children}
         </div>
-        {tools && toolsOpen && (
-          <aside id="workspace-tools" className="ds-tools-panel" aria-label="工作区工具">
-            {tools}
+        {aside && (
+          <aside id="layout-tools" className="ds-tools-panel" aria-label={kind === 'monitoring' ? '实时信息' : '工作区工具'}>
+            {aside}
           </aside>
         )}
       </div>
     </Shell>
   );
 }
-export function MonitoringLayout({ children, alerts }) {
-  return (
-    <Shell kind="monitoring">
-      <div className="ds-monitoring">
-        <div className="min-w-0 flex-1">{children}</div>
-        {alerts && (
-          <aside className="ds-tools-panel" aria-label="实时信息">
-            {alerts}
-          </aside>
-        )}
-      </div>
-    </Shell>
-  );
+export function StandardAdminLayout(props) {
+  return <AdaptiveLayout kind="standard-admin" {...props} />;
+}
+export function WorkspaceLayout(props) {
+  return <AdaptiveLayout kind="workspace" {...props} />;
+}
+export function MonitoringLayout(props) {
+  return <AdaptiveLayout kind="monitoring" {...props} />;
 }
 export function PageLayout(props) {
   const { layout } = useLayout();
-  if (layout === 'workspace') return <WorkspaceLayout {...props} />;
-  if (layout === 'monitoring') return <MonitoringLayout {...props} />;
-  return <StandardAdminLayout {...props} />;
+  return <AdaptiveLayout kind={layout} {...props} />;
 }
 export { LayoutProvider } from './provider';
 export { useLayout, LAYOUTS } from './context';

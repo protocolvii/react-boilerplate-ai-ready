@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { App, PrivateRoute, Home, NotFound, Login, ChangePassword } from './containers';
+import { App, DesignPlayground, PrivateRoute, Home, NotFound, Login, ChangePassword } from './containers';
 
 export const routes = [
   {
@@ -10,6 +10,7 @@ export const routes = [
       { path: '/', component: Home, needAuth: true },
       { path: '/change-password', component: ChangePassword, needAuth: true },
       { path: '/login', component: Login },
+      { path: '/design-playground', component: DesignPlayground },
       { path: '*', component: NotFound }
     ]
   }

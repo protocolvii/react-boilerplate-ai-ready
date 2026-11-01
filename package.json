@@ -19,7 +19,8 @@
     "format:check": "prettier --check .",
     "preview": "vite preview",
     "dev:mock": "vite --mode mock",
-    "test:mock": "node --test tests/mock-api.test.mjs"
+    "test:mock": "node --test tests/mock-api.test.mjs",
+    "test:design": "node --test tests/appearance.test.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

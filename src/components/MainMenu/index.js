@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, PanelLeftClose, PanelLeftOpen, KeyRound } from 'lucide-react';
+import { LayoutDashboard, PanelLeftClose, PanelLeftOpen, KeyRound, Palette } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '../ui/sheet';
 import { cn } from '../../utils/cn';
@@ -37,7 +37,8 @@ const MainMenu = () => {
   };
   const items = [
     { to: '/', label: '控制台', icon: LayoutDashboard },
-    { to: '/change-password', label: '修改密码', icon: KeyRound }
+    { to: '/design-playground', label: '设计系统', icon: Palette },
+    { to: '/change-password', label: '修改密码', icon: KeyRound, Palette }
   ];
   const navigation = compact => (
     <nav className="flex-1 space-y-1" aria-label="主导航">

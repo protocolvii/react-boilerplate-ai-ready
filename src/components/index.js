@@ -1,3 +1,11 @@
+import MetricCard from './MetricCard';
+import StatusIndicator from './StatusIndicator';
+import EmptyState from './EmptyState';
+import SearchToolbar from './SearchToolbar';
+import FilterBar from './FilterBar';
+import DataTable from './DataTable';
+import ConfirmDialog from './ConfirmDialog';
+import SectionHeader from './SectionHeader';
 import MainHeader from './MainHeader';
 import MainMenu from './MainMenu';
 import MainPage from './MainPage';
@@ -10,4 +18,4 @@ import FormBox from './FormBox';
 import ListToolbar from './ListToolbar';
 import Pagination from './Pagination';
 
-export { MainHeader, MainMenu, MainPage, Breadcrumb, PageHeader, PageContent, PageSearch, PageSection, FormBox, ListToolbar, Pagination };
+export { MetricCard, StatusIndicator, EmptyState, SearchToolbar, FilterBar, DataTable, ConfirmDialog, SectionHeader, MainHeader, MainMenu, MainPage, Breadcrumb, PageHeader, PageContent, PageSearch, PageSection, FormBox, ListToolbar, Pagination };

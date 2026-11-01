@@ -114,3 +114,26 @@
     min-height: 2.75rem;
   }
 }
+
+.ds-brand-band {
+  height: 0.25rem;
+  background: var(--primary);
+}
+
+:root[data-theme='creative-ai'] .ds-brand-band {
+  background: linear-gradient(100deg, var(--primary), var(--chart-2), var(--chart-3));
+}
+
+:root[data-theme='industrial-pro'] [data-metric-value] {
+  font-family: var(--font-data);
+  letter-spacing: -0.04em;
+}
+
+[data-slot='button'],
+[data-slot='input'],
+[data-slot='textarea'],
+[data-slot='select-trigger'],
+[data-slot='tabs-trigger'] {
+  transition-duration: var(--motion-duration);
+  transition-timing-function: var(--motion-easing);
+}

@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter, useNavigate } from 'react-router-dom';
 import { Toaster } from '../../components/ui/sonner';
 import { LayoutProvider } from '../../design-system/layouts';
 import { AppearanceProvider, useAppearance } from '../../design-system/appearance';
+import { TooltipProvider } from '../../components/ui/tooltip';
 import { HelmetProvider } from 'react-helmet-async';
 
 import { routes, renderRoutes } from '../../routes';
@@ -29,14 +30,26 @@ const Root = ({ store }) => (
   <Provider store={store}>
     <AppearanceProvider>
       <LayoutProvider>
-        <HelmetProvider>
-          <BrowserRouter>
-            <>
-              <NavigationProvider>{renderRoutes(routes)}</NavigationProvider>
-              <AppearanceToaster />
-            </>
-          </BrowserRouter>
-        </HelmetProvider>
+        <TooltipProvider delayDuration={250}>
+          <HelmetProvider>
+            <BrowserRouter>
+              <>
+                <NavigationProvider>
+                  <Suspense
+                    fallback={
+                      <p role="status" className="p-8 text-sm text-muted-foreground">
+                        加载页面…
+                      </p>
+                    }
+                  >
+                    {renderRoutes(routes)}
+                  </Suspense>
+                </NavigationProvider>
+                <AppearanceToaster />
+              </>
+            </BrowserRouter>
+          </HelmetProvider>
+        </TooltipProvider>
       </LayoutProvider>
     </AppearanceProvider>
   </Provider>

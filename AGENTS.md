@@ -13,6 +13,12 @@
 - 页面标题使用 react-helmet-async；缓存使用现有 localforage 封装；已有日期处理依赖为 moment，按需使用。
 - 保持任务范围内的业务流程，不做无关重构。普通业务开发不修改构建、鉴权和工具链配置，不随意新增依赖。
 
+## Design System 开发入口
+
+新增或修改 UI 前阅读 [docs/design-system.md](docs/design-system.md)。默认 Modern SaaS + System + Default + Standard Admin。主题、密度和布局独立，通过 `useAppearance` / `useLayout` 更新，不在业务页面直接操作根属性或外观存储。使用语义 Token，状态色不跟随品牌更改。优先复用 PageHeader、MetricCard、StatusIndicator、SearchToolbar、DataTable、ConfirmDialog 等组件。`/design-playground` 是无需后端的设计预览与交互示例。
+
+新增页面优先使用 `src/design-system/layouts` 的 StandardAdminLayout / WorkspaceLayout / MonitoringLayout；允许切换布局时使用 PageLayout。布局已包含顶部栏与侧栏，不要重复挂载。全局主题改动运行 `npm run test:design`，并检查浅深色、三种密度、移动端和输入状态保持。
+
 ## 命令与验证
 
 ```bash
@@ -105,7 +111,7 @@ MainMenu 使用 NavLink 按 URL 显示选中状态，不接收 `defaultSelectedK
 
 Helmet 从 `react-helmet-async` 导入，config 从 `@/config` 导入。面包屑格式是 `{ name, link }`，当前页面可以省略 link。
 
-- `PageHeader`：breadcrumb、title、info、children、paddingBottom。
+- `PageHeader`：breadcrumb、title、info、actions、children、paddingBottom。
 - `PageSection`：children、paddingTop、minHeight、marginTop。
 - `FormBox`：表单内容宽度与布局容器。
 - `PageSearch`、`ListToolbar`：搜索区和列表工具栏容器。
@@ -448,7 +454,7 @@ import styles from './styles.css';
 // JSX: <div className={cn(styles.content, 'flex gap-4')} />
 ```
 
-业务 `.css` 默认是 CSS Modules，不使用 `.module.css` 后缀。全局选择器用 `:global`，不要为了类名风格改动已有 CSS Modules class。`src/assets/css/main.css` 单独作为全局入口，主题和 Tailwind 工具类不能被局部化。
+业务 `.css` 默认是 CSS Modules，不使用 `.module.css` 后缀。全局选择器用 `:global`，不要为了类名风格改动已有 CSS Modules class。`src/assets/css/main.css` 是全局入口，`src/design-system/tokens/` 也是全局 CSS；主题和 Tailwind 工具类不能被局部化。主题变量在 tokens 中定义，由 main.css 导入。
 
 PostCSS 当前支持 nesting、simple vars、mixins；新增页面优先使用 Tailwind 与原生 CSS 变量，不额外创建一套主题值。Tailwind 动态样式使用完整类名映射，不拼接 `bg-${color}-500` 等无法静态扫描的类名。先使用主题语义类 bg-background、text-foreground、text-muted-foreground、border-border 等。
 

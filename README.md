@@ -49,6 +49,12 @@ npm run format:check    # 格式检查
 npm run format          # 格式化
 ```
 
+## 多主题 Design System
+
+打开 `/design-playground` 可无需登录预览三种预设：Modern SaaS、Industrial Pro、Creative AI。支持浅色 / 深色 / 跟随系统、三种信息密度及 Standard Admin / Workspace / Monitoring 布局，选择会保存到本机。
+
+页面包含可交互的数据管理、工业监测、AI 工作台和基础组件画廊，使用静态数据，不访问后端。主题 Token、Provider、组件 API 与 AI 开发规则见 [设计系统文档](docs/design-system.md)。
+
 ## 环境配置
 
 `src/config.js` 集中管理应用配置：
@@ -124,7 +130,7 @@ import { Label } from '@/components/ui/label';
 
 表单使用原生 HTML 校验与显式业务校验。消息提示使用 Sonner 的 `toast.success()` / `toast.error()`，全局 `Toaster` 在 Root 中挂载。
 
-日常样式优先使用 Tailwind，主题变量在 `src/assets/css/main.css` 中定义。业务 `.css` 默认启用 CSS Modules，可通过 `import styles from './styles.css'` 使用局部类名；全局选择器使用 `:global`。Tailwind 入口 `src/assets/css/main.css` 为全局样式，不启用 CSS Modules。PostCSS 支持 nesting、simple vars、mixins 和 Autoprefixer。
+日常样式优先使用 Tailwind，主题变量在 `src/design-system/tokens/` 中定义，由 `src/assets/css/main.css` 导入。业务 `.css` 默认启用 CSS Modules，可通过 `import styles from './styles.css'` 使用局部类名；全局选择器使用 `:global`。Tailwind 入口 `src/assets/css/main.css` 为全局样式，不启用 CSS Modules。PostCSS 支持 nesting、simple vars、mixins 和 Autoprefixer。
 
 接入参考：[shadcn/ui Vite 安装文档](https://ui.shadcn.com/docs/installation/vite)、[Vite 文档](https://vite.dev/guide/)。
 
