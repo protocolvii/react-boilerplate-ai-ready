@@ -1,10 +1,10 @@
 .contentWrap {
   width: 100%;
-  background-color: #fff;
-  min-height: 50px;
-  margin-bottom: 16px;
+  background: var(--card);
+  border-radius: var(--radius);
+  margin-bottom: var(--layout-gap);
 }
 
 .contentBody {
-  padding: 15px 24px;
+  padding: var(--panel-space);
 }

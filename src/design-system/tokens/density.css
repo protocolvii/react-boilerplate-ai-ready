@@ -1,0 +1,116 @@
+/* 以 data-slot 适配官方组件，避免复制三套组件源码。显式 size 的小按钮、图标按钮不强制放大。 */
+:root {
+  --header-height: 3.5rem;
+  --sidebar-width: 14rem;
+  --sidebar-collapsed-width: 4.5rem;
+}
+
+[data-slot='button'][data-size='default'],
+[data-slot='input'],
+[data-slot='select-trigger'][data-size='default'] {
+  height: var(--control-height);
+}
+
+[data-slot='textarea'] {
+  min-height: calc(var(--control-height) * 2.5);
+}
+
+[data-slot='card'] {
+  gap: var(--layout-gap);
+  padding-block: var(--panel-space);
+  box-shadow: var(--panel-shadow);
+}
+
+[data-slot='card-header'],
+[data-slot='card-content'],
+[data-slot='card-footer'] {
+  padding-inline: var(--panel-space);
+}
+
+[data-slot='table-cell'],
+[data-slot='table-head'] {
+  padding: var(--table-cell-space) 1rem;
+}
+
+[data-slot='tabs-list'] {
+  min-height: var(--control-height);
+}
+
+[data-slot='dropdown-menu-content'],
+[data-slot='popover-content'],
+[data-slot='dialog-content'],
+[data-slot='sheet-content'] {
+  box-shadow: var(--shadow-overlay);
+}
+
+.ds-page-content {
+  padding: var(--panel-space);
+}
+
+.ds-panel {
+  border: var(--border-width) solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--card-foreground);
+  box-shadow: var(--panel-shadow);
+}
+
+.ds-workspace,
+.ds-monitoring {
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.ds-tools-panel {
+  position: sticky;
+  top: var(--header-height);
+  width: 18rem;
+  flex: 0 0 18rem;
+  min-height: calc(100vh - var(--header-height));
+  padding: var(--panel-space);
+  border-left: var(--border-width) solid var(--border);
+  background: var(--card);
+}
+
+.ds-layout-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0.5rem var(--panel-space);
+  border-bottom: var(--border-width) solid var(--border);
+}
+
+@media (width < 1280px) {
+  .ds-workspace,
+  .ds-monitoring {
+    flex-direction: column;
+  }
+
+  .ds-workspace > div,
+  .ds-monitoring > div {
+    width: 100%;
+  }
+
+  .ds-tools-panel {
+    position: static;
+    width: 100%;
+    min-height: auto;
+    flex-basis: auto;
+    border-top: var(--border-width) solid var(--border);
+    border-left: 0;
+  }
+}
+
+@media (width < 768px) {
+  :root {
+    --density-panel-space: 1rem;
+  }
+}
+
+@media (pointer: coarse) {
+  [data-slot='input'],
+  [data-slot='button'],
+  [data-slot='select-trigger'] {
+    min-height: 2.75rem;
+  }
+}

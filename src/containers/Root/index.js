@@ -2,6 +2,7 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { BrowserRouter, useNavigate } from 'react-router-dom';
 import { Toaster } from '../../components/ui/sonner';
+import { LayoutProvider } from '../../design-system/layouts';
 import { AppearanceProvider, useAppearance } from '../../design-system/appearance';
 import { HelmetProvider } from 'react-helmet-async';
 
@@ -27,14 +28,16 @@ const AppearanceToaster = () => {
 const Root = ({ store }) => (
   <Provider store={store}>
     <AppearanceProvider>
-      <HelmetProvider>
-        <BrowserRouter>
-          <>
-            <NavigationProvider>{renderRoutes(routes)}</NavigationProvider>
-            <AppearanceToaster />
-          </>
-        </BrowserRouter>
-      </HelmetProvider>
+      <LayoutProvider>
+        <HelmetProvider>
+          <BrowserRouter>
+            <>
+              <NavigationProvider>{renderRoutes(routes)}</NavigationProvider>
+              <AppearanceToaster />
+            </>
+          </BrowserRouter>
+        </HelmetProvider>
+      </LayoutProvider>
     </AppearanceProvider>
   </Provider>
 );

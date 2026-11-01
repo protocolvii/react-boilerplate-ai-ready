@@ -1,8 +1,10 @@
 .section {
   width: 100%;
-  background-color: #fff;
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--card-foreground);
 }
 
 .sectionBody {
-  padding: 0 24px 24px 24px;
+  padding: var(--panel-space);
 }

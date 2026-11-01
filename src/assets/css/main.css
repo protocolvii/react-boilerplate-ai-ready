@@ -2,6 +2,7 @@
 @import 'tw-animate-css';
 @import '@fontsource-variable/inter';
 @import '../../design-system/tokens/base.css';
+@import '../../design-system/tokens/density.css';
 @import '../../design-system/tokens/modern-saas.css';
 @import '../../design-system/tokens/industrial-pro.css';
 @import '../../design-system/tokens/creative-ai.css';

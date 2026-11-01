@@ -2,11 +2,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 0;
+  padding: var(--layout-gap) 0;
 }
 
 .left {
-  color: rgba(0, 0, 0, 0.85);
+  color: var(--foreground);
   font-weight: 500;
   font-size: 16px;
 }
