@@ -2,28 +2,4 @@
   margin: 0 auto;
   padding-top: 8px;
   max-width: 600px;
-
-  input {
-    width: 328px;
-  }
-}
-
-:global {
-  .form-box {
-    .ant-input-password {
-      width: 328px;
-    }
-
-    .ant-select {
-      width: 328px;
-    }
-
-    form .ant-select {
-      width: 328px;
-    }
-
-    .ant-btn {
-      margin-top: 24px;
-    }
-  }
 }

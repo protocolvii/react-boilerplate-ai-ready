@@ -1,10 +1,6 @@
 import React from 'react';
 import styles from './styles.css';
 
-const FormBox = ({ children }) => (
-  <div className="form-box">
-    <div className={styles.form}>{children}</div>
-  </div>
-);
+const FormBox = ({ children }) => <div className={styles.form}>{children}</div>;
 
 export default FormBox;
