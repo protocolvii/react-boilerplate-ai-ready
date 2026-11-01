@@ -10,8 +10,17 @@ export function LayoutProvider({ children }) {
       return 'standard-admin';
     }
   });
+  const [preview, setPreview] = useState(null);
+  const beginPreview = useCallback(value => setPreview(normalize(value)), []);
+  const endPreview = useCallback(() => setPreview(null), []);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const setLayout = useCallback(value => setLayoutValue(normalize(value)), []);
+  const setLayout = useCallback(
+    value => {
+      if (preview !== null) setPreview(normalize(value));
+      else setLayoutValue(normalize(value));
+    },
+    [preview]
+  );
   useEffect(() => {
     try {
       localStorage.setItem(key, layout);
@@ -34,6 +43,6 @@ export function LayoutProvider({ children }) {
     window.addEventListener('storage', sync);
     return () => window.removeEventListener('storage', sync);
   }, []);
-  const value = useMemo(() => ({ layout, setLayout, mobileOpen, setMobileOpen }), [layout, setLayout, mobileOpen]);
+  const value = useMemo(() => ({ layout: preview ?? layout, setLayout, mobileOpen, setMobileOpen, beginPreview, endPreview }), [layout, preview, setLayout, mobileOpen, beginPreview, endPreview]);
   return <LayoutContext.Provider value={value}>{children}</LayoutContext.Provider>;
 }

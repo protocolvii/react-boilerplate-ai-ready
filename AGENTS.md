@@ -15,7 +15,7 @@
 
 ## Design System 开发入口
 
-新增或修改 UI 前阅读 [docs/design-system.md](docs/design-system.md)。默认 Modern SaaS + System + Default + Standard Admin。主题、密度和布局独立，通过 `useAppearance` / `useLayout` 更新，不在业务页面直接操作根属性或外观存储。使用语义 Token，状态色不跟随品牌更改。优先复用 PageHeader、MetricCard、StatusIndicator、SearchToolbar、DataTable、ConfirmDialog 等组件。`/design-playground` 是无需后端的设计预览与交互示例。
+新增或修改 UI 前阅读 [docs/design-system.md](docs/design-system.md)。默认 Modern SaaS + System + Default + Standard Admin。主题、密度和布局独立，通过 `useAppearance` / `useLayout` 更新，不在业务页面直接操作根属性或外观存储。使用语义 Token，状态色不跟随品牌更改。优先复用 PageHeader、MetricCard、StatusIndicator、SearchToolbar、DataTable、ConfirmDialog 等组件。`/design-playground` 是仅本地开发可用的设计预览与交互示例，右上角调色板图标直达，左侧不放设计系统菜单；生产不注册该路由或入口，也不提供外观选择界面。手动 Token 覆盖仅用于预览；Agent 应直接修改对应源码，由 Vite 热更新展示。不要集成 AI 接口、对话或额外 Draft 服务。
 
 新增页面优先使用 `src/design-system/layouts` 的 StandardAdminLayout / WorkspaceLayout / MonitoringLayout；允许切换布局时使用 PageLayout。布局已包含顶部栏与侧栏，不要重复挂载。全局主题改动运行 `npm run test:design`，并检查浅深色、三种密度、移动端和输入状态保持。
 
@@ -86,7 +86,7 @@ import { cn } from '@/utils/cn';
 4. 需要菜单入口时，在 `src/components/MainMenu/items.js` 的 `menuItems` 数组中添加 `{ to: '/articles', label: '文章管理', icon: FileText }`，并从 `lucide-react` 导入图标。
 5. 页面使用 Redux 模块时，在 `src/reducers.js` 的 `combineReducers` 中注册 reducer，字段名必须与 selector 一致。
 
-MainMenu 根据 URL 自动显示选中状态并展开祖先菜单，不接收 `defaultSelectedKeys`、`defaultOpenKeys` 等参数。叶节点默认精确匹配，设置 `end: false` 可匹配详情等子路由。分组使用 `{ key, label, icon, children: [...] }`，支持递归子菜单；分组点击展开，叶节点 `to` 负责跳转。侧栏收起时使用 DropdownMenu 展示子导航，移动端在 Sheet 内展开。Playground 子导航使用 `?view=`，与页面 Tabs 和浏览器前进后退同步。
+MainMenu 根据 URL 自动显示选中状态并展开祖先菜单，不接收 `defaultSelectedKeys`、`defaultOpenKeys` 等参数。叶节点默认精确匹配，设置 `end: false` 可匹配详情等子路由。分组使用 `{ key, label, icon, children: [...] }`，支持递归子菜单；分组点击展开，叶节点 `to` 负责跳转。侧栏收起时使用 DropdownMenu 展示子导航，移动端在 Sheet 内展开。Playground 内部页签使用 `?view=`，与浏览器前进后退同步；不作为左侧业务子菜单。
 
 参考页面：`src/containers/Home/index.js` 的布局和 `src/containers/Auth/ChangePassword/index.js` 的完整表单交互。`src/containers/sample/` 是示意代码，尚未接入页面导出、路由和 reducer；使用前检查相对路径与接口，不将其当成已经完成的业务模块。
 

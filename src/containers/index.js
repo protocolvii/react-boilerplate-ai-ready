@@ -6,6 +6,6 @@ import Login from './Auth';
 import PrivateRoute from './PrivateRoute';
 import ChangePassword from './Auth/ChangePassword';
 
-const DesignPlayground = lazy(() => import('./DesignPlayground'));
+const DesignPlayground = import.meta.env.DEV ? lazy(() => import('./DesignPlayground')) : null;
 
 export { DesignPlayground, App, Home, NotFound, Login, PrivateRoute, ChangePassword };

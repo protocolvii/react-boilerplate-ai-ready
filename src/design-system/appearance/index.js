@@ -18,11 +18,15 @@ export function AppearanceProvider({ children }) {
       return { ...DEFAULT_APPEARANCE };
     }
   });
+  const [preview, setPreview] = useState(null);
+  const activeSettings = preview ?? settings;
+  const beginPreview = useCallback(value => setPreview(normalizeAppearance(value)), []);
+  const endPreview = useCallback(() => setPreview(null), []);
   const systemDark = useSyncExternalStore(subscribeSystem, getSystemDark, getServerDark);
-  const resolvedMode = settings.colorMode === 'system' ? (systemDark ? 'dark' : 'light') : settings.colorMode;
+  const resolvedMode = activeSettings.colorMode === 'system' ? (systemDark ? 'dark' : 'light') : activeSettings.colorMode;
   useLayoutEffect(() => {
-    applyAppearance(document.documentElement, settings, systemDark);
-  }, [settings, systemDark]);
+    applyAppearance(document.documentElement, activeSettings, systemDark);
+  }, [activeSettings, systemDark]);
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
@@ -42,8 +46,18 @@ export function AppearanceProvider({ children }) {
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
   }, []);
-  const updateAppearance = useCallback(patch => setSettings(current => normalizeAppearance({ ...current, ...patch })), []);
-  const value = useMemo(() => ({ ...settings, resolvedMode, updateAppearance, resetAppearance: () => setSettings({ ...DEFAULT_APPEARANCE }) }), [settings, resolvedMode, updateAppearance]);
+  const updateAppearance = useCallback(
+    patch => {
+      const update = current => normalizeAppearance({ ...current, ...patch });
+      if (preview !== null) setPreview(update);
+      else setSettings(update);
+    },
+    [preview]
+  );
+  const value = useMemo(
+    () => ({ ...activeSettings, resolvedMode, updateAppearance, beginPreview, endPreview, resetAppearance: () => (preview !== null ? setPreview({ ...DEFAULT_APPEARANCE }) : setSettings({ ...DEFAULT_APPEARANCE })) }),
+    [activeSettings, resolvedMode, updateAppearance, beginPreview, endPreview, preview]
+  );
   return <AppearanceContext.Provider value={value}>{children}</AppearanceContext.Provider>;
 }
 export { useAppearance } from './context';

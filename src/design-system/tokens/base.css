@@ -6,6 +6,8 @@
   --border-width: 1px;
   --shadow-overlay: 0 12px 40px rgb(0 0 0 / 14%);
   --text-caption: 0.75rem;
+  --font-weight-body: 400;
+  --line-height-body: 1.5;
   --text-body: 0.875rem;
   --text-title: clamp(1.125rem, 1.6vw, 1.25rem);
   --density-control-height: 2.25rem;

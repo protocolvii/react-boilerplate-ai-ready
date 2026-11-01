@@ -1,22 +1,38 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch, useStore } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogOut, KeyRound, User, Menu } from 'lucide-react';
+import { LogOut, KeyRound, User, Menu, Palette } from 'lucide-react';
 import { Button } from '../ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '../ui/dropdown-menu';
 import { logout } from '../../containers/Auth/actions';
 import { getMyInfo } from '../../containers/User/actions';
 import { selectUser } from '../../containers/User/selectors';
 import config from '../../config';
-import { AppearanceMenu } from '../../design-system/components';
+import { getOrRefreshToken } from '../../utils/auth';
 import { selectToken } from '../../containers/Auth/selectors';
 import { useLayout } from '../../design-system/layouts/context';
 const MainHeader = () => {
   const { setMobileOpen } = useLayout();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const store = useStore();
   const user = useSelector(selectUser);
   const token = useSelector(selectToken);
+  const [restoringAuth, setRestoringAuth] = useState(!token);
+  useEffect(() => {
+    let active = true;
+    // 公开页面不会经过 PrivateRoute，也需要从已有缓存恢复登录态。
+    getOrRefreshToken(dispatch, store.getState, { isFresh: false })
+      .catch(() => {
+        // 无会话时继续公开浏览，不强制跳转登录。
+      })
+      .finally(() => {
+        if (active) setRestoringAuth(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [dispatch, store]);
   useEffect(() => {
     if (token && !user.id && !user.hasRequestedMyInfo) dispatch(getMyInfo()).catch(() => {});
   }, [dispatch, token, user.id, user.hasRequestedMyInfo]);
@@ -31,7 +47,13 @@ const MainHeader = () => {
         </Link>
       </div>
       <div className="flex shrink-0 items-center gap-1">
-        <AppearanceMenu />
+        {import.meta.env.DEV && (
+          <Button variant="ghost" size="icon" asChild>
+            <Link to="/design-playground" aria-label="设计系统" title="设计系统（开发工具）">
+              <Palette className="size-4" />
+            </Link>
+          </Button>
+        )}
         {token ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -52,6 +74,10 @@ const MainHeader = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+        ) : restoringAuth ? (
+          <span role="status" className="text-xs text-muted-foreground">
+            正在恢复登录状态…
+          </span>
         ) : (
           <Button variant="outline" size="sm" asChild>
             <Link to="/login">登录</Link>

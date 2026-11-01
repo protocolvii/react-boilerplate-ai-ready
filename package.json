@@ -20,7 +20,7 @@
     "preview": "vite preview",
     "dev:mock": "vite --mode mock",
     "test:mock": "node --test tests/mock-api.test.mjs",
-    "test:design": "node --test tests/appearance.test.mjs"
+    "test:design": "node --test tests/appearance.test.mjs tests/menu-navigation.test.mjs tests/playground-preview.test.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

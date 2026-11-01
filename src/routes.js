@@ -10,7 +10,7 @@ export const routes = [
       { path: '/', component: Home, needAuth: true },
       { path: '/change-password', component: ChangePassword, needAuth: true },
       { path: '/login', component: Login },
-      { path: '/design-playground', component: DesignPlayground },
+      ...(import.meta.env.DEV ? [{ path: '/design-playground', component: DesignPlayground }] : []),
       { path: '*', component: NotFound }
     ]
   }

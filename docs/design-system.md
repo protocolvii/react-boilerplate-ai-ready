@@ -1,6 +1,6 @@
 # Design System
 
-本系统面向长期复用的管理后台。业务页面共享语义 Token、shadcn/ui 基础组件和业务组件；主题、颜色模式、密度与布局分别选择。设计预览入口为 `/design-playground`，无需登录，使用页面内静态数据，不访问业务 API。
+本系统面向长期复用的管理后台。业务页面共享语义 Token、shadcn/ui 基础组件和业务组件；主题、颜色模式、密度与布局分别选择。设计预览入口为本地开发服务的 `/design-playground`，无需登录，使用页面内静态数据，不访问业务 API。
 
 ## AI 开发入口
 
@@ -38,7 +38,7 @@ src/design-system/
   layouts/context.js         布局注册与 useLayout
   layouts/provider.js        布局选择、移动端导航状态
   layouts/index.js           三种布局与动态 PageLayout
-  components/index.js        AppearanceControls、AppearanceMenu
+  components/index.js        AppearanceControls
   tokens/base.css            字体、状态色、密度基础值、动效
   tokens/modern-saas.css      SaaS 的浅深色语义变量
   tokens/industrial-pro.css   工业预设的浅深色语义变量
@@ -107,7 +107,7 @@ import { PageHeader, PageContent } from '@/components';
 - MonitoringLayout：接受 `alerts`，提供右侧实时信息面板。
 - PageLayout：相同 props，根据 `useLayout().layout` 动态选择样式，保持子页面树稳定。
 
-布局自身包含 MainHeader / MainMenu / MainPage，不要再重复挂载。顶部栏含外观入口；桌面侧栏可折叠，移动端使用 Sheet。小于 1280px 时右侧面板移至正文下方，小于 768px 时启用移动导航。宽表格在表格容器内横向滚动，不让整个页面溢出。
+布局自身包含 MainHeader / MainMenu / MainPage，不要再重复挂载。顶部栏仅在开发环境显示直达设计系统的图标，所有外观调整集中在 Playground，最终用户没有样式或颜色模式选择入口；桌面侧栏可折叠，移动端使用 Sheet。小于 1280px 时右侧面板移至正文下方，小于 768px 时启用移动导航。宽表格在表格容器内横向滚动，不让整个页面溢出。
 
 ## 侧栏子导航
 
@@ -122,7 +122,7 @@ import { PageHeader, PageContent } from '@/components';
 
 分组不负责跳转，点击可展开或收起；进入叶节点路由时自动展开祖先并高亮选中项。叶节点默认精确匹配，`end: false` 允许匹配详情子路由。侧栏收起时点击分组图标显示浮层，更深层级使用子浮层；移动端在抽屉内缩进展开。使用原生按钮、嵌套列表和 aria-expanded / aria-current 提供键盘和选中语义。
 
-“设计系统”的四个子导航接入现有示例，通过 `?view=data|monitoring|workspace|components` 与页面 Tabs 同步。默认无 query 时为 data；该叶节点通过 defaultSearch 定义缺省查询值。业务页面通常直接使用独立路由即可，菜单不替代路由注册与登录保护。
+侧栏不放置设计系统入口，业务菜单的递归 children、自动展开、选中和折叠浮层能力仍保留。Playground 自身的 Tabs 使用 `?view=data|monitoring|workspace|components` 与浏览器历史同步。业务页面通常直接使用独立路由，菜单不替代路由注册与登录保护；查询参数匹配可通过 defaultSearch 指定缺省查询值。
 
 ## 密度
 
@@ -156,10 +156,35 @@ DataTable 列定义为 `{ key, header, sortable, render }`，render 接收整行
 
 - 数据管理：搜索、状态过滤、排序、分页、编辑/新增 Dialog、归档确认和空状态。
 - 工业监测：指标、带单位与阈值的 SVG 趋势图、设备表格、告警时间线，刷新为本地示例数据。
-- AI 工作台：项目资源、对话记录、任务输入、上下文工具；发送只产生本地演示回复。
+- AI 工作台：静态项目资源、结果卡片、工作区导航和上下文面板，不提供 AI 对话或任务发送。
 - 基础组件：按钮、表单控件、Select、Checkbox、Radio、Switch、Dialog、Sheet、Popover、Tooltip、Tabs、Badge、Alert、Skeleton、Card、Separator。
 
-示例数据在 data.js 中固定，便于截图比较。外观持久化，演示业务数据不持久化；刷新页面恢复示例。页面可公开访问用于设计评审，生产项目若不需要可移除菜单与路由。
+示例数据在 data.js 中固定，便于截图比较，演示业务数据不持久化。Playground 是本地预览工具，不连接 AI，不提供对话能力。使用 VS Code 中的 Codex 或其他 Agent 编辑代码，由 Vite 热更新页面。
+
+### 手动实时调整
+
+点击页面标题旁或右下角的“设计配置”打开面板。配置分为“外观配置”和“样式微调”两个页签，面板独立滚动，预览页面不再被配置表单向下挤占。右侧面板覆盖在页面上方，不改变预览区域宽度或触发布局重排；宽屏下可操作未被遮挡的预览区域，平板和手机使用抽屉。关闭面板即可查看完整效果。点击面板外的预览区域、隐藏按钮或按 Escape 可关闭，当前调整与撤销历史保留；右下角入口可随时重新打开。
+
+展开 Token 分组，使用拾色器或输入 CSS 值。支持主色、前景/背景、状态、侧栏、图表颜色；基础字体、字号、字重、行高；圆角、阴影、面板边框；页面与卡片间距、表格最小行高和单元格间距、控件高度。全部作用于真实组件，不使用另画的预览模型。Dashboard 复用数据管理指标与表格，Charts 使用工业监测图表，Form / Dialog 使用项目现有表单和基础组件。
+
+- 留空的 Token 跟随源码；手动覆盖值按 `preset:resolvedMode:density` 隔离，切换后不会混用颜色。
+- 无效 CSS 值会显示错误并暂用源码值，修正后才能暂存或导出。
+- “暂存调整”写入独立 localStorage 键 `react-boilerplate:playground-draft:v1`，刷新或重新进入时恢复；未暂存的改动离开后丢弃。
+- “撤销调整”撤回最近一次编辑，包含面板内的主题、模式、密度与布局，最多记录 50 步。
+- “恢复项目配置”清除所有覆盖和暂存，恢复进入页面时的应用外观选择，并继续使用当前源码 Token。
+- 导出 JSON / 复制给 AI Agent 只生成预览配置，不会写源码；剪贴板权限不可用时可在弹窗中手动复制。
+
+复用既有 AppearanceProvider / LayoutProvider 的临时会话，正式外观存储不被覆盖，离开 Playground 后清理内联 Token 并恢复应用外观。页面期间修改的是文档根变量，以便真实 Sidebar 和传送到 body 的 Dialog / Popover 同步预览；不另外维护主题系统。
+
+新增手动字段在 `src/containers/DesignPlayground/preview/fields.js` 注册。`usePreview.js` 处理暂存、历史与 Token 覆盖；`PreviewPanel.js` 组合现有表单组件。CSS 基线在热更新后重新读取，用户未覆盖的变量立即体现代码变化；已覆盖变量需留空或恢复配置，才能显示对应源码值。共享 Token 补充了正文基础字重/行高、可选页面间距、卡片内部间距与表格行高，默认值延续现有布局。
+
+### AI Agent 与源码修改
+
+将导出的 JSON 交给 Agent，明确目标预设和浅深色，再修改 `src/design-system/tokens/` 对应文件或组件样式。JSON 的 `profiles` 是覆盖值，不是完整主题；不要把预览 storage 或内联样式当成正式设计配置。密度与预设的间距计算应沿用既有 Token。修改后用未覆盖的预览验证 HMR，并执行项目检查。
+
+### 开发和生产边界
+
+路由、顶部开发工具入口、lazy import 都由 `import.meta.env.DEV` 控制。`npm run dev` / `dev:mock` 的右上角调色板图标直接进入 Playground，不再提供外观设置弹出菜单。生产和 staging 构建不注册路由、不显示该图标，也不生成 Playground / ComponentGallery 专用 JS 分包。生产访问 `/design-playground` 显示 404。正式应用使用项目配置的默认外观，保留 Provider 与主题能力，但暂不向最终用户提供外观选择界面。
 
 ## 验证与扩展检查
 

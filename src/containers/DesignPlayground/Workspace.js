@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import { Sparkles, Send, FileText, ListChecks, BookOpen, ArrowUpRight } from 'lucide-react';
+import { Sparkles, FileText, ListChecks, BookOpen } from 'lucide-react';
 import { Button } from '../../components/ui/button';
-import { Textarea } from '../../components/ui/textarea';
-import { Label } from '../../components/ui/label';
 import { StatusIndicator } from '../../components';
-import { cn } from '../../utils/cn';
 const tools = [
   { label: '分析助手', icon: Sparkles },
   { label: '知识检索', icon: BookOpen },
@@ -32,8 +29,6 @@ export function WorkspaceTools() {
 }
 export default function Workspace({ showResources = true }) {
   const [active, setActive] = useState('分析助手');
-  const [prompt, setPrompt] = useState('');
-  const [messages, setMessages] = useState([]);
   return (
     <section className="ds-panel overflow-hidden" aria-label="AI 工作台示例">
       <div className="ds-brand-band" />
@@ -76,42 +71,12 @@ export default function Workspace({ showResources = true }) {
                 </ul>
               </div>
             </div>
-            {messages.map((text, index) => (
-              <div key={index} className={cn('rounded-lg p-4 text-sm leading-7', index % 2 === 0 ? 'bg-muted' : 'border bg-card')}>
-                <span className="mb-1 block text-xs font-semibold text-muted-foreground">{index % 2 === 0 ? '你的任务' : '本地演示反馈'}</span>
-                {text}
-              </div>
-            ))}
-            <form
-              className="space-y-3 border-t pt-4"
-              onSubmit={event => {
-                event.preventDefault();
-                if (!prompt.trim()) return;
-                setMessages(current => [...current, prompt.trim(), '演示任务已接收。真实产品可在此接入任务服务，本页仅展示交互与布局。']);
-                setPrompt('');
-              }}
-            >
-              <Label htmlFor="workspace-prompt" className="sr-only">
-                描述你的任务
-              </Label>
-              <Textarea id="workspace-prompt" value={prompt} onChange={event => setPrompt(event.target.value)} placeholder="描述一个任务，继续探索工作台…" rows={3} />
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-xs text-muted-foreground">本地演示 · 未连接 AI 服务</p>
-                <Button type="submit" disabled={!prompt.trim()}>
-                  <Send className="size-4" />
-                  发送任务
-                </Button>
-              </div>
-            </form>
+            <p className="border-t pt-4 text-xs text-muted-foreground">静态工作台布局预览，不提供 AI 对话或任务服务。</p>
           </div>
         </div>
         {showResources && (
           <aside className="border-t p-[var(--panel-space)] xl:w-56 xl:shrink-0 xl:border-l xl:border-t-0">
             <WorkspaceTools />
-            <Button variant="outline" className="mt-5 w-full" onClick={() => document.getElementById('workspace-prompt')?.focus()}>
-              继续探索
-              <ArrowUpRight className="size-4" />
-            </Button>
           </aside>
         )}
       </div>

@@ -10,6 +10,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --text-sm: var(--text-body);
   --font-sans: var(--font-body);
   --font-mono: var(--font-data);
   --shadow-panel: var(--panel-shadow);
@@ -75,7 +76,8 @@
 
     font-family: var(--font-body);
     font-size: var(--text-body);
-    line-height: 1.5;
+    font-weight: var(--font-weight-body);
+    line-height: var(--line-height-body);
   }
 
   :focus-visible {
