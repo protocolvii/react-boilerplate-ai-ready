@@ -17,16 +17,34 @@ npm run dev
 
 AI 开发约定见 [AGENTS.md](AGENTS.md)。
 
+## 无后端开发
+
+没有配置后端服务时运行：
+
+```bash
+npm run dev:mock
+```
+
+打开 `http://127.0.0.1:3001`，使用账号 **admin**、密码 **admin123** 登录。模拟模式使用开发端口加 1，与普通开发的浏览器登录缓存隔离；也可通过 `--port` 显式设置端口。
+
+模拟接口包括登录、用户信息、token 刷新、退出和修改密码。请求仍经过项目的 request、Redux 与路由鉴权流程，可以直接调试控制台、布局和表单，无需启动后端或修改鉴权代码。
+
+数据仅在开发服务内存中保存；修改密码会影响本次运行的后续登录，重启服务后密码恢复为 admin123，原有模拟会话失效。其他业务接口需要在 `vite/mock-api.mjs` 中按接口协议补充；未配置的 `/api` 请求返回明确的 404 JSON，不会转发到真实后端。
+
+`npm run dev` 使用 `src/config.js` 的真实接口代理。模拟功能仅由 dev:mock 显式开启，不用于生产构建或 preview，也不会进入前端构建产物。
+
 ## 常用命令
 
 ```bash
+npm run dev:mock        # 无后端开发，使用本地模拟接口
 npm run dev             # 开发服务，支持 React Fast Refresh 和 CSS 热更新
 npm run build           # 生产构建，输出 build/static
 npm run build:staging   # 测试环境构建
 npm run preview         # 本地预览构建产物
 npm run clean           # 清理 build/static
-npm run eslint          # JS / JSX 检查
+npm run eslint          # 源码、Vite 配置和测试检查
 npm run stylelint       # CSS 检查
+npm run test:mock       # 模拟接口和运行模式检查
 npm run format:check    # 格式检查
 npm run format          # 格式化
 ```
@@ -62,6 +80,7 @@ npm run format          # 格式化
 ```text
 vite.config.mjs             Vite 开发与构建配置
 vite/source-conventions.mjs  JSX 与 CSS Modules 文件处理
+vite/mock-api.mjs            本地开发模拟接口
 components.json             shadcn/ui CLI 配置
 jsconfig.json               编辑器路径别名与 JSX 配置
 src/template/index.html     HTML 模板

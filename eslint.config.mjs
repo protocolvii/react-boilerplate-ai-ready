@@ -27,6 +27,13 @@ export default [
   reactHooks.configs.flat.recommended,
   jsxA11y.flatConfigs.recommended,
   {
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parserOptions: { ecmaVersion: 'latest', sourceType: 'module' }
+    }
+  },
+  {
     files: ['src/**/*.{js,jsx}'],
     languageOptions: {
       ecmaVersion: 'latest',
@@ -74,6 +81,12 @@ export default [
       'react/prop-types': 'off',
       'react-hooks/set-state-in-effect': 'off'
     }
+  },
+  {
+    files: ['vite.config.mjs', 'vite/**/*.mjs', 'tests/**/*.mjs'],
+    languageOptions: { globals: globals.node },
+    // 当前 import resolver 不支持部分依赖的 package exports；实际解析由 Vite / Node 验证。
+    rules: { 'import/no-unresolved': 'off' }
   },
   {
     files: ['src/components/ui/**/*.jsx'],

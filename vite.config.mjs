@@ -9,21 +9,27 @@ import postcssSimpleVars from 'postcss-simple-vars';
 import postcssNested from 'postcss-nested';
 import { createConfig } from './src/config.js';
 import { sourceConventions } from './vite/source-conventions.mjs';
+import { mockApi } from './vite/mock-api.mjs';
 
 const htmlEntry = fileURLToPath(new URL('./index.html', import.meta.url));
 const htmlTemplate = fileURLToPath(new URL('./src/template/index.html', import.meta.url));
 
-const stages = { development: 'dev', staging: 'staging', production: 'prod' };
+const stages = { development: 'dev', mock: 'dev', staging: 'staging', production: 'prod' };
 const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]);
 
-export default defineConfig(({ command, mode }) => {
+export default defineConfig(({ command, mode, isPreview }) => {
+  const isMock = mode === 'mock';
+  if (isMock && (command !== 'serve' || isPreview)) throw new Error('mock 模式仅用于 npm run dev:mock，不能用于构建或预览。');
   const stage = process.env.STAGE || stages[mode];
   if (!stage) throw new Error(`Unknown Vite mode: ${mode}. Use development, staging or production, or set STAGE.`);
+  if (isMock && stage !== 'dev') throw new Error('mock 模式仅支持 dev 环境，请移除 STAGE 环境变量。');
   const config = createConfig(stage);
+  if (isMock && config.apiUrl !== '/api') throw new Error('mock 模式要求 dev.apiUrl 为 /api。');
   const isBuild = command === 'build';
 
   return {
     plugins: [
+      ...(isMock ? [mockApi()] : []),
       sourceConventions(),
       react(),
       tailwindcss(),
@@ -80,17 +86,19 @@ export default defineConfig(({ command, mode }) => {
     },
     server: {
       host: config.host,
-      port: config.hotLoadPort,
+      // 模拟模式使用独立端口，避免与真实接口开发共享浏览器登录缓存。
+      port: isMock ? config.hotLoadPort + 1 : config.hotLoadPort,
       strictPort: true,
-      proxy: config.proxyTarget
-        ? {
-            '^/api(?:/|$)': {
-              target: config.proxyTarget,
-              changeOrigin: true,
-              rewrite: path => path.replace(/^\/api(?=\/|$)/, '') || '/'
+      proxy:
+        !isMock && config.proxyTarget
+          ? {
+              '^/api(?:/|$)': {
+                target: config.proxyTarget,
+                changeOrigin: true,
+                rewrite: path => path.replace(/^\/api(?=\/|$)/, '') || '/'
+              }
             }
-          }
-        : undefined
+          : undefined
     },
     build: {
       outDir: 'build/static',

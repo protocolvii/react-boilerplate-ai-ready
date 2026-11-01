@@ -17,11 +17,12 @@
 
 ```bash
 npm ci                  # 按锁文件安装依赖
+npm run dev:mock        # 无后端开发，默认 http://127.0.0.1:3001
 npm run dev             # 开发服务，默认 http://127.0.0.1:3000
 npm run build           # 生产构建，输出 build/static
 npm run build:staging   # staging 环境构建
 npm run preview         # 预览构建产物
-npm run eslint          # JS / JSX 检查
+npm run eslint          # 源码、Vite 配置和测试检查
 npm run stylelint       # CSS 检查
 npm run format:check    # 格式检查
 npm run format          # 格式化，执行前注意范围
@@ -468,3 +469,9 @@ SVG、图片、字体通过 Vite 原生导入或 CSS url() 使用；SVG 默认�
 核对页面导出、路由、菜单、reducer 与 selector 是否对应；确认 UI 不调用其他库的 API，样式和表单具备必要反馈。运行与改动相符的检查，并说明实际验证结果、模拟接口范围和未完成事项。
 
 用户对工作范围、提交或发布的要求优先于默认流程；不要因为实现功能而擅自提交、推送或部署。
+
+## 无后端联调
+
+使用 `npm run dev:mock` 启动本地模拟 API，默认端口为开发端口加 1，账号 admin / admin123。模拟登录、用户信息、token 刷新、修改密码和退出；修改密码和会话只存在于内存，重启后重置。无需修改 PrivateRoute、鉴权或业务 API 调用。
+
+新页面需要模拟数据时，在 `vite/mock-api.mjs` 按相同请求和响应协议添加明确的路由，未知 /api 接口返回 404，不伪装所有请求成功。模拟接口不得替代真实接口验证。普通 dev 使用配置的后端代理；mock 不能用于 build 或 preview。
