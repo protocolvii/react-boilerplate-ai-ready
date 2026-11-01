@@ -83,10 +83,10 @@ import { cn } from '@/utils/cn';
 
    这里使用项目的 `component` 字段，值是组件函数，不是 JSX。业务后台默认设置 `needAuth: true`；登录等明确公开的页面不加。`PrivateRoute` 负责登录校验。
 
-4. 需要菜单入口时，在 `src/components/MainMenu/index.js` 的 `items` 数组中添加 `{ to: '/articles', label: '文章管理', icon: FileText }`，并从 `lucide-react` 导入图标。
+4. 需要菜单入口时，在 `src/components/MainMenu/items.js` 的 `menuItems` 数组中添加 `{ to: '/articles', label: '文章管理', icon: FileText }`，并从 `lucide-react` 导入图标。
 5. 页面使用 Redux 模块时，在 `src/reducers.js` 的 `combineReducers` 中注册 reducer，字段名必须与 selector 一致。
 
-MainMenu 使用 NavLink 按 URL 显示选中状态，不接收 `defaultSelectedKeys`、`defaultOpenKeys` 等参数。现有菜单使用 `end` 精确匹配；需要子路由共享选中状态时，根据需求调整匹配。
+MainMenu 根据 URL 自动显示选中状态并展开祖先菜单，不接收 `defaultSelectedKeys`、`defaultOpenKeys` 等参数。叶节点默认精确匹配，设置 `end: false` 可匹配详情等子路由。分组使用 `{ key, label, icon, children: [...] }`，支持递归子菜单；分组点击展开，叶节点 `to` 负责跳转。侧栏收起时使用 DropdownMenu 展示子导航，移动端在 Sheet 内展开。Playground 子导航使用 `?view=`，与页面 Tabs 和浏览器前进后退同步。
 
 参考页面：`src/containers/Home/index.js` 的布局和 `src/containers/Auth/ChangePassword/index.js` 的完整表单交互。`src/containers/sample/` 是示意代码，尚未接入页面导出、路由和 reducer；使用前检查相对路径与接口，不将其当成已经完成的业务模块。
 

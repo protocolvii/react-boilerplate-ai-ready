@@ -109,6 +109,21 @@ import { PageHeader, PageContent } from '@/components';
 
 布局自身包含 MainHeader / MainMenu / MainPage，不要再重复挂载。顶部栏含外观入口；桌面侧栏可折叠，移动端使用 Sheet。小于 1280px 时右侧面板移至正文下方，小于 768px 时启用移动导航。宽表格在表格容器内横向滚动，不让整个页面溢出。
 
+## 侧栏子导航
+
+菜单配置位于 `src/components/MainMenu/items.js`，由 Navigation.js 递归渲染，桌面和移动端共用。分组设置稳定的 key 与 children，叶节点设置 to：
+
+```js
+{ key: 'users', label: '用户管理', icon: Users, children: [
+  { to: '/users', label: '用户列表' },
+  { to: '/user-groups', label: '用户组' }
+] }
+```
+
+分组不负责跳转，点击可展开或收起；进入叶节点路由时自动展开祖先并高亮选中项。叶节点默认精确匹配，`end: false` 允许匹配详情子路由。侧栏收起时点击分组图标显示浮层，更深层级使用子浮层；移动端在抽屉内缩进展开。使用原生按钮、嵌套列表和 aria-expanded / aria-current 提供键盘和选中语义。
+
+“设计系统”的四个子导航接入现有示例，通过 `?view=data|monitoring|workspace|components` 与页面 Tabs 同步。默认无 query 时为 data；该叶节点通过 defaultSearch 定义缺省查询值。业务页面通常直接使用独立路由即可，菜单不替代路由注册与登录保护。
+
 ## 密度
 
 密度通过根属性切换 Token，再由 data-slot 适配官方组件，无需复制三份组件源码。Default 控件基准 36px，Comfortable 为 44px，Compact 为 32px；表格单元格、面板内边距、布局间距和 textarea 同步变化。预设的 spacing scale 在这些值上施加视觉节奏差异。

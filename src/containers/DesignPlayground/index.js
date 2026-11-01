@@ -1,4 +1,5 @@
-import React, { lazy, Suspense, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { RotateCcw, BookOpen, Layers3, Sun, Moon } from 'lucide-react';
 import { PageHeader, PageContent, SectionHeader, StatusIndicator } from '../../components';
@@ -41,7 +42,23 @@ function TokenStrip() {
 export default function DesignPlayground() {
   const appearance = useAppearance();
   const { layout, setLayout } = useLayout();
-  const [tab, setTab] = useState('data');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const view = searchParams.get('view');
+  const tab = ['data', 'monitoring', 'workspace', 'components'].includes(view) ? view : 'data';
+  const requestedTab = useRef(tab);
+  useEffect(() => {
+    requestedTab.current = tab;
+  }, [tab]);
+  const setTab = value => {
+    // 聚焦与鼠标激活可能连续触发，避免同一次切换重复写入历史记录。
+    if (requestedTab.current === value) return;
+    requestedTab.current = value;
+    setSearchParams(current => {
+      const next = new URLSearchParams(current);
+      next.set('view', value);
+      return next;
+    });
+  };
   const [guide, setGuide] = useState(false);
   return (
     <PageLayout tools={<WorkspaceTools />} alerts={<AlarmFeed />}>

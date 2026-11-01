@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { NavLink, useLocation } from 'react-router-dom';
-import { LayoutDashboard, PanelLeftClose, PanelLeftOpen, KeyRound, Palette } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
+import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '../ui/sheet';
 import { cn } from '../../utils/cn';
 import { setMainMenuCollapsed } from '../../containers/User/actions';
 import { selectCollapsed } from '../../containers/User/selectors';
 import { useLayout } from '../../design-system/layouts/context';
+import Navigation from './Navigation';
+import { menuItems } from './items';
 
 const MainMenu = () => {
   const dispatch = useDispatch();
@@ -26,7 +28,7 @@ const MainMenu = () => {
   }, [collapsed, dispatch]);
   useEffect(() => {
     setMobileOpen(false);
-  }, [location.pathname, setMobileOpen]);
+  }, [location.pathname, location.search, setMobileOpen]);
   const toggle = () => {
     dispatch(setMainMenuCollapsed(!collapsed));
     try {
@@ -35,36 +37,12 @@ const MainMenu = () => {
       /* 不影响交互。 */
     }
   };
-  const items = [
-    { to: '/', label: '控制台', icon: LayoutDashboard },
-    { to: '/design-playground', label: '设计系统', icon: Palette },
-    { to: '/change-password', label: '修改密码', icon: KeyRound, Palette }
-  ];
-  const navigation = compact => (
-    <nav className="flex-1 space-y-1" aria-label="主导航">
-      {items.map(({ to, label, icon: Icon }) => (
-        <NavLink
-          key={to}
-          end
-          to={to}
-          title={label}
-          onClick={() => setMobileOpen(false)}
-          className={({ isActive }) =>
-            cn('flex min-h-10 items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground', isActive && 'bg-sidebar-accent font-semibold text-sidebar-primary')
-          }
-        >
-          <Icon className="size-4 shrink-0" />
-          {!compact && label}
-        </NavLink>
-      ))}
-    </nav>
-  );
+  const navigation = compact => <Navigation items={menuItems} compact={compact} location={location} onNavigate={() => setMobileOpen(false)} />;
   return (
     <>
       <aside
         className={cn('fixed bottom-0 left-0 top-[var(--header-height)] hidden flex-col border-r border-sidebar-border bg-sidebar p-3 text-sidebar-foreground md:flex', collapsed ? 'w-[var(--sidebar-collapsed-width)]' : 'w-[var(--sidebar-width)]')}
       >
-        {!collapsed && <div className="px-3 pb-3 pt-2 text-xs font-medium tracking-wider text-muted-foreground">工作空间</div>}
         {navigation(collapsed)}
         <Button variant="ghost" onClick={toggle} aria-label={collapsed ? '展开菜单' : '收起菜单'} aria-expanded={!collapsed}>
           {collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
