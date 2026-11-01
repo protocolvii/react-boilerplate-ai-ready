@@ -3,7 +3,6 @@ import { Provider } from 'react-redux';
 import { BrowserRouter, useNavigate } from 'react-router-dom';
 import { Toaster } from '../../components/ui/sonner';
 import { HelmetProvider } from 'react-helmet-async';
-import { ThemeProvider } from 'next-themes';
 
 import { routes, renderRoutes } from '../../routes';
 import { setNavigate } from '../../utils/navigation';
@@ -23,10 +22,10 @@ const Root = ({ store }) => (
   <Provider store={store}>
     <HelmetProvider>
       <BrowserRouter>
-        <ThemeProvider attribute="class" forcedTheme="light" enableSystem={false}>
+        <>
           <NavigationProvider>{renderRoutes(routes)}</NavigationProvider>
-          <Toaster richColors closeButton />
-        </ThemeProvider>
+          <Toaster theme="light" richColors closeButton />
+        </>
       </BrowserRouter>
     </HelmetProvider>
   </Provider>

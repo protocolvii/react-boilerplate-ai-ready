@@ -16,6 +16,12 @@
         "ignoreAtRules": ["theme", "custom-variant", "apply", "source", "utility", "variant", "reference"]
       }
     ],
-    "import-notation": "string"
+    "import-notation": "string",
+    "at-rule-prelude-no-invalid": [
+      true,
+      {
+        "ignoreAtRules": ["apply"]
+      }
+    ]
   }
 }

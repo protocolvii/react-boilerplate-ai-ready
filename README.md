@@ -6,7 +6,7 @@ GitHub 仓库：https://github.com/ihahoo/react-boilerplate-ai-ready
 
 ## 开始开发
 
-使用 Node.js 22.12+（建议 Node.js 22 LTS）与 npm。
+使用 Node.js 22.12+（22.x）、24.x 或 26+ 与 npm，建议使用 Node.js 22 或 24 LTS。
 
 ```bash
 npm ci
