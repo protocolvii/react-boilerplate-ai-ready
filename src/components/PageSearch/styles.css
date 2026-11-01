@@ -1,0 +1,24 @@
+.contentWrap {
+  width: 100%;
+  background-color: #fff;
+  min-height: 50px;
+  margin-bottom: 16px;
+}
+
+.contentBody {
+  padding: 15px 24px;
+}
+
+:global {
+  .search-box form .ant-select {
+    width: 120px;
+  }
+
+  .search-box form .ant-form-item {
+    margin: 10px;
+  }
+
+  .search-box .ant-input {
+    width: 150px;
+  }
+}

@@ -1,0 +1,9 @@
+node_modules
+build
+dist
+public
+coverage
+package-lock.json
+
+# 保留 shadcn CLI 生成源码的官方格式
+src/components/ui
