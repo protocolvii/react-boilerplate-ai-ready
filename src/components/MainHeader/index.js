@@ -26,7 +26,7 @@ const MainHeader = () => {
         <Button variant="ghost" size="icon" className="shrink-0 md:hidden" onClick={() => setMobileOpen(true)} aria-label="打开导航">
           <Menu />
         </Button>
-        <Link to="/" className="truncate text-sm font-semibold">
+        <Link to="/" className="truncate text-base font-semibold md:text-lg">
           {config.app.title}
         </Link>
       </div>
