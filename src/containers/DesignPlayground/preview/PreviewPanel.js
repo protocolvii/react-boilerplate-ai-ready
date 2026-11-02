@@ -53,7 +53,7 @@ export default function PreviewPanel({ preview, compact = false }) {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h2 className="text-base font-semibold">样式微调</h2>
-          <p className="mt-2 max-w-3xl text-sm text-muted-foreground">仅调整此页。展开下面的 Token 分组编辑，留空即跟随项目源码；预设、浅深色与密度分别记录覆盖值。</p>
+          <p className="mt-2 max-w-3xl text-sm text-muted-foreground">调整即时预览，点击底部“保存到项目”才写入源码。留空跟随项目值；保存空值会移除该项已保存的覆盖。预设、浅深色与密度分别记录。</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button

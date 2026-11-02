@@ -1,6 +1,6 @@
 import React, { useRef, useState, useSyncExternalStore } from 'react';
 import { Dialog as DialogPrimitive } from 'radix-ui';
-import { Settings2, X } from 'lucide-react';
+import { Save, Settings2, X } from 'lucide-react';
 import { Button } from '../../../components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '../../../components/ui/sheet';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../../components/ui/tabs';
@@ -62,6 +62,23 @@ export default function PreviewDrawer({ open, onOpenChange, preview, children })
           </TabsContent>
         </div>
       </Tabs>
+      <div className="shrink-0 space-y-2 border-t bg-background p-4">
+        <Button className="w-full" disabled={!preview.projectReady || preview.saving || preview.invalid.length > 0} onClick={preview.saveProject}>
+          <Save />
+          {preview.saving ? '保存中…' : '保存到项目'}
+        </Button>
+        <p className="text-xs text-muted-foreground">保存后更新项目源码及默认外观，可通过 Git 查看和撤销。</p>
+        {preview.saveError && (
+          <p role="alert" className="text-sm text-destructive">
+            {preview.saveError}
+          </p>
+        )}
+        {preview.saveMessage && (
+          <p role="status" className="text-sm text-muted-foreground">
+            {preview.saveMessage}
+          </p>
+        )}
+      </div>
     </>
   );
   return (

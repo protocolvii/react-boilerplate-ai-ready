@@ -1,12 +1,39 @@
-import { useLayoutEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useAppearance } from '../../../design-system/appearance';
 import { useLayout } from '../../../design-system/layouts';
+import projectDesign from '../../../design-system/project-design.json';
 import { FIELDS, PREVIEW_STORAGE_KEY, profileKey, readDraft, validValue } from './fields';
 
 export default function usePreview() {
   const appearance = useAppearance();
   const layout = useLayout();
-  const [original] = useState(() => ({ version: 1, appearance: { preset: appearance.preset, colorMode: appearance.colorMode, density: appearance.density }, layout: layout.layout, profiles: {} }));
+  const original = { ...projectDesign, profiles: {} };
+  const [projectReady, setProjectReady] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState('');
+  const [saveMessage, setSaveMessage] = useState(() => {
+    try {
+      return sessionStorage.getItem('design-project-saved') || '';
+    } catch {
+      return '';
+    }
+  });
+  const revision = useRef(null);
+  const savingRef = useRef(false);
+  useEffect(() => {
+    try {
+      sessionStorage.removeItem('design-project-saved');
+    } catch {
+      /* 不依赖浏览器存储。 */
+    }
+    fetch('/__design-project')
+      .then(async response => {
+        if (!response.ok) throw new Error('无法读取项目保存状态');
+        revision.current = (await response.json()).revision;
+        setProjectReady(true);
+      })
+      .catch(error => setSaveError(error.message));
+  }, []);
   const [initial] = useState(() => {
     try {
       return readDraft(localStorage) || original;
@@ -69,7 +96,45 @@ export default function usePreview() {
     setHistory(current => [...current.slice(-49), snapshot()]);
     apply(next);
   };
+  const saveProject = async () => {
+    if (savingRef.current || invalid.length) return;
+    savingRef.current = true;
+    setSaving(true);
+    setSaveError('');
+    setSaveMessage('');
+    try {
+      if (!revision.current) throw new Error('尚未读取到项目状态，请刷新页面后重试');
+      const response = await fetch('/__design-project', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ revision: revision.current, config: snapshot() })
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || '保存失败');
+      revision.current = result.revision;
+      appearance.commitPreview(snapshot().appearance);
+      layout.commitPreview(snapshot().layout);
+      setHistory([]);
+      try {
+        localStorage.removeItem(PREVIEW_STORAGE_KEY);
+        sessionStorage.setItem('design-project-saved', '已写入项目文件，尚未 Git 提交。');
+      } catch {
+        /* 不影响源码保存。 */
+      }
+      setSaveMessage('已写入项目文件，尚未 Git 提交。');
+    } catch (error) {
+      setSaveError(error.message || '保存失败，调整仍保留');
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
+    }
+  };
   return {
+    projectReady,
+    saving,
+    saveError,
+    saveMessage,
+    saveProject,
     values,
     baseline,
     invalid,

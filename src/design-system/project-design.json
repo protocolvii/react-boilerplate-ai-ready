@@ -1,0 +1,6 @@
+{
+  "version": 1,
+  "appearance": { "preset": "modern-saas", "colorMode": "light", "density": "default" },
+  "layout": "standard-admin",
+  "profiles": {}
+}

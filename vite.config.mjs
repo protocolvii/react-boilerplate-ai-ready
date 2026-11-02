@@ -9,6 +9,7 @@ import postcssSimpleVars from 'postcss-simple-vars';
 import postcssNested from 'postcss-nested';
 import { createConfig } from './src/config.js';
 import { sourceConventions } from './vite/source-conventions.mjs';
+import { designSave } from './vite/design-save.mjs';
 import { mockApi } from './vite/mock-api.mjs';
 import { getAppearanceBootstrapScript } from './src/design-system/appearance/settings.js';
 
@@ -30,6 +31,7 @@ export default defineConfig(({ command, mode, isPreview }) => {
 
   return {
     plugins: [
+      ...(!isBuild && !isPreview ? [designSave()] : []),
       ...(isMock ? [mockApi()] : []),
       sourceConventions(),
       react(),

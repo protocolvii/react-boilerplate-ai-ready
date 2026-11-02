@@ -14,6 +14,7 @@ export function AppearanceProvider({ children }) {
   const activeSettings = preview ?? settings;
   const beginPreview = useCallback(value => setPreview(normalizeAppearance(value)), []);
   const endPreview = useCallback(() => setPreview(null), []);
+  const commitPreview = useCallback(value => setSettings(normalizeAppearance(value)), []);
   const resolvedMode = activeSettings.colorMode;
   useLayoutEffect(() => {
     applyAppearance(document.documentElement, activeSettings);
@@ -46,8 +47,8 @@ export function AppearanceProvider({ children }) {
     [preview]
   );
   const value = useMemo(
-    () => ({ ...activeSettings, resolvedMode, updateAppearance, beginPreview, endPreview, resetAppearance: () => (preview !== null ? setPreview({ ...DEFAULT_APPEARANCE }) : setSettings({ ...DEFAULT_APPEARANCE })) }),
-    [activeSettings, resolvedMode, updateAppearance, beginPreview, endPreview, preview]
+    () => ({ ...activeSettings, resolvedMode, updateAppearance, beginPreview, endPreview, commitPreview, resetAppearance: () => (preview !== null ? setPreview({ ...DEFAULT_APPEARANCE }) : setSettings({ ...DEFAULT_APPEARANCE })) }),
+    [activeSettings, resolvedMode, updateAppearance, beginPreview, endPreview, commitPreview, preview]
   );
   return <AppearanceContext.Provider value={value}>{children}</AppearanceContext.Provider>;
 }

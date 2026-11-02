@@ -6,6 +6,7 @@
 @import '../../design-system/tokens/modern-saas.css';
 @import '../../design-system/tokens/industrial-pro.css';
 @import '../../design-system/tokens/creative-ai.css';
+@import '../../design-system/tokens/project.css';
 
 @custom-variant dark (&:is(.dark *));
 

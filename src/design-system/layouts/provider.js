@@ -1,18 +1,20 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import projectDesign from '../project-design.json';
 import { LAYOUTS, LayoutContext } from './context';
 const key = 'react-boilerplate:layout:v1';
-const normalize = value => (LAYOUTS.some(layout => layout.id === value) ? value : 'standard-admin');
+const normalize = value => (LAYOUTS.some(layout => layout.id === value) ? value : projectDesign.layout);
 export function LayoutProvider({ children }) {
   const [layout, setLayoutValue] = useState(() => {
     try {
       return normalize(localStorage.getItem(key));
     } catch {
-      return 'standard-admin';
+      return projectDesign.layout;
     }
   });
   const [preview, setPreview] = useState(null);
   const beginPreview = useCallback(value => setPreview(normalize(value)), []);
   const endPreview = useCallback(() => setPreview(null), []);
+  const commitPreview = useCallback(value => setLayoutValue(normalize(value)), []);
   const [mobileOpen, setMobileOpen] = useState(false);
   const setLayout = useCallback(
     value => {
@@ -43,6 +45,6 @@ export function LayoutProvider({ children }) {
     window.addEventListener('storage', sync);
     return () => window.removeEventListener('storage', sync);
   }, []);
-  const value = useMemo(() => ({ layout: preview ?? layout, setLayout, mobileOpen, setMobileOpen, beginPreview, endPreview }), [layout, preview, setLayout, mobileOpen, beginPreview, endPreview]);
+  const value = useMemo(() => ({ layout: preview ?? layout, setLayout, mobileOpen, setMobileOpen, beginPreview, endPreview, commitPreview }), [layout, preview, setLayout, mobileOpen, beginPreview, endPreview, commitPreview]);
   return <LayoutContext.Provider value={value}>{children}</LayoutContext.Provider>;
 }

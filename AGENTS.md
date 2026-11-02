@@ -38,7 +38,7 @@
 - 新增可复用公共组件：编写 Preview，并加入 Component Registry；新增通用页面模板：编写独立预览，并加入 Page Registry。一次性页面内部组件不强制注册。
 - 注册文件位于 `src/containers/DesignPlayground/gallery/`。不要把开发注册表导入正式组件或业务入口，避免生产打包设计工具。
 - 设计系统仅开发环境可用，右上角图标直达，左侧不放设计菜单。生产不提供该路由、入口或外观选择界面。子菜单机制仍支持 children。
-- 手动配置只影响 Playground 预览。AI 应修改对应 Token / 组件源码，由 Vite HMR 展示效果；不集成 AI API、对话、图片服务或 Draft 数据库。
+- 手动调整先影响 Playground 预览，明确点击“保存到项目”后才写入 project-design.json 和 tokens/project.css；保存不执行 Git 提交。AI 也可直接修改对应 Token / 组件源码，由 Vite HMR 展示效果；不集成 AI API、对话、图片服务或 Draft 数据库。
 
 ## 业务关键约束
 

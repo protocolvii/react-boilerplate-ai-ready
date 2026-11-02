@@ -1,3 +1,4 @@
+import projectDesign from '../project-design.json' with { type: 'json' };
 export const PRESETS = [
   { id: 'modern-saas', name: 'Modern SaaS', description: '清晰、克制的日常工作空间' },
   { id: 'industrial-pro', name: 'Industrial Pro', description: '精密、可靠的数据与运维界面' },
@@ -6,7 +7,7 @@ export const PRESETS = [
 export const COLOR_MODES = ['light', 'dark'];
 export const DENSITIES = ['default', 'comfortable', 'compact'];
 export const STORAGE_KEY = 'react-boilerplate:appearance:v1';
-export const DEFAULT_APPEARANCE = { preset: 'modern-saas', colorMode: 'light', density: 'default' };
+export const DEFAULT_APPEARANCE = projectDesign.appearance;
 
 export function normalizeAppearance(value) {
   const input = value && typeof value === 'object' ? value : {};
