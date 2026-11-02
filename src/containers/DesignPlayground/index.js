@@ -121,10 +121,7 @@ export default function DesignPlayground() {
                 </Suspense>
               </TabsContent>
             </Tabs>
-            <footer className="flex flex-wrap items-center justify-between gap-3 border-t py-4 text-xs text-muted-foreground">
-              <span>本地预览 · 由 Vite 热更新同步源码 · 不连接 AI 或业务接口</span>
-              <StatusIndicator tone="neutral" label="主题不改变业务行为" />
-            </footer>
+            <footer className="border-t py-4 text-xs leading-relaxed text-muted-foreground">调整即时预览，点击“保存到项目”后写入源码；直接修改源码也会自动更新预览。</footer>
           </div>
         </PageContent>
       </div>
