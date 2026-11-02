@@ -15,7 +15,15 @@ npm run dev
 
 开发地址为 `http://127.0.0.1:3000`。首次启动前，请在 `src/config.js` 中配置应用标题及各环境的后端地址。`yourdomain.com` 相关地址为示例，需要替换为实际服务地址。
 
-AI 开发约定见 [AGENTS.md](AGENTS.md)。
+AI 开发总入口见 [AGENTS.md](AGENTS.md)。按任务选择规范，不要求先图片设计或先制作原型：
+
+- [设计系统](docs/design-system.md)：Design Profile、Token、字体、状态与布局。
+- [Design Playground](docs/design-playground.md)：设计配置、组件 / 页面注册与验证。
+- [AI Design Guidelines](docs/ai-design-guidelines.md)：图片设计、原型、图片转代码、组件和业务开发四种独立能力。
+- [页面模板](docs/page-templates.md)：当前模板用途和复用边界。
+- [业务开发指南](docs/development.md)：路由、Redux、接口、表单与 Mock 详细示例。
+
+这些文档供任意 AI Agent 使用；工具未自动读取 AGENTS.md 时，可显式让其从该文件开始。
 
 ## 无后端开发
 
@@ -45,6 +53,8 @@ npm run clean           # 清理 build/static
 npm run eslint          # 源码、Vite 配置和测试检查
 npm run stylelint       # CSS 检查
 npm run test:mock       # 模拟接口和运行模式检查
+npm run check:registry  # 组件 / 页面注册表检查
+npm run test:design     # 设计系统与注册表测试
 npm run format:check    # 格式检查
 npm run format          # 格式化
 ```
@@ -53,7 +63,7 @@ npm run format          # 格式化
 
 本地开发时通过右上角调色板图标直接进入设计系统，也可打开 `/design-playground` 无需登录预览三种预设：Modern SaaS、Industrial Pro、Creative AI。支持浅色 / 深色 / 跟随系统、三种信息密度及 Standard Admin / Workspace / Monitoring 布局，Playground 的选择仅在预览会话中生效。
 
-页面包含 Dashboard / 数据管理、工业监测图表、静态 AI 工作台和基础组件画廊，使用静态数据，不访问后端或 AI 服务。可手动调整 Token 并即时预览，支持独立暂存、撤销、恢复、导出 JSON 和复制给 AI Agent；源码修改由 Vite 热更新自动展示。左侧菜单不放设计系统入口。生产构建不包含 Playground 路由和顶部入口，暂不向最终用户提供样式或颜色模式切换。主题 Token、Provider、组件 API 与 AI 开发规则见 [设计系统文档](docs/design-system.md)。
+页面包含 Dashboard / 数据管理、工业监测图表、静态 AI 工作台和基础组件画廊，示例使用静态数据，不接业务数据接口或 AI 服务；全局顶栏保持现有登录态恢复。可手动调整 Token 并即时预览，支持独立暂存、撤销、恢复、导出 JSON 和复制给 AI Agent；源码修改由 Vite 热更新自动展示。左侧菜单不放设计系统入口。生产构建不包含 Playground 路由和顶部入口，暂不向最终用户提供样式或颜色模式切换。主题 Token、Provider、组件 API 与 AI 开发规则见 [设计系统文档](docs/design-system.md)。
 
 ## 环境配置
 

@@ -1,6 +1,6 @@
 # Design System
 
-本系统面向长期复用的管理后台。业务页面共享语义 Token、shadcn/ui 基础组件和业务组件；主题、颜色模式、密度与布局分别选择。设计预览入口为本地开发服务的 `/design-playground`，无需登录，使用页面内静态数据，不访问业务 API。
+本系统面向长期复用的管理后台。业务页面共享语义 Token、shadcn/ui 基础组件和业务组件；主题、颜色模式、密度与布局分别选择。设计预览入口为本地开发服务的 `/design-playground`，无需登录，示例使用页面内静态数据，不调用业务数据 API；全局顶栏仍沿用已有登录态恢复，存在会话时可请求用户信息。
 
 ## AI 开发入口
 
@@ -45,7 +45,7 @@ src/design-system/
   tokens/creative-ai.css      AI 预设的浅深色语义变量
   tokens/density.css          密度与响应式布局适配
 src/assets/css/main.css       全局导入、Tailwind @theme 映射和基础元素
-src/containers/DesignPlayground/  组件画廊与三个业务示例
+src/containers/DesignPlayground/  开发预览、配置面板、组件与页面注册表
 ```
 
 Token 目录和 main.css 是全局 CSS，其余业务 `.css` 仍默认使用 CSS Modules。不要在 Token 文件使用局部类名导出。
@@ -71,6 +71,36 @@ Token 目录和 main.css 是全局 CSS，其余业务 `.css` 仍默认使用 CSS
 | 动效 | `motion-duration`、`motion-easing`                                | 交互过渡，尊重 reduced motion          |
 
 优先写 `bg-background text-foreground`、`bg-card text-card-foreground`、`text-muted-foreground`、`border-border`。状态使用 StatusIndicator，不用品牌 primary 表示成功。图表同时提供标签、单位和图例；告警使用图标与文字，不仅靠颜色区分。
+
+## 项目 Design Profile
+
+Design Profile 指项目已经确认的 preset、colorMode、density 和 layout 组合，以及对应 Token 的源码值，不是额外的配置服务。未定制时以 `appearance/settings.js` 的 DEFAULT_APPEARANCE 和 LayoutProvider 默认值为准：Modern SaaS / System / Default / Standard Admin。AI 先检查当前代码与用户确认的风格；不能仅因业务属于工业或 AI 就擅自替换整个项目的视觉预设。需要新视觉方向时可以提出扩展，不限于三套预设，但不要在单页硬编码另一套主题。
+
+## 排版与间距标尺
+
+| 项目                | 当前默认值与约定                                                                                                     |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 英文 / 中文         | Inter Variable；中文回退 PingFang SC、Microsoft YaHei、system-ui、sans-serif，统一由 `--font-body` 定义              |
+| 正文                | `--text-body: 0.875rem`（14px），`--font-weight-body: 400`，`--line-height-body: 1.5`；Tailwind text-sm 引用正文字号 |
+| 页面标题            | `--text-title: clamp(1.125rem, 1.6vw, 1.25rem)`，约 18–20px；标题字重为预设的 `--heading-weight`                     |
+| 辅助文字            | `--text-caption` / text-xs，默认 12px；不通过持续缩小字号提高密度                                                    |
+| 数字                | tabular-nums 保持数字等宽；`--font-data` 提供系统等宽字体，Industrial Pro 的指标使用该字体                           |
+| 页面 / 卡片内边距   | `--page-space` 默认回退 `--panel-space`；Modern SaaS 的 Default / Comfortable / Compact 分别为 24 / 32 / 16px        |
+| 区块 / 卡片内部间距 | `--layout-gap` 分别为 16 / 24 / 12px；`--card-gap` 默认回退区块间距                                                  |
+| 表格                | `--table-cell-space` 为上下内边距，分别 12 / 16 / 8px；`--table-row-height` 可设置最小行高，默认按内容计算           |
+| 默认控件            | `--control-height` 分别为 36 / 44 / 32px；保留显式 size 变体和触摸设备最小高度                                       |
+
+间距会叠加预设的 `--preset-space-scale`：Modern SaaS 为 1、Industrial Pro 为 0.92、Creative AI 为 1.06。优先使用上述变量与 Tailwind 原有间距等级，不重复包装每个数值，不随意改变已有 class。
+
+## 组件外观与交互状态
+
+- 圆角引用 `--radius` 及派生工具类，三预设的基准分别为 10 / 6 / 14px；不能只更换 primary 冒充新风格。
+- 面板引用 `--panel-shadow`、浮层引用 `--shadow-overlay`，边框使用 border-border 与 `--border-width`；避免多层无用途的 Card。
+- Hover 使用 accent 或组件现有 variant；Focus 保留清晰的 ring / outline，不移除键盘焦点。
+- Disabled 使用原生 disabled 与组件样式；Loading 结束前阻止重复提交，必要时设置 aria-busy 或 role=status。
+- Error 文字需说明原因，并通过 aria-invalid / aria-describedby 关联字段；错误、告警和在线状态同时使用文字或图标。
+- 动画引用 motion Token，尊重 prefers-reduced-motion，不为每个组件添加动画。
+- 注册示例覆盖有意义的变体与状态，普通业务开发组合组件；不要为了预览重写 shadcn/ui 的行为。
 
 ## AppearanceProvider
 
@@ -150,41 +180,9 @@ DataTable 列定义为 `{ key, header, sortable, render }`，render 接收整行
 
 业务失败、权限、加载状态依实际接口处理，不能直接沿用静态示例的成功行为。对话框需标题、描述；图标按钮需 aria-label；表单需 Label 和错误关联；通知在事件或 effect 中触发。
 
-## Playground
+## Playground 与协作规范
 
-`/design-playground` 提供四个页签：
-
-- 数据管理：搜索、状态过滤、排序、分页、编辑/新增 Dialog、归档确认和空状态。
-- 工业监测：指标、带单位与阈值的 SVG 趋势图、设备表格、告警时间线，刷新为本地示例数据。
-- AI 工作台：静态项目资源、结果卡片、工作区导航和上下文面板，不提供 AI 对话或任务发送。
-- 基础组件：按钮、表单控件、Select、Checkbox、Radio、Switch、Dialog、Sheet、Popover、Tooltip、Tabs、Badge、Alert、Skeleton、Card、Separator。
-
-示例数据在 data.js 中固定，便于截图比较，演示业务数据不持久化。Playground 是本地预览工具，不连接 AI，不提供对话能力。使用 VS Code 中的 Codex 或其他 Agent 编辑代码，由 Vite 热更新页面。
-
-### 手动实时调整
-
-点击页面标题旁或右下角的“设计配置”打开面板。配置分为“外观配置”和“样式微调”两个页签，面板独立滚动，预览页面不再被配置表单向下挤占。右侧面板覆盖在页面上方，不改变预览区域宽度或触发布局重排；宽屏下可操作未被遮挡的预览区域，平板和手机使用抽屉。关闭面板即可查看完整效果。点击面板外的预览区域、隐藏按钮或按 Escape 可关闭，当前调整与撤销历史保留；右下角入口可随时重新打开。
-
-展开 Token 分组，使用拾色器或输入 CSS 值。支持主色、前景/背景、状态、侧栏、图表颜色；基础字体、字号、字重、行高；圆角、阴影、面板边框；页面与卡片间距、表格最小行高和单元格间距、控件高度。全部作用于真实组件，不使用另画的预览模型。Dashboard 复用数据管理指标与表格，Charts 使用工业监测图表，Form / Dialog 使用项目现有表单和基础组件。
-
-- 留空的 Token 跟随源码；手动覆盖值按 `preset:resolvedMode:density` 隔离，切换后不会混用颜色。
-- 无效 CSS 值会显示错误并暂用源码值，修正后才能暂存或导出。
-- “暂存调整”写入独立 localStorage 键 `react-boilerplate:playground-draft:v1`，刷新或重新进入时恢复；未暂存的改动离开后丢弃。
-- “撤销调整”撤回最近一次编辑，包含面板内的主题、模式、密度与布局，最多记录 50 步。
-- “恢复项目配置”清除所有覆盖和暂存，恢复进入页面时的应用外观选择，并继续使用当前源码 Token。
-- 导出 JSON / 复制给 AI Agent 只生成预览配置，不会写源码；剪贴板权限不可用时可在弹窗中手动复制。
-
-复用既有 AppearanceProvider / LayoutProvider 的临时会话，正式外观存储不被覆盖，离开 Playground 后清理内联 Token 并恢复应用外观。页面期间修改的是文档根变量，以便真实 Sidebar 和传送到 body 的 Dialog / Popover 同步预览；不另外维护主题系统。
-
-新增手动字段在 `src/containers/DesignPlayground/preview/fields.js` 注册。`usePreview.js` 处理暂存、历史与 Token 覆盖；`PreviewPanel.js` 组合现有表单组件。CSS 基线在热更新后重新读取，用户未覆盖的变量立即体现代码变化；已覆盖变量需留空或恢复配置，才能显示对应源码值。共享 Token 补充了正文基础字重/行高、可选页面间距、卡片内部间距与表格行高，默认值延续现有布局。
-
-### AI Agent 与源码修改
-
-将导出的 JSON 交给 Agent，明确目标预设和浅深色，再修改 `src/design-system/tokens/` 对应文件或组件样式。JSON 的 `profiles` 是覆盖值，不是完整主题；不要把预览 storage 或内联样式当成正式设计配置。密度与预设的间距计算应沿用既有 Token。修改后用未覆盖的预览验证 HMR，并执行项目检查。
-
-### 开发和生产边界
-
-路由、顶部开发工具入口、lazy import 都由 `import.meta.env.DEV` 控制。`npm run dev` / `dev:mock` 的右上角调色板图标直接进入 Playground，不再提供外观设置弹出菜单。生产和 staging 构建不注册路由、不显示该图标，也不生成 Playground / ComponentGallery 专用 JS 分包。生产访问 `/design-playground` 显示 404。正式应用使用项目配置的默认外观，保留 Provider 与主题能力，但暂不向最终用户提供外观选择界面。
+使用与注册方法见 [Design Playground](design-playground.md)，通用模板见 [页面模板](page-templates.md)，不同设计任务的选择见 [AI Design Guidelines](ai-design-guidelines.md)。开发工具继续使用现有 Provider 和右侧配置面板，不是另一套主题或正式设计配置。
 
 ## 验证与扩展检查
 

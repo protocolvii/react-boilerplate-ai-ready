@@ -7,11 +7,12 @@ import { Button } from '../../components/ui/button';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../components/ui/dialog';
 import { useAppearance, PRESETS } from '../../design-system/appearance';
-import { PageLayout, useLayout } from '../../design-system/layouts';
+import { PageLayout } from '../../design-system/layouts';
 import config from '../../config';
-import DataManagement from './DataManagement';
-import Monitoring, { AlarmFeed } from './Monitoring';
-import Workspace, { WorkspaceTools } from './Workspace';
+import { AlarmFeed } from './Monitoring';
+import { WorkspaceTools } from './Workspace';
+import PageGallery from './PageGallery';
+import { pageRegistry } from './gallery/page-registry';
 import usePreview from './preview/usePreview';
 import PreviewDrawer from './preview/PreviewDrawer';
 const ComponentGallery = lazy(() => import('./ComponentGallery'));
@@ -42,10 +43,9 @@ function TokenStrip() {
 }
 export default function DesignPlayground() {
   const preview = usePreview();
-  const { layout } = useLayout();
   const [searchParams, setSearchParams] = useSearchParams();
   const view = searchParams.get('view');
-  const tab = ['data', 'monitoring', 'workspace', 'components'].includes(view) ? view : 'data';
+  const tab = view === 'components' || pageRegistry.some(entry => entry.id === view) ? view : pageRegistry[0].id;
   const requestedTab = useRef(tab);
   useEffect(() => {
     requestedTab.current = tab;
@@ -97,20 +97,18 @@ export default function DesignPlayground() {
           <div className="mx-auto max-w-[100rem] space-y-[var(--layout-gap)]">
             <Tabs value={tab} onValueChange={setTab} className="min-w-0 gap-5">
               <TabsList className="h-auto max-w-full justify-start gap-1 overflow-x-auto bg-muted/70 p-1" aria-label="设计示例">
-                <TabsTrigger value="data">Dashboard / 数据管理</TabsTrigger>
-                <TabsTrigger value="monitoring">工业监测</TabsTrigger>
-                <TabsTrigger value="workspace">AI 工作台</TabsTrigger>
-                <TabsTrigger value="components">基础组件</TabsTrigger>
+                {pageRegistry.map(entry => (
+                  <TabsTrigger key={entry.id} value={entry.id}>
+                    {entry.name}
+                  </TabsTrigger>
+                ))}
+                <TabsTrigger value="components">组件库</TabsTrigger>
               </TabsList>
-              <TabsContent value="data">
-                <DataManagement />
-              </TabsContent>
-              <TabsContent value="monitoring">
-                <Monitoring showFeed={layout !== 'monitoring'} />
-              </TabsContent>
-              <TabsContent value="workspace">
-                <Workspace showResources={layout !== 'workspace'} />
-              </TabsContent>
+              {pageRegistry.map(entry => (
+                <TabsContent key={entry.id} value={entry.id}>
+                  <PageGallery entry={entry} />
+                </TabsContent>
+              ))}
               <TabsContent value="components">
                 <Suspense
                   fallback={
@@ -134,13 +132,15 @@ export default function DesignPlayground() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>设计系统接入规范</DialogTitle>
-            <DialogDescription>完整文档位于项目 docs/design-system.md。</DialogDescription>
+            <DialogDescription>规范入口：AGENTS.md；设计、画廊注册与 AI 协作说明位于 docs/。</DialogDescription>
           </DialogHeader>
           <ol className="list-decimal space-y-3 pl-5 text-sm leading-relaxed text-muted-foreground">
             <li>先选择页面结构，再独立选择设计预设、颜色模式与密度。</li>
             <li>优先使用语义 Token、官方 shadcn/ui 和通用业务组件。</li>
             <li>不要在页面重新定义颜色，也不要把状态色绑定到品牌色。</li>
             <li>使用 AppearanceProvider，避免创建第二套主题状态。</li>
+            <li>新增公共组件注册 Component Gallery，通用页面模板注册 Page Gallery。</li>
+            <li>根据用户需求选择图片设计、原型、图片转代码或直接开发，不要求固定顺序。</li>
             <li>完成后验证浅深色、键盘交互与 390 / 1024 / 1440px 布局。</li>
           </ol>
         </DialogContent>
