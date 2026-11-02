@@ -12,7 +12,7 @@ import { getOrRefreshToken } from '../../utils/auth';
 import { selectToken } from '../../containers/Auth/selectors';
 import { useLayout } from '../../design-system/layouts/context';
 const MainHeader = () => {
-  const { setMobileOpen } = useLayout();
+  const { mobileOpen, setMobileOpen } = useLayout();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const store = useStore();
@@ -39,7 +39,7 @@ const MainHeader = () => {
   return (
     <header className="fixed inset-x-0 top-0 z-40 flex h-[var(--header-height)] items-center justify-between gap-3 border-b bg-card px-4">
       <div className="flex min-w-0 items-center gap-2">
-        <Button variant="ghost" size="icon" className="shrink-0 md:hidden" onClick={() => setMobileOpen(true)} aria-label="打开导航">
+        <Button variant="ghost" size="icon" className="ds-navigation-trigger shrink-0" onClick={() => setMobileOpen(true)} aria-label="打开导航" aria-expanded={mobileOpen} aria-controls="main-navigation-drawer">
           <Menu />
         </Button>
         <Link to="/" className="truncate text-base font-semibold md:text-lg">

@@ -4,19 +4,20 @@
 
 ## 三个组成部分
 
-| 部分                  | 当前实现                                          | 用途                                                                  |
-| --------------------- | ------------------------------------------------- | --------------------------------------------------------------------- |
-| Design System Preview | 既有右侧设计配置面板、真实页面 Shell 和组件       | 预设、Light / Dark / System、字体、颜色、圆角、阴影、间距、密度与布局 |
-| Component Gallery     | “组件画廊”页签，可搜索名称 / 标签并按实际分类筛选 | 基础 UI 与可复用业务组件的状态和用法                                  |
-| Page Gallery          | Dashboard / 数据管理、工业监测、AI 工作台页签     | 现有完整页面示例与可复用模板，共用外层 PageLayout                     |
+| 部分                  | 当前实现                                        | 用途                                                                  |
+| --------------------- | ----------------------------------------------- | --------------------------------------------------------------------- |
+| Design System Preview | 既有右侧设计配置面板、真实页面 Shell 和组件     | 预设、Light / Dark / System、字体、颜色、圆角、阴影、间距、密度与布局 |
+| Component Gallery     | “组件库”页签，可搜索名称 / 标签并按实际分类筛选 | 基础 UI 与可复用业务组件的状态和用法                                  |
+| Page Gallery          | 通用列表页、Dashboard、工业监测、AI 工作台页签  | 现有完整页面示例与可复用模板，共用外层 PageLayout                     |
 
 主题与布局规则见 [设计系统](design-system.md)。页面模板说明见 [page-templates.md](page-templates.md)。根据用户任务选择 [AI 协作规范](ai-design-guidelines.md)，不规定图片、原型或业务开发的先后顺序。
 
 ## 当前预览内容
 
-`/design-playground` 的前三个页签由 Page Registry 生成，组件画廊由 Component Registry 生成：
+`/design-playground` 的页面页签由 Page Registry 生成，组件画廊由 Component Registry 生成：
 
 - 数据管理：搜索、状态过滤、排序、分页、编辑/新增 Dialog、归档确认和空状态。
+- 通用列表页：独立筛选区、通用项目字段、固定操作列、详情 / 新增 / 编辑 / 删除与分页。
 - 工业监测：指标、带单位与阈值的 SVG 趋势图、设备表格、告警时间线，刷新为本地示例数据。
 - AI 工作台：静态项目资源、结果卡片、工作区导航和上下文面板，不提供 AI 对话或任务发送。
 - 组件画廊：按钮、表单控件、Select、Checkbox、Radio、Switch、Dialog、Sheet、Popover、Tooltip、Tabs、Badge、Alert、Skeleton、Card、Separator。

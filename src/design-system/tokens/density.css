@@ -139,3 +139,35 @@
   transition-duration: var(--motion-duration);
   transition-timing-function: var(--motion-easing);
 }
+
+.ds-navigation-trigger {
+  display: none;
+}
+
+.ds-desktop-sidebar {
+  display: flex;
+}
+
+.ds-main-page {
+  margin-left: var(--sidebar-width);
+}
+
+.ds-main-page[data-sidebar-collapsed='true'] {
+  margin-left: var(--sidebar-collapsed-width);
+}
+
+/* 手机与平板触屏横屏后继续使用抽屉导航，正文不预留侧栏宽度。 */
+@media (width < 768px), (hover: none) and (pointer: coarse) {
+  .ds-navigation-trigger {
+    display: inline-flex;
+  }
+
+  .ds-desktop-sidebar {
+    display: none;
+  }
+
+  .ds-main-page,
+  .ds-main-page[data-sidebar-collapsed='true'] {
+    margin-left: 0;
+  }
+}

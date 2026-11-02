@@ -1,0 +1,43 @@
+.advancedFilters {
+  display: contents;
+}
+
+.mobileOnly {
+  display: none;
+}
+
+.desktopActions {
+  display: flex;
+}
+
+.actionColumn {
+  width: 10rem;
+  min-width: 10rem;
+}
+
+/* 触屏设备横屏后仍使用紧凑交互，不只依赖视口宽度。 */
+@media (width < 768px), (hover: none) and (pointer: coarse) {
+  .advancedFilters:not(.expanded) {
+    display: none;
+  }
+
+  .mobileOnly {
+    display: inline-flex;
+  }
+
+  .desktopActions {
+    display: none;
+  }
+
+  .actionColumn {
+    width: 4rem;
+    min-width: 4rem;
+  }
+}
+
+/* 仅手机竖屏取消首列固定，为中间数据列留出浏览空间。 */
+@media (width < 768px) and (orientation: portrait) {
+  .nameColumn {
+    position: static;
+  }
+}

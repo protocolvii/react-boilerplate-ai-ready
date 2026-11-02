@@ -41,7 +41,10 @@ const MainMenu = () => {
   return (
     <>
       <aside
-        className={cn('fixed bottom-0 left-0 top-[var(--header-height)] hidden flex-col border-r border-sidebar-border bg-sidebar p-3 text-sidebar-foreground md:flex', collapsed ? 'w-[var(--sidebar-collapsed-width)]' : 'w-[var(--sidebar-width)]')}
+        className={cn(
+          'fixed bottom-0 left-0 top-[var(--header-height)] ds-desktop-sidebar flex-col border-r border-sidebar-border bg-sidebar p-3 text-sidebar-foreground',
+          collapsed ? 'w-[var(--sidebar-collapsed-width)]' : 'w-[var(--sidebar-width)]'
+        )}
       >
         {navigation(collapsed)}
         <Button variant="ghost" onClick={toggle} aria-label={collapsed ? '展开菜单' : '收起菜单'} aria-expanded={!collapsed}>
@@ -50,12 +53,12 @@ const MainMenu = () => {
         </Button>
       </aside>
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-        <SheetContent side="left" className="w-72 max-w-[calc(100vw-2rem)] bg-sidebar text-sidebar-foreground">
+        <SheetContent id="main-navigation-drawer" side="left" className="w-72 max-w-[calc(100vw-2rem)] bg-sidebar text-sidebar-foreground">
           <SheetHeader>
             <SheetTitle>工作区导航</SheetTitle>
             <SheetDescription>选择要访问的页面</SheetDescription>
           </SheetHeader>
-          <div className="flex flex-1 flex-col p-4">{navigation(false)}</div>
+          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-4">{navigation(false)}</div>
         </SheetContent>
       </Sheet>
     </>

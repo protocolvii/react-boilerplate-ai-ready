@@ -29,9 +29,9 @@ export function LayoutProvider({ children }) {
     }
   }, [layout]);
   useEffect(() => {
-    const media = window.matchMedia('(min-width: 768px)');
+    const media = window.matchMedia('(width < 768px), (hover: none) and (pointer: coarse)');
     const close = () => {
-      if (media.matches) setMobileOpen(false);
+      if (!media.matches) setMobileOpen(false);
     };
     media.addEventListener('change', close);
     return () => media.removeEventListener('change', close);

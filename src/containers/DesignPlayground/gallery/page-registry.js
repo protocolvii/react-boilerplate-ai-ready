@@ -4,8 +4,17 @@ const page = name => lazy(() => import('./previews/PagePreviews.js').then(module
 // layout 是推荐布局，实际渲染复用 Playground 外层 PageLayout，不重复挂载导航。
 export const pageRegistry = [
   {
+    id: 'list',
+    name: '通用列表页',
+    category: 'Data Table',
+    description: '独立筛选区、列表工具栏、首尾固定列与分页；以通用项目数据展示详情、新增、编辑和删除。',
+    tags: ['List', 'Filters', 'DataTable', 'CRUD'],
+    layout: 'standard-admin',
+    preview: page('ListPagePreview')
+  },
+  {
     id: 'data',
-    name: 'Dashboard / 数据管理',
+    name: 'Dashboard',
     category: 'Data Management',
     description: '指标、搜索筛选、排序分页、编辑与归档，适用于管理列表。',
     tags: ['Dashboard', 'DataTable', 'Form'],

@@ -137,7 +137,7 @@ import { PageHeader, PageContent } from '@/components';
 - MonitoringLayout：接受 `alerts`，提供右侧实时信息面板。
 - PageLayout：相同 props，根据 `useLayout().layout` 动态选择样式，保持子页面树稳定。
 
-布局自身包含 MainHeader / MainMenu / MainPage，不要再重复挂载。顶部栏仅在开发环境显示直达设计系统的图标，所有外观调整集中在 Playground，最终用户没有样式或颜色模式选择入口；桌面侧栏可折叠，移动端使用 Sheet。小于 1280px 时右侧面板移至正文下方，小于 768px 时启用移动导航。宽表格在表格容器内横向滚动，不让整个页面溢出。
+布局自身包含 MainHeader / MainMenu / MainPage，不要再重复挂载。顶部栏仅在开发环境显示直达设计系统的图标，所有外观调整集中在 Playground，最终用户没有样式或颜色模式选择入口；桌面侧栏可折叠，移动端使用 Sheet。小于 1280px 时右侧面板移至正文下方，小于 768px 或设备为无悬停的粗指针触屏时使用左上角按钮打开抽屉导航，手机和平板横屏也保持此方式，正文不预留侧栏宽度。宽表格在表格容器内横向滚动，不让整个页面溢出。
 
 ## 侧栏子导航
 
@@ -164,19 +164,19 @@ import { PageHeader, PageContent } from '@/components';
 
 基础组件位于 `src/components/ui/`，遵循官方 API，优先使用 variant、size、asChild 等组合方式。高级业务组件从 `@/components` 导入：
 
-| 组件            | 主要 props                                                                      |
-| --------------- | ------------------------------------------------------------------------------- |
-| PageHeader      | title、info、breadcrumb、actions、children                                      |
-| SectionHeader   | title、description、actions、id                                                 |
-| MetricCard      | label、value、detail、icon、className                                           |
-| StatusIndicator | tone、label、className                                                          |
-| EmptyState      | title、description、actions                                                     |
-| SearchToolbar   | value、onChange、onSubmit、placeholder、actions、children                       |
-| FilterBar       | summary、children                                                               |
-| DataTable       | columns、rows、rowKey、sort、onSort、loading、caption、emptyTitle、emptyActions |
-| ConfirmDialog   | open、onOpenChange、title、description、confirmLabel、onConfirm                 |
+| 组件            | 主要 props                                                                                 |
+| --------------- | ------------------------------------------------------------------------------------------ |
+| PageHeader      | title、info、breadcrumb、actions、children                                                 |
+| SectionHeader   | title、description、actions、id                                                            |
+| MetricCard      | label、value、detail、icon、className                                                      |
+| StatusIndicator | tone、label、className                                                                     |
+| EmptyState      | title、description、actions                                                                |
+| SearchToolbar   | value、onChange、onSubmit、placeholder、actions、children                                  |
+| FilterBar       | summary、children                                                                          |
+| DataTable       | columns、rows、rowKey、sort、onSort、loading、caption、emptyTitle、emptyActions、className |
+| ConfirmDialog   | open、onOpenChange、title、description、confirmLabel、onConfirm                            |
 
-DataTable 列定义为 `{ key, header, sortable, render }`，render 接收整行数据；排序和分页由页面控制。它不是完整表格引擎，不隐式请求接口。ConfirmDialog 等待 onConfirm 的 Promise，处理中禁用重复操作，失败保留对话框并显示错误。
+DataTable 列定义为 `{ key, header, sortable, render, className, headerClassName }`，render 接收整行数据；排序和分页由页面控制。它不是完整表格引擎，不隐式请求接口。ConfirmDialog 等待 onConfirm 的 Promise，处理中禁用重复操作，失败保留对话框并显示错误。
 
 业务失败、权限、加载状态依实际接口处理，不能直接沿用静态示例的成功行为。对话框需标题、描述；图标按钮需 aria-label；表单需 Label 和错误关联；通知在事件或 effect 中触发。
 

@@ -94,7 +94,7 @@ export function TablePreview() {
         <DataTable
           columns={[
             { key: 'name', header: '名称', sortable: true },
-            { key: 'count', header: '数量' }
+            { key: 'count', header: '数量', className: 'sticky right-0 bg-card', headerClassName: 'sticky right-0 bg-muted' }
           ]}
           rows={mode === 'empty' ? [] : ordered.slice((page - 1) * perPage, page * perPage)}
           sort={sort}

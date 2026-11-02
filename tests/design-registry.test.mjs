@@ -7,13 +7,16 @@ import { validateRegistries, filterRegistry } from '../src/containers/DesignPlay
 test('actual registries contain valid previews, metadata and globally unique IDs', () => {
   assert.deepEqual(validateRegistries(componentRegistry, pageRegistry), []);
   assert(componentRegistry.length > 0 && pageRegistry.length > 0);
+  assert.equal(pageRegistry[0].id, 'list');
+  assert.equal(pageRegistry.find(entry => entry.id === 'data').name, 'Dashboard');
   const documentedComponents = ['PageHeader', 'SectionHeader', 'MetricCard', 'StatusIndicator', 'EmptyState', 'SearchToolbar', 'FilterBar', 'DataTable', 'ConfirmDialog'];
   const tags = new Set(componentRegistry.flatMap(entry => entry.tags || []));
   documentedComponents.forEach(name => assert(tags.has(name), `Missing public component preview: ${name}`));
-  assert.deepEqual(
-    pageRegistry.map(entry => entry.id),
-    ['data', 'monitoring', 'workspace']
-  );
+  for (const id of ['data', 'list', 'monitoring', 'workspace'])
+    assert(
+      pageRegistry.some(entry => entry.id === id),
+      `Missing page template: ${id}`
+    );
 });
 
 test('registry validation rejects collisions, missing previews and invalid page layouts', () => {
