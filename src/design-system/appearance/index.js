@@ -1,15 +1,13 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
 import { AppearanceContext } from './context';
-import { DEFAULT_APPEARANCE, STORAGE_KEY, applyAppearance, normalizeAppearance, readAppearance } from './settings';
+import { DEFAULT_APPEARANCE, applyAppearance, normalizeAppearance } from './settings';
 
 export function AppearanceProvider({ children }) {
-  const [settings, setSettings] = useState(() => {
-    try {
-      return readAppearance(window.localStorage);
-    } catch {
-      return { ...DEFAULT_APPEARANCE };
-    }
-  });
+  const sourceAppearance = DEFAULT_APPEARANCE;
+  const [settings, setSettings] = useState(() => ({ ...DEFAULT_APPEARANCE }));
+  useLayoutEffect(() => {
+    setSettings({ ...sourceAppearance });
+  }, [sourceAppearance]);
   const [preview, setPreview] = useState(null);
   const activeSettings = preview ?? settings;
   const beginPreview = useCallback(value => setPreview(normalizeAppearance(value)), []);
@@ -19,25 +17,6 @@ export function AppearanceProvider({ children }) {
   useLayoutEffect(() => {
     applyAppearance(document.documentElement, activeSettings);
   }, [activeSettings]);
-  useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-    } catch {
-      /* 禁用存储时仍支持会话内切换。 */
-    }
-  }, [settings]);
-  useEffect(() => {
-    const handleStorage = event => {
-      if (event.key !== STORAGE_KEY && event.key !== null) return;
-      try {
-        setSettings(normalizeAppearance(JSON.parse(event.newValue)));
-      } catch {
-        setSettings({ ...DEFAULT_APPEARANCE });
-      }
-    };
-    window.addEventListener('storage', handleStorage);
-    return () => window.removeEventListener('storage', handleStorage);
-  }, []);
   const updateAppearance = useCallback(
     patch => {
       const update = current => normalizeAppearance({ ...current, ...patch });

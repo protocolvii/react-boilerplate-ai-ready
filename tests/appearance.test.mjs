@@ -1,42 +1,41 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { runInNewContext } from 'node:vm';
-import { DEFAULT_APPEARANCE, STORAGE_KEY, normalizeAppearance, readAppearance, getAppearanceBootstrapScript } from '../src/design-system/appearance/settings.js';
+import { DEFAULT_APPEARANCE, normalizeAppearance, getAppearanceBootstrapScript } from '../src/design-system/appearance/settings.js';
 
-test('appearance validates each dimension independently and tolerates unavailable storage', () => {
+test('appearance validates each dimension independently against project defaults', () => {
   assert.deepEqual(normalizeAppearance({ preset: 'industrial-pro', colorMode: 'dark', density: 'compact' }), { preset: 'industrial-pro', colorMode: 'dark', density: 'compact' });
   assert.deepEqual(normalizeAppearance({ preset: 'unknown', colorMode: 'dark', density: 'huge' }), { ...DEFAULT_APPEARANCE, colorMode: 'dark' });
-  assert.deepEqual(
-    readAppearance({
-      getItem() {
-        throw new Error('blocked');
-      }
-    }),
-    DEFAULT_APPEARANCE
-  );
-  assert.deepEqual(readAppearance({ getItem: () => '{bad' }), DEFAULT_APPEARANCE);
-  assert.equal(DEFAULT_APPEARANCE.colorMode, 'light');
-  assert.equal(normalizeAppearance({ colorMode: 'system' }).colorMode, 'light');
+  assert.deepEqual(normalizeAppearance(null), DEFAULT_APPEARANCE);
+  assert.equal(normalizeAppearance({ colorMode: 'system' }).colorMode, DEFAULT_APPEARANCE.colorMode);
 });
 
-test('prepaint initialization migrates stored system mode to light before React', () => {
-  const root = {
-    dataset: {},
-    style: {},
-    classList: {
-      toggle(name, value) {
-        this[name] = value;
+test('prepaint uses source defaults and never reads stale browser preferences', () => {
+  for (const stored of [{ preset: 'creative-ai', colorMode: 'dark', density: 'compact' }, null]) {
+    const root = {
+      dataset: {},
+      style: {},
+      classList: {
+        toggle(name, value) {
+          this[name] = value;
+        }
       }
-    }
-  };
-  runInNewContext(getAppearanceBootstrapScript(), {
-    document: { documentElement: root },
-    localStorage: { getItem: key => (key === STORAGE_KEY ? JSON.stringify({ preset: 'creative-ai', colorMode: 'system', density: 'comfortable' }) : null) },
-    matchMedia: () => ({ matches: true })
-  });
-  assert.equal(root.dataset.theme, 'creative-ai');
-  assert.equal(root.dataset.density, 'comfortable');
-  assert.equal(root.classList.dark, false);
-  assert.equal(root.dataset.colorMode, 'light');
-  assert.equal(root.style.colorScheme, 'light');
+    };
+    runInNewContext(getAppearanceBootstrapScript(), {
+      document: { documentElement: root },
+      localStorage: {
+        getItem() {
+          assert.fail(`Must not read browser preference: ${JSON.stringify(stored)}`);
+        }
+      },
+      matchMedia() {
+        assert.fail('Must not read system preference');
+      }
+    });
+    assert.equal(root.dataset.theme, DEFAULT_APPEARANCE.preset);
+    assert.equal(root.dataset.density, DEFAULT_APPEARANCE.density);
+    assert.equal(root.dataset.colorMode, DEFAULT_APPEARANCE.colorMode);
+    assert.equal(root.classList.dark, DEFAULT_APPEARANCE.colorMode === 'dark');
+    assert.equal(root.style.colorScheme, DEFAULT_APPEARANCE.colorMode);
+  }
 });

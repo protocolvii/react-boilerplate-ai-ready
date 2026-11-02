@@ -6,7 +6,6 @@ export const PRESETS = [
 ];
 export const COLOR_MODES = ['light', 'dark'];
 export const DENSITIES = ['default', 'comfortable', 'compact'];
-export const STORAGE_KEY = 'react-boilerplate:appearance:v1';
 export const DEFAULT_APPEARANCE = projectDesign.appearance;
 
 export function normalizeAppearance(value) {
@@ -16,13 +15,6 @@ export function normalizeAppearance(value) {
     colorMode: COLOR_MODES.includes(input.colorMode) ? input.colorMode : DEFAULT_APPEARANCE.colorMode,
     density: DENSITIES.includes(input.density) ? input.density : DEFAULT_APPEARANCE.density
   };
-}
-export function readAppearance(storage) {
-  try {
-    return normalizeAppearance(JSON.parse(storage.getItem(STORAGE_KEY)));
-  } catch {
-    return { ...DEFAULT_APPEARANCE };
-  }
 }
 export function applyAppearance(root, settings) {
   const mode = settings.colorMode;
@@ -35,5 +27,5 @@ export function applyAppearance(root, settings) {
 }
 export function getAppearanceBootstrapScript() {
   // 与 Provider 共用归一化逻辑，在 CSS 和 React 加载前设置根属性。
-  return `(()=>{const PRESETS=${JSON.stringify(PRESETS)};const COLOR_MODES=${JSON.stringify(COLOR_MODES)};const DENSITIES=${JSON.stringify(DENSITIES)};const DEFAULT_APPEARANCE=${JSON.stringify(DEFAULT_APPEARANCE)};const STORAGE_KEY=${JSON.stringify(STORAGE_KEY)};${normalizeAppearance.toString()};${readAppearance.toString()};${applyAppearance.toString()};let settings;try{settings=readAppearance(localStorage)}catch{settings=DEFAULT_APPEARANCE}applyAppearance(document.documentElement,settings)})();`;
+  return `(()=>{const settings=${JSON.stringify(DEFAULT_APPEARANCE)};${applyAppearance.toString()};applyAppearance(document.documentElement,settings)})();`;
 }

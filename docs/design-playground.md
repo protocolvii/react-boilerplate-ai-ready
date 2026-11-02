@@ -37,7 +37,7 @@
 - “恢复项目配置”清除所有覆盖和暂存，恢复源码中最近保存的项目外观选择，并继续使用当前源码 Token。
 - 导出 JSON / 复制给 AI Agent 只生成预览配置，不会写源码；剪贴板权限不可用时可在弹窗中手动复制。
 
-复用既有 AppearanceProvider / LayoutProvider 的临时会话，正式外观存储不被覆盖，离开 Playground 后清理内联 Token 并恢复应用外观。页面期间修改的是文档根变量，以便真实 Sidebar 和传送到 body 的 Dialog / Popover 同步预览；不另外维护主题系统。
+复用既有 AppearanceProvider / LayoutProvider 的临时会话，正式外观以源码为准，离开 Playground 后清理内联 Token 并恢复应用外观；外观和布局不自动写入浏览器缓存。页面期间修改的是文档根变量，以便真实 Sidebar 和传送到 body 的 Dialog / Popover 同步预览；不另外维护主题系统。
 
 新增手动字段在 `src/containers/DesignPlayground/preview/fields.js` 注册。`usePreview.js` 处理暂存、历史与 Token 覆盖；`PreviewPanel.js` 组合现有表单组件。CSS 基线在热更新后重新读取，用户未覆盖的变量立即体现代码变化；已覆盖变量需留空或恢复配置，才能显示对应源码值。共享 Token 补充了正文基础字重/行高、可选页面间距、卡片内部间距与表格行高，默认值延续现有布局。
 
