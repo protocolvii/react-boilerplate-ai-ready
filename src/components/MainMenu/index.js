@@ -47,9 +47,17 @@ const MainMenu = () => {
         )}
       >
         {navigation(collapsed)}
-        <Button variant="ghost" onClick={toggle} aria-label={collapsed ? '展开菜单' : '收起菜单'} aria-expanded={!collapsed}>
-          {collapsed ? <PanelLeftOpen /> : <PanelLeftClose />}
-          {!collapsed && '收起导航'}
+        <Button
+          variant="ghost"
+          className="mt-2 h-10 w-full p-0 font-normal text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          onClick={toggle}
+          aria-label={collapsed ? '展开菜单' : '收起菜单'}
+          aria-expanded={!collapsed}
+        >
+          <span className={cn('inline-flex items-center justify-center gap-2', !collapsed && '-translate-x-1')}>
+            {collapsed ? <PanelLeftOpen aria-hidden="true" className="size-4" /> : <PanelLeftClose aria-hidden="true" className="size-4" />}
+            {!collapsed && <span className="leading-none">收起导航</span>}
+          </span>
         </Button>
       </aside>
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
