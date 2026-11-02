@@ -86,3 +86,13 @@ JS/React 改动执行 ESLint 和格式检查，CSS 改动执行 Stylelint；依�
 - 失败后读取截图、browser-log 和 Trace，调查原因；不得随意删除断言、skip、放宽视觉阈值或更新基准使测试通过。
 - 视觉候选可通过 `test:e2e:visual:capture` 生成，基准图片必须人工确认；Agent 未获明确授权不得更新或补建基准。
 - 测试产物位于 `artifacts/e2e/`，不提交日志、临时截图或 Trace。无法执行浏览器测试时，交付中说明原因和验证边界。
+
+## 单元与组件测试
+
+配置和示例见 [单元与组件测试](docs/unit-testing.md)。使用 JavaScript Vitest + React Testing Library；现有 Node 测试继续保留，Playwright 独立运行。
+
+- 修改已有逻辑时按影响范围补充并运行测试；新增纯逻辑放 `tests/unit/*.test.js`，不要复制现有 Appearance/Mock 的 Node 测试。
+- 新增可复用公共组件优先测试关键交互、pending、失败与重试，放 `tests/components/*.test.jsx`；业务源码仍按项目约定使用 `.js`。
+- 不要求每个简单 UI 组件都有单元测试；测试优先验证用户可观察行为和公开输入输出，不依赖内部实现。
+- 运行 `test:unit` / `test:components` 或 `test:vitest`；`npm test` 汇总 Vitest 与现有 Node 测试。新增业务页面仍优先通过 Playwright 进行页面验证。
+- 测试失败先调查并修复，不能通过删除、skip 或随意削弱断言掩盖问题。API 未完成继续复用既有 Vite Mock，不另建 MSW 系统。

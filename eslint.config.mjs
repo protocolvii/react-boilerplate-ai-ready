@@ -83,7 +83,7 @@ export default [
     }
   },
   {
-    files: ['vite.config.mjs', 'vite/**/*.mjs', 'tests/**/*.mjs', 'playwright*.config.js'],
+    files: ['vite.config.mjs', 'vite/**/*.mjs', 'tests/**/*.mjs', 'playwright*.config.js', 'vitest.config.js'],
     languageOptions: { globals: globals.node },
     // 当前 import resolver 不支持部分依赖的 package exports；实际解析由 Vite / Node 验证。
     rules: { 'import/no-unresolved': 'off' }
@@ -92,6 +92,11 @@ export default [
     files: ['tests/e2e/**/*.js'],
     languageOptions: { globals: { ...globals.node, ...globals.browser } },
     rules: { 'import/no-unresolved': 'off' }
+  },
+  {
+    files: ['tests/unit/**/*.js', 'tests/components/**/*.jsx', 'tests/setup.js'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser }, parserOptions: { ecmaFeatures: { jsx: true } } },
+    rules: { 'import/no-unresolved': 'off', 'react/prop-types': 'off', 'react/jsx-filename-extension': ['error', { extensions: ['.jsx'] }] }
   },
   {
     files: ['src/components/ui/**/*.jsx'],

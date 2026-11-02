@@ -12,7 +12,7 @@
     "build": "vite build",
     "build:staging": "vite build --mode staging",
     "clean": "rimraf build/static",
-    "eslint": "eslint src vite tests vite.config.mjs playwright*.config.js",
+    "eslint": "eslint src vite tests vite.config.mjs playwright*.config.js vitest.config.js",
     "stylelint": "stylelint \"src/**/*.css\"",
     "stylelint:fix": "stylelint \"src/**/*.css\" --fix",
     "format": "prettier --write .",
@@ -22,7 +22,7 @@
     "test:mock": "node --test tests/mock-api.test.mjs",
     "test:design": "node --test tests/appearance.test.mjs tests/menu-navigation.test.mjs tests/navigation.test.mjs tests/playground-preview.test.mjs tests/design-registry.test.mjs tests/list-page.test.mjs tests/design-save.test.mjs",
     "check:registry": "node --test tests/design-registry.test.mjs",
-    "test": "npm run test:design && npm run test:mock",
+    "test": "npm run test:vitest && npm run test:design && npm run test:mock",
     "test:e2e": "playwright test --project=chromium --project=mobile",
     "test:e2e:headed": "playwright test --project=chromium --headed",
     "test:e2e:ui": "playwright test --project=chromium --project=mobile --ui",
@@ -30,12 +30,19 @@
     "test:e2e:visual:capture": "E2E_CAPTURE=1 playwright test --project=visual",
     "test:e2e:production": "playwright test --config=playwright.production.config.js",
     "test:e2e:report": "playwright show-report artifacts/e2e/dev/report",
-    "test:e2e:install": "playwright install chromium"
+    "test:e2e:install": "playwright install chromium",
+    "test:vitest": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:components": "vitest run tests/components",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
     "@playwright/test": "^1.64.1",
     "@tailwindcss/vite": "^4.3.3",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.8",
     "@vitejs/plugin-react": "^6.1.2",
     "autoprefixer": "^10.6.2",
     "eslint": "^9.39.5",
@@ -45,6 +52,7 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.1.1",
     "globals": "^17.14.0",
+    "jsdom": "^28.1.0",
     "postcss": "^8.5.32",
     "postcss-mixins": "^12.1.2",
     "postcss-nested": "^9.0.1",
@@ -55,7 +63,8 @@
     "stylelint-config-css-modules": "^4.6.0",
     "stylelint-config-standard": "^40.0.0",
     "tailwindcss": "^4.3.3",
-    "vite": "^8.3.5"
+    "vite": "^8.3.5",
+    "vitest": "^5.1.0"
   },
   "dependencies": {
     "@fontsource-variable/inter": "^5.3.0",

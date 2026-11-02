@@ -178,3 +178,14 @@ npm run test:e2e:production
 ```
 
 视觉基准须人工确认，不能自动更新以消除失败。命令、浏览器环境要求、报告与 Trace、Agent 工作流程见 [浏览器验证](docs/browser-verification.md)。
+
+## 单元与组件测试
+
+```bash
+npm test
+npm run test:unit
+npm run test:components
+npm run test:watch
+```
+
+Vitest + React Testing Library 负责纯逻辑和公共组件交互，已有 Node 测试保持不变，页面与真实浏览器验证继续使用 Playwright。分工、配置与示例见 [单元与组件测试](docs/unit-testing.md)。
