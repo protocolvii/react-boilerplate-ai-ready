@@ -1,4 +1,5 @@
 import React, { useId, useState } from 'react';
+import { DatePicker } from '../../../components';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
@@ -100,7 +101,7 @@ export default function ProjectEditor({ project, onClose, onSave }) {
             </div>
             <div className="space-y-2">
               <Label htmlFor={`${id}-date`}>更新日期</Label>
-              <Input id={`${id}-date`} name="updated" type="date" value={values.updated} onChange={event => update('updated', event.target.value)} disabled={pending} />
+              <DatePicker id={`${id}-date`} name="updated" value={values.updated} onChange={value => update('updated', value)} disabled={pending} />
             </div>
           </div>
           {error && (

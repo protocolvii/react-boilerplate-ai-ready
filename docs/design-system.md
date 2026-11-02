@@ -199,3 +199,12 @@ npm run build
 检查关键文本与相邻背景达到 WCAG AA 普通文字 4.5:1；状态不能仅用颜色；图表提供可读摘要；启用 reduced motion 时减少动画。自动检查不能代替真实屏幕阅读器与完整键盘人工审查。
 
 截图与交互验证使用静态示例，不需要后端。真实业务、鉴权和接口联调另行按 AGENTS.md 验证。
+
+## 日期与进度
+
+从 `@/components` 导入 DatePicker、ProgressBar。两者分别组合官方 shadcn Calendar / Popover 和 Progress；基础源码位于 `src/components/ui/`，业务包装位于各自的目录。
+
+- DatePicker：`value` / `defaultValue` / `min` / `max` 使用本地日期 `YYYY-MM-DD`；`onChange(value)` 返回日期字符串，清空返回空字符串。支持 `id`、`name`（隐藏表单字段）、`disabled`、`placeholder`、`className` 和 ARIA 属性。用 Label 关联触发按钮。日历为中文，支持年月切换；它不是原生日期输入，不自动执行原生 required 校验，表单需在提交时校验必填和业务日期范围。
+- ProgressBar：`value` 为 0–100 的数值，超出范围自动限制；`null` 表示不确定进度。`label` 提供可访问名称，`showValue` 默认显示百分比，`className` 设置容器宽度。仅需基础进度轨道时可直接导入 `@/components/ui/progress` 的 Progress。
+
+组件库中“日期选择”和“进度条”使用真实组件，分别展示日期约束 / 禁用 / 错误和可调整进度 / 零值 / 完成 / 不确定状态。通用列表页复用这两个公共组件。

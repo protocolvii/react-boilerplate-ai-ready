@@ -6,6 +6,8 @@ const business = name => lazy(() => import('./previews/BusinessPreviews.js').the
 export const componentRegistry = [
   { id: 'buttons', name: '按钮与操作', category: 'Basic', description: 'Button 的变体、尺寸、禁用与加载状态，以及 Tooltip。', tags: ['Button', 'Tooltip'], preview: basic('ButtonPreview') },
   { id: 'inputs', name: '输入与校验', category: 'Form', description: 'Input、Textarea、Label 与错误关联。', tags: ['Input', 'Textarea', 'Label'], preview: basic('InputPreview') },
+  { id: 'date-picker', name: '日期选择', category: 'Form', description: 'DatePicker 的日期、范围约束、禁用与错误状态，基于 shadcn Calendar 与 Popover。', tags: ['DatePicker', 'Date', '日期'], preview: business('DatePickerPreview') },
+  { id: 'progress-bar', name: '进度条', category: 'Feedback', description: 'ProgressBar 的百分比、零进度、完成和不确定进度。', tags: ['ProgressBar', 'Progress', '进度'], preview: business('ProgressPreview') },
   { id: 'choices', name: '选择与开关', category: 'Form', description: 'Select、Checkbox、RadioGroup、Switch 的受控交互。', tags: ['Select', 'Checkbox', 'RadioGroup', 'Switch'], preview: basic('ChoicePreview') },
   { id: 'overlays', name: '浮层与对话框', category: 'Feedback', description: 'Dialog、Sheet、Popover、Alert 与键盘操作。', tags: ['Dialog', 'Sheet', 'Popover', 'Alert'], preview: basic('OverlayPreview') },
   { id: 'status', name: '状态与反馈', category: 'Feedback', description: '独立状态语义、Badge 与失败反馈。', tags: ['StatusIndicator', 'Badge', 'Alert'], preview: basic('StatusPreview') },

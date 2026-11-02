@@ -1,7 +1,7 @@
 import React, { useId, useMemo, useRef, useState } from 'react';
 import { Search, RotateCcw, Plus, MoreHorizontal, ChevronDown, Eye, Pencil, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { SectionHeader, DataTable, Pagination, ConfirmDialog, StatusIndicator } from '../../../components';
+import { DatePicker, ProgressBar, SectionHeader, DataTable, Pagination, ConfirmDialog, StatusIndicator } from '../../../components';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
@@ -82,14 +82,7 @@ export default function ListPage() {
       key: 'progress',
       header: '完成进度',
       className: 'min-w-44',
-      render: row => (
-        <div className="flex items-center gap-3">
-          <div role="progressbar" aria-label={`${row.name}完成进度`} aria-valuenow={row.progress ?? 0} aria-valuemin={0} aria-valuemax={100} className="h-1.5 w-20 overflow-hidden rounded-full bg-muted">
-            <div className="h-full rounded-full bg-primary" style={{ width: `${row.progress ?? 0}%` }} />
-          </div>
-          <span className="tabular-nums">{row.progress ?? 0}%</span>
-        </div>
-      )
+      render: row => <ProgressBar value={row.progress ?? 0} label={`${row.name}完成进度`} className="w-36" />
     },
     { key: 'created', header: '创建日期', sortable: true, className: 'min-w-36', render: row => <span className="tabular-nums">{row.created || '—'}</span> },
     { key: 'deadline', header: '截止日期', sortable: true, className: 'min-w-36', render: row => <span className="tabular-nums">{row.deadline || '—'}</span> },
@@ -199,23 +192,21 @@ export default function ListPage() {
             <Label htmlFor={`${id}-created-from`} className="shrink-0">
               创建日期
             </Label>
-            <div className="flex min-w-0 items-center gap-2">
-              <Input
+            <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+              <DatePicker
                 id={`${id}-created-from`}
-                type="date"
                 aria-label="创建日期起始"
                 value={draft.createdFrom || ''}
-                onChange={event => update('createdFrom', event.target.value)}
+                onChange={value => update('createdFrom', value)}
                 className="w-full min-w-0 sm:w-40"
                 aria-invalid={!!filterError || undefined}
                 aria-describedby={filterError ? `${id}-filter-error` : undefined}
               />
-              <span className="text-sm text-muted-foreground">至</span>
-              <Input
-                type="date"
+              <span className="shrink-0 text-sm text-muted-foreground">至</span>
+              <DatePicker
                 aria-label="创建日期结束"
                 value={draft.createdTo || ''}
-                onChange={event => update('createdTo', event.target.value)}
+                onChange={value => update('createdTo', value)}
                 className="w-full min-w-0 sm:w-40"
                 aria-invalid={!!filterError || undefined}
                 aria-describedby={filterError ? `${id}-filter-error` : undefined}

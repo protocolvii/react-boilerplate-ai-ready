@@ -1,6 +1,6 @@
 import React, { useId, useState } from 'react';
 import { Activity } from 'lucide-react';
-import { PageHeader, SectionHeader, MetricCard, EmptyState, SearchToolbar, FilterBar, DataTable, Pagination, ConfirmDialog, FormBox } from '../../../../components';
+import { DatePicker, ProgressBar, PageHeader, SectionHeader, MetricCard, EmptyState, SearchToolbar, FilterBar, DataTable, Pagination, ConfirmDialog, FormBox } from '../../../../components';
 import { Button } from '../../../../components/ui/button';
 import { Input } from '../../../../components/ui/input';
 import { Label } from '../../../../components/ui/label';
@@ -178,5 +178,55 @@ export function FormPreview() {
         )}
       </form>
     </FormBox>
+  );
+}
+
+export function DatePickerPreview() {
+  const id = useId();
+  const [date, setDate] = useState('');
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      <div className="space-y-2">
+        <Label htmlFor={`${id}-date`}>选择日期</Label>
+        <DatePicker id={`${id}-date`} value={date} onChange={setDate} />
+        <p className="text-sm text-muted-foreground">{date || '尚未选择日期'}</p>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor={`${id}-end`}>结束日期（不早于所选日期）</Label>
+        <DatePicker id={`${id}-end`} min={date || undefined} />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor={`${id}-disabled`}>禁用日期</Label>
+        <DatePicker id={`${id}-disabled`} disabled />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor={`${id}-invalid`}>日期错误示例</Label>
+        <DatePicker id={`${id}-invalid`} aria-invalid="true" aria-describedby={`${id}-error`} />
+        <p id={`${id}-error`} className="text-sm text-destructive">
+          示例：请选择有效的业务日期。
+        </p>
+      </div>
+      <p className="text-sm text-muted-foreground sm:col-span-2">基于 shadcn Calendar 与 Popover，支持中文日历、年月切换和清空日期。</p>
+    </div>
+  );
+}
+export function ProgressPreview() {
+  const id = useId();
+  const [value, setValue] = useState(45);
+  return (
+    <div className="max-w-md space-y-5">
+      <div className="space-y-2">
+        <Label htmlFor={id}>调整完成进度</Label>
+        <input id={id} type="range" min="0" max="100" value={value} onChange={event => setValue(Number(event.target.value))} className="w-full accent-primary" />
+        <ProgressBar value={value} label="完成进度" />
+      </div>
+      <ProgressBar value={0} label="尚未开始" />
+      <ProgressBar value={100} label="已完成" />
+      <ProgressBar value={null} label="等待处理结果" />
+      <div className="space-y-2">
+        <p className="text-sm text-muted-foreground">隐藏百分比文字</p>
+        <ProgressBar value={65} showValue={false} label="后台任务进度" />
+      </div>
+    </div>
   );
 }

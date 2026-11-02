@@ -1,3 +1,5 @@
+import DatePicker from './DatePicker';
+import ProgressBar from './ProgressBar';
 import MetricCard from './MetricCard';
 import StatusIndicator from './StatusIndicator';
 import EmptyState from './EmptyState';
@@ -18,4 +20,26 @@ import FormBox from './FormBox';
 import ListToolbar from './ListToolbar';
 import Pagination from './Pagination';
 
-export { MetricCard, StatusIndicator, EmptyState, SearchToolbar, FilterBar, DataTable, ConfirmDialog, SectionHeader, MainHeader, MainMenu, MainPage, Breadcrumb, PageHeader, PageContent, PageSearch, PageSection, FormBox, ListToolbar, Pagination };
+export {
+  DatePicker,
+  ProgressBar,
+  MetricCard,
+  StatusIndicator,
+  EmptyState,
+  SearchToolbar,
+  FilterBar,
+  DataTable,
+  ConfirmDialog,
+  SectionHeader,
+  MainHeader,
+  MainMenu,
+  MainPage,
+  Breadcrumb,
+  PageHeader,
+  PageContent,
+  PageSearch,
+  PageSection,
+  FormBox,
+  ListToolbar,
+  Pagination
+};
