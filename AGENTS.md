@@ -30,7 +30,7 @@
 
 ## 设计与 Gallery
 
-- 当前 Design Profile 以源码和用户确认结果为准；默认 Modern SaaS / System / Default / Standard Admin。不要擅自改动项目整体风格。
+- 当前 Design Profile 以源码和用户确认结果为准；默认 Modern SaaS / Light / Default / Standard Admin。不要擅自改动项目整体风格。
 - Preset、颜色模式、密度、布局互相独立；复用现有 AppearanceProvider / LayoutProvider，不创建第二套主题或配置系统。
 - 用 bg-background、text-foreground、bg-card、border-border 等语义 Token；状态色不跟随品牌色改变含义。
 - 优先组合 PageHeader、MetricCard、StatusIndicator、SearchToolbar、FilterBar、DataTable、ConfirmDialog、EmptyState、SectionHeader 等公共组件。

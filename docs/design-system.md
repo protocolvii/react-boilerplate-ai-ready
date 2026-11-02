@@ -5,7 +5,7 @@
 ## AI 开发入口
 
 1. 阅读本文与 AGENTS.md，再检查实际组件源码。
-2. 默认使用 Modern SaaS、跟随系统颜色、Default 密度和 Standard Admin 布局。
+2. 默认使用 Modern SaaS、浅色模式、Default 密度和 Standard Admin 布局。
 3. 新页面优先组合已有组件，不复制一套基础组件，不按主题写三套 JSX。
 4. 使用语义颜色，不把品牌蓝、紫色或状态颜色硬编码到业务页面。
 5. 外观状态通过 Provider 更新，不在页面直接修改根 class、data 属性或 localStorage。
@@ -20,7 +20,7 @@
 | Industrial Pro | 设备与运维监测      | 蓝青色、小圆角、低阴影、等宽指标、紧致节奏       |
 | Creative AI    | AI 工作区与创作工具 | 紫色、较大圆角、柔和阴影、宽松节奏、局部品牌渐变 |
 
-每个预设均定义 Light / Dark。System 根据操作系统偏好实时选择颜色模式。预设不会强制更改用户密度或布局；例如 Creative AI 也能使用 Compact 和 Monitoring。
+每个预设均定义 Light / Dark。颜色模式默认为 Light，支持手动切换 Dark；旧配置中的 System 自动归一化为 Light。预设不会强制更改用户密度或布局；例如 Creative AI 也能使用 Compact 和 Monitoring。
 
 - 密度：`default`、`comfortable`、`compact`。
 - 布局：`standard-admin`、`workspace`、`monitoring`。
@@ -74,7 +74,7 @@ Token 目录和 main.css 是全局 CSS，其余业务 `.css` 仍默认使用 CSS
 
 ## 项目 Design Profile
 
-Design Profile 指项目已经确认的 preset、colorMode、density 和 layout 组合，以及对应 Token 的源码值，不是额外的配置服务。未定制时以 `appearance/settings.js` 的 DEFAULT_APPEARANCE 和 LayoutProvider 默认值为准：Modern SaaS / System / Default / Standard Admin。AI 先检查当前代码与用户确认的风格；不能仅因业务属于工业或 AI 就擅自替换整个项目的视觉预设。需要新视觉方向时可以提出扩展，不限于三套预设，但不要在单页硬编码另一套主题。
+Design Profile 指项目已经确认的 preset、colorMode、density 和 layout 组合，以及对应 Token 的源码值，不是额外的配置服务。未定制时以 `appearance/settings.js` 的 DEFAULT_APPEARANCE 和 LayoutProvider 默认值为准：Modern SaaS / Light / Default / Standard Admin。AI 先检查当前代码与用户确认的风格；不能仅因业务属于工业或 AI 就擅自替换整个项目的视觉预设。需要新视觉方向时可以提出扩展，不限于三套预设，但不要在单页硬编码另一套主题。
 
 ## 排版与间距标尺
 
@@ -111,10 +111,10 @@ import { useAppearance } from '@/design-system/appearance/context';
 
 const { preset, colorMode, density, resolvedMode, updateAppearance, resetAppearance } = useAppearance();
 updateAppearance({ preset: 'industrial-pro' });
-updateAppearance({ colorMode: 'system', density: 'compact' });
+updateAppearance({ colorMode: 'light', density: 'compact' });
 ```
 
-`resolvedMode` 是实际 light/dark，`colorMode` 可以是 system。全局 Sonner 使用实际模式。主题切换更新变量，不重新挂载业务页面，搜索、表单与弹窗状态应保留。
+`resolvedMode` 是实际 light/dark，`colorMode` 仅支持 light/dark。全局 Sonner 使用实际模式。主题切换更新变量，不重新挂载业务页面，搜索、表单与弹窗状态应保留。
 
 新增预设：在 settings.js 注册 ID，创建包含完整浅深色语义变量的 CSS，导入 main.css，检查正文、按钮、弱文字与状态文字的对比度，扩展六主题验证。不要遗漏 sidebar、chart、status、输入、焦点和浮层。
 

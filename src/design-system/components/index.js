@@ -7,8 +7,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '.
 const choices = {
   colorMode: [
     { id: 'light', name: '浅色 Light' },
-    { id: 'dark', name: '深色 Dark' },
-    { id: 'system', name: '跟随系统 System' }
+    { id: 'dark', name: '深色 Dark' }
   ],
   density: [
     { id: 'default', name: '标准 Default' },

@@ -1,14 +1,6 @@
-import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { AppearanceContext } from './context';
 import { DEFAULT_APPEARANCE, STORAGE_KEY, applyAppearance, normalizeAppearance, readAppearance } from './settings';
-
-const subscribeSystem = callback => {
-  const media = window.matchMedia('(prefers-color-scheme: dark)');
-  media.addEventListener('change', callback);
-  return () => media.removeEventListener('change', callback);
-};
-const getSystemDark = () => window.matchMedia('(prefers-color-scheme: dark)').matches;
-const getServerDark = () => false;
 
 export function AppearanceProvider({ children }) {
   const [settings, setSettings] = useState(() => {
@@ -22,11 +14,10 @@ export function AppearanceProvider({ children }) {
   const activeSettings = preview ?? settings;
   const beginPreview = useCallback(value => setPreview(normalizeAppearance(value)), []);
   const endPreview = useCallback(() => setPreview(null), []);
-  const systemDark = useSyncExternalStore(subscribeSystem, getSystemDark, getServerDark);
-  const resolvedMode = activeSettings.colorMode === 'system' ? (systemDark ? 'dark' : 'light') : activeSettings.colorMode;
+  const resolvedMode = activeSettings.colorMode;
   useLayoutEffect(() => {
-    applyAppearance(document.documentElement, activeSettings, systemDark);
-  }, [activeSettings, systemDark]);
+    applyAppearance(document.documentElement, activeSettings);
+  }, [activeSettings]);
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));

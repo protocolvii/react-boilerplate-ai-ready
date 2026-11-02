@@ -15,9 +15,11 @@ test('appearance validates each dimension independently and tolerates unavailabl
     DEFAULT_APPEARANCE
   );
   assert.deepEqual(readAppearance({ getItem: () => '{bad' }), DEFAULT_APPEARANCE);
+  assert.equal(DEFAULT_APPEARANCE.colorMode, 'light');
+  assert.equal(normalizeAppearance({ colorMode: 'system' }).colorMode, 'light');
 });
 
-test('prepaint initialization restores appearance and resolves system mode without React', () => {
+test('prepaint initialization migrates stored system mode to light before React', () => {
   const root = {
     dataset: {},
     style: {},
@@ -34,6 +36,7 @@ test('prepaint initialization restores appearance and resolves system mode witho
   });
   assert.equal(root.dataset.theme, 'creative-ai');
   assert.equal(root.dataset.density, 'comfortable');
-  assert.equal(root.classList.dark, true);
-  assert.equal(root.style.colorScheme, 'dark');
+  assert.equal(root.classList.dark, false);
+  assert.equal(root.dataset.colorMode, 'light');
+  assert.equal(root.style.colorScheme, 'light');
 });

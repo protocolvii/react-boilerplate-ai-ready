@@ -61,7 +61,7 @@ npm run format          # 格式化
 
 ## 多主题 Design System
 
-本地开发时通过右上角调色板图标直接进入设计系统，也可打开 `/design-playground` 无需登录预览三种预设：Modern SaaS、Industrial Pro、Creative AI。支持浅色 / 深色 / 跟随系统、三种信息密度及 Standard Admin / Workspace / Monitoring 布局，Playground 的选择仅在预览会话中生效。
+本地开发时通过右上角调色板图标直接进入设计系统，也可打开 `/design-playground` 无需登录预览三种预设：Modern SaaS、Industrial Pro、Creative AI。支持浅色 / 深色、三种信息密度及 Standard Admin / Workspace / Monitoring 布局，Playground 的选择仅在预览会话中生效。
 
 页面包含 Dashboard / 数据管理、工业监测图表、静态 AI 工作台和基础组件画廊，示例使用静态数据，不接业务数据接口或 AI 服务；全局顶栏保持现有登录态恢复。可手动调整 Token 并即时预览，支持独立暂存、撤销、恢复、导出 JSON 和复制给 AI Agent；源码修改由 Vite 热更新自动展示。左侧菜单不放设计系统入口。生产构建不包含 Playground 路由和顶部入口，暂不向最终用户提供样式或颜色模式切换。主题 Token、Provider、组件 API 与 AI 开发规则见 [设计系统文档](docs/design-system.md)。
 
