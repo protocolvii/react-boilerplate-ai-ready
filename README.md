@@ -22,6 +22,8 @@ AI 开发总入口见 [AGENTS.md](AGENTS.md)。按任务选择规范，不要求
 - [AI Design Guidelines](docs/ai-design-guidelines.md)：图片设计、原型、图片转代码、组件和业务开发四种独立能力。
 - [页面模板](docs/page-templates.md)：当前模板用途和复用边界。
 - [业务开发指南](docs/development.md)：路由、Redux、接口、表单与 Mock 详细示例。
+- [单元与组件测试](docs/unit-testing.md)：Vitest、React Testing Library 与既有 Node 测试的分工和示例。
+- [浏览器验证](docs/browser-verification.md)：Playwright、Mock E2E、视觉基准、报告和 Trace。
 
 这些文档供任意 AI Agent 使用；工具未自动读取 AGENTS.md 时，可显式让其从该文件开始。
 
@@ -52,6 +54,12 @@ npm run preview         # 本地预览构建产物
 npm run clean           # 清理 build/static
 npm run eslint          # 源码、Vite 配置和测试检查
 npm run stylelint       # CSS 检查
+npm test                # Vitest 与既有 Node 测试
+npm run test:unit        # 纯逻辑单元测试
+npm run test:components  # React 组件交互测试
+npm run test:watch       # Vitest 监听模式
+npm run test:e2e         # Playwright 桌面与手机验证
+npm run test:e2e:production # 独立生产构建和浏览器检查
 npm run test:mock       # 模拟接口和运行模式检查
 npm run check:registry  # 组件 / 页面注册表检查
 npm run test:design     # 设计系统与注册表测试
@@ -61,9 +69,11 @@ npm run format          # 格式化
 
 ## 多主题 Design System
 
-本地开发时通过右上角调色板图标直接进入设计系统，也可打开 `/design-playground` 无需登录预览三种预设：Modern SaaS、Industrial Pro、Creative AI。支持浅色 / 深色、三种信息密度及 Standard Admin / Workspace / Monitoring 布局，Playground 的选择仅在预览会话中生效。
+本地开发时通过右上角调色板图标直接进入设计系统，也可打开 `/design-playground` 无需登录预览三种预设：Modern SaaS、Industrial Pro、Creative AI。支持浅色 / 深色、三种信息密度及 Standard Admin / Workspace / Monitoring 布局。调整先在预览会话中生效，点击“保存到项目”后写入项目默认配置和 Token 覆盖，供后续开发与生产构建使用。
 
-页面包含 Dashboard / 数据管理、工业监测图表、静态 AI 工作台和基础组件画廊，示例使用静态数据，不接业务数据接口或 AI 服务；全局顶栏保持现有登录态恢复。可手动调整 Token 并即时预览，支持独立暂存、撤销、恢复、导出 JSON 和复制给 AI Agent；源码修改由 Vite 热更新自动展示。左侧菜单不放设计系统入口。生产构建不包含 Playground 路由和顶部入口，暂不向最终用户提供样式或颜色模式切换。主题 Token、Provider、组件 API 与 AI 开发规则见 [设计系统文档](docs/design-system.md)。
+页面顶层分为“页面模板”和“组件库”。页面模板包含通用列表页、Dashboard、工业监测、静态 AI 工作台；组件库提供基础与公共组件的真实交互示例。示例使用静态数据，不接业务数据接口或 AI 服务，全局顶栏支持恢复已有登录态。
+
+可手动调整 Token 并即时预览，支持暂存、撤销、恢复项目配置、保存到项目、导出已保存 JSON、导入 JSON 到预览以及复制给 AI Agent。保存写入 `src/design-system/project-design.json` 与 `src/design-system/tokens/project.css`，不会自动 Git 提交；源码修改由 Vite 热更新展示。左侧菜单不放设计系统入口，生产构建不提供 Playground 路由、顶部入口或设计配置写入接口。主题、布局、组件 API 与协作规则见 [设计系统文档](docs/design-system.md)。
 
 ## 环境配置
 
@@ -92,26 +102,48 @@ npm run format          # 格式化
 - shadcn/ui、Radix UI、Lucide 图标、Sonner 消息提示
 - Tailwind CSS 4、CSS Modules、PostCSS
 - Vite、ESLint、Prettier、Stylelint
+- Design Tokens、AppearanceProvider、布局与开发态 Design Playground
+- Vite 开发 Mock：模拟现有鉴权接口，业务调用入口与真实接口一致
+- Vitest、React Testing Library、user-event、jest-dom、jsdom：单元与组件测试
+- Node Test Runner：既有设计配置、数据处理与 Mock HTTP 测试
+- Playwright Test：页面交互、响应式、视觉比较与生产构建验证
 
 ```text
-vite.config.mjs             Vite 开发与构建配置
-vite/source-conventions.mjs  JSX 与 CSS Modules 文件处理
-vite/mock-api.mjs            本地开发模拟接口
-components.json             shadcn/ui CLI 配置
-jsconfig.json               编辑器路径别名与 JSX 配置
-src/template/index.html     HTML 模板
-src/index.js                React 入口
-src/config.js               应用与环境配置
-src/components/ui/          shadcn/ui 基础组件
-src/components/             页面布局和业务通用组件
-src/containers/             登录、修改密码、控制台和样例模块
-src/routes.js               路由与登录保护
-src/reducers.js              Redux reducer 注册
-src/utils/                  请求、鉴权、缓存、错误处理和跳转工具
-src/utils/cn/index.js        cn 样式合并工具
-src/assets/css/main.css      Tailwind 入口和主题变量
-build/                      Express 静态服务与 Docker 发布文件
-AGENTS.md                   AI 开发约定
+vite.config.mjs                       Vite 开发与构建配置
+vitest.config.js                      Vitest 配置，复用 Vite 编译与别名
+playwright.config.js                  Mock E2E、桌面/手机与视觉测试
+playwright.production.config.js       独立生产构建和 preview 测试
+vite/source-conventions.mjs           .js JSX 与 CSS Modules 文件处理
+vite/mock-api.mjs                     开发模拟接口
+vite/design-save.mjs                  开发态设计配置源码保存接口
+components.json                      shadcn/ui CLI 配置
+jsconfig.json                        编辑器路径别名与 JSX 配置
+src/template/index.html              HTML 模板
+src/index.js                         React 入口
+src/config.js                        应用与环境配置
+src/components/ui/                   shadcn/ui 基础组件
+src/components/                      页面布局和公共业务组件
+src/containers/                      登录、修改密码、控制台和业务模块
+src/containers/DesignPlayground/      开发态页面模板、组件库与设计配置面板
+src/design-system/appearance/        外观状态与主题应用
+src/design-system/layouts/           标准后台、工作台和监测布局
+src/design-system/tokens/            全局主题、密度及项目覆盖 CSS
+src/design-system/project-design.json 已保存的默认外观、布局与 Token 覆盖
+src/routes.js                        路由与登录保护
+src/reducers.js                      Redux reducer 注册
+src/utils/                           请求、鉴权、缓存、错误与跳转工具
+src/utils/cn/index.js                 cn 样式合并工具
+src/assets/css/main.css              Tailwind 入口与全局 Token 导入
+tests/setup.js                      RTL 匹配器与测试状态清理
+tests/unit/                         Vitest 纯逻辑测试（.test.js）
+tests/components/                   RTL 组件交互测试（.test.jsx）
+tests/*.test.mjs                    既有 Node 设计、数据与 Mock 测试
+tests/e2e/                          Playwright 交互、生产与视觉测试
+tests/e2e/visual/baselines/          仅存放人工确认的视觉基准
+artifacts/e2e/                       生成的报告、截图和 Trace，Git 忽略
+docs/                               设计、业务开发与测试文档
+build/                               Express 静态服务与 Docker 发布文件
+AGENTS.md                            AI 开发规范入口
 ```
 
 `@/` 指向 `src/`，在 Vite 和 `jsconfig.json` 中配置。业务组件和普通逻辑使用 `.js`，支持 JSX；shadcn/ui 基础组件使用 CLI 生成的 `.jsx`。项目采用 JavaScript，不引入 TypeScript。

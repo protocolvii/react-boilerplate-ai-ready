@@ -14,6 +14,8 @@
 | 公共组件、专业组件、业务页面开发   | [Component Development](docs/ai-design/component-development.md)                     |
 | 新增可复用页面模板                 | [页面模板](docs/page-templates.md)、Design Playground                                |
 | 路由、Redux、API、表单或 Mock 联调 | [业务开发指南](docs/development.md) 中对应章节                                       |
+| 工具逻辑或组件测试                 | [单元与组件测试](docs/unit-testing.md)                                               |
+| 页面交互、响应式或截图验证         | [浏览器验证](docs/browser-verification.md)                                           |
 
 用户可以直接要求图片、原型、图片转代码或业务开发，不强制先画图或先做原型。文档不绑定具体 Agent；不能假定其他工具自动读取 AGENTS.md，需要时引导其读取本文件。
 
