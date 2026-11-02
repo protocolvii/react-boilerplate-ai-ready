@@ -4,17 +4,17 @@
 
 ## 三个组成部分
 
-| 部分                  | 当前实现                                        | 用途                                                         |
-| --------------------- | ----------------------------------------------- | ------------------------------------------------------------ |
-| Design System Preview | 既有右侧设计配置面板、真实页面 Shell 和组件     | 预设、Light / Dark、字体、颜色、圆角、阴影、间距、密度与布局 |
-| Component Gallery     | “组件库”页签，可搜索名称 / 标签并按实际分类筛选 | 基础 UI 与可复用业务组件的状态和用法                         |
-| Page Gallery          | 通用列表页、Dashboard、工业监测、AI 工作台页签  | 现有完整页面示例与可复用模板，共用外层 PageLayout            |
+| 部分                  | 当前实现                                                       | 用途                                                         |
+| --------------------- | -------------------------------------------------------------- | ------------------------------------------------------------ |
+| Design System Preview | 既有右侧设计配置面板、真实页面 Shell 和组件                    | 预设、Light / Dark、字体、颜色、圆角、阴影、间距、密度与布局 |
+| Component Gallery     | “组件库”页签，可搜索名称 / 标签并按实际分类筛选                | 基础 UI 与可复用业务组件的状态和用法                         |
+| Page Gallery          | “页面模板”页签内选择通用列表页、Dashboard、工业监测、AI 工作台 | 现有完整页面示例与可复用模板，共用外层 PageLayout            |
 
 主题与布局规则见 [设计系统](design-system.md)。页面模板说明见 [page-templates.md](page-templates.md)。根据用户任务选择 [AI 协作规范](ai-design-guidelines.md)，不规定图片、原型或业务开发的先后顺序。
 
 ## 当前预览内容
 
-`/design-playground` 的页面页签由 Page Registry 生成，组件画廊由 Component Registry 生成：
+`/design-playground` 顶层分为“页面模板”和“组件库”。页面模板选择器由 Page Registry 生成，默认通用列表页；切换到组件库后再返回，会恢复本次浏览中选择的模板。组件画廊由 Component Registry 生成：
 
 - 数据管理：搜索、状态过滤、排序、分页、编辑/新增 Dialog、归档确认和空状态。
 - 通用列表页：独立筛选区、通用项目字段、固定操作列、详情 / 新增 / 编辑 / 删除与分页。
@@ -79,11 +79,11 @@ import { lazy } from 'react';
 
 ## Page Registry：新增通用页面模板
 
-注册表：`src/containers/DesignPlayground/gallery/page-registry.js`。字段与组件表一致，另有可选 layout，合法值为 standard-admin / workspace / monitoring。id 同时用于 `?view=<id>` 深链和页签；不要使用保留 ID `components`，不要随意改动已有 data / monitoring / workspace 地址。
+注册表：`src/containers/DesignPlayground/gallery/page-registry.js`。字段与组件表一致，另有可选 layout，合法值为 standard-admin / workspace / monitoring。id 同时用于 `?view=<id>` 深链和模板选择器；不要使用保留 ID `components`，不要随意改动已有 data / monitoring / workspace 地址。
 
 1. 提取可复用的页面内容与交互组件，数据通过 props 或适配层提供。
 2. 在 `gallery/previews/` 写轻量适配组件，确保静态数据可独立预览，不需要真实 API 或特定业务 Redux 模块。
-3. 注册记录，顶层页签与 PageGallery 自动显示，不需要重复注册正式业务路由。
+3. 注册记录，模板选择器与 PageGallery 自动显示，不需要重复注册正式业务路由。
 4. 在 [页面模板](page-templates.md) 记录用途、数据范围、状态及适用布局。
 5. 验证深链、切换、主题、密度和生产隔离。
 

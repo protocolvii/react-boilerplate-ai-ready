@@ -1,9 +1,11 @@
-import React, { lazy, Suspense, useEffect, useRef, useState } from 'react';
+import React, { lazy, Suspense, useEffect, useId, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { BookOpen, Sun, Moon } from 'lucide-react';
 import { PageHeader, PageContent, StatusIndicator } from '../../components';
 import { Button } from '../../components/ui/button';
+import { Label } from '../../components/ui/label';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '../../components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../components/ui/dialog';
 import { useAppearance, PRESETS } from '../../design-system/appearance';
@@ -46,9 +48,13 @@ export default function DesignPlayground() {
   const [searchParams, setSearchParams] = useSearchParams();
   const view = searchParams.get('view');
   const tab = view === 'components' || pageRegistry.some(entry => entry.id === view) ? view : pageRegistry[0].id;
+  const templateId = useId();
+  const lastTemplate = useRef(tab === 'components' ? pageRegistry[0].id : tab);
+  const selectedTemplate = pageRegistry.find(entry => entry.id === tab) || pageRegistry[0];
   const requestedTab = useRef(tab);
   useEffect(() => {
     requestedTab.current = tab;
+    if (tab !== 'components') lastTemplate.current = tab;
   }, [tab]);
   const setTab = value => {
     // 聚焦与鼠标激活可能连续触发，避免同一次切换重复写入历史记录。
@@ -95,20 +101,31 @@ export default function DesignPlayground() {
         />
         <PageContent>
           <div className="mx-auto max-w-[100rem] space-y-[var(--layout-gap)]">
-            <Tabs value={tab} onValueChange={setTab} className="min-w-0 gap-5">
-              <TabsList className="h-auto max-w-full justify-start gap-1 overflow-x-auto bg-muted/70 p-1" aria-label="设计示例">
-                {pageRegistry.map(entry => (
-                  <TabsTrigger key={entry.id} value={entry.id}>
-                    {entry.name}
-                  </TabsTrigger>
-                ))}
+            <Tabs value={tab === 'components' ? 'components' : 'pages'} onValueChange={value => setTab(value === 'components' ? 'components' : lastTemplate.current)} className="min-w-0 gap-5">
+              <TabsList className="h-auto max-w-full justify-start gap-1 bg-muted/70 p-1" aria-label="设计示例">
+                <TabsTrigger value="pages">页面模板</TabsTrigger>
                 <TabsTrigger value="components">组件库</TabsTrigger>
               </TabsList>
-              {pageRegistry.map(entry => (
-                <TabsContent key={entry.id} value={entry.id}>
-                  <PageGallery entry={entry} />
-                </TabsContent>
-              ))}
+              <TabsContent value="pages" className="min-w-0 space-y-[var(--layout-gap)]">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                  <Label htmlFor={templateId} className="shrink-0">
+                    选择页面模板
+                  </Label>
+                  <Select value={selectedTemplate.id} onValueChange={setTab}>
+                    <SelectTrigger id={templateId} className="w-full sm:w-56">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {pageRegistry.map(entry => (
+                        <SelectItem key={entry.id} value={entry.id}>
+                          {entry.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <PageGallery key={selectedTemplate.id} entry={selectedTemplate} />
+              </TabsContent>
               <TabsContent value="components">
                 <Suspense
                   fallback={
