@@ -91,6 +91,8 @@ export default defineConfig(({ command, mode, isPreview }) => {
       postcss: { plugins: [postcssMixins(), postcssSimpleVars(), postcssNested(), autoprefixer()] }
     },
     server: {
+      // Trace 中包含 HTML，不能让测试产物触发应用整页刷新。
+      watch: { ignored: ['**/artifacts/**', '**/test-results/**', '**/playwright-report/**'] },
       host: config.host,
       // 模拟模式使用独立端口，避免与真实接口开发共享浏览器登录缓存。
       port: isMock ? config.hotLoadPort + 1 : config.hotLoadPort,

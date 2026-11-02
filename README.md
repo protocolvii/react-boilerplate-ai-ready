@@ -165,3 +165,16 @@ SVG 通过 `import logoUrl from './logo.svg'` 获取图片 URL，`?raw` 获取�
 `npm run build` 输出 `build/static`，可部署到支持 SPA 回退的静态服务器。非资源路由应回退到 `index.html`。
 
 `build/server.js` 提供带 SPA 回退的 Express 静态服务，`build/Dockerfile` 用于容器部署。GitHub 部署流水线需根据项目的部署环境配置。
+
+## 浏览器验证
+
+使用 JavaScript 配置的 Playwright Test，支持独立 Mock E2E、桌面/手机交互、视觉候选和生产构建验证。
+
+```bash
+npm run test:e2e:install
+npm run test:e2e
+npm run test:e2e:visual:capture
+npm run test:e2e:production
+```
+
+视觉基准须人工确认，不能自动更新以消除失败。命令、浏览器环境要求、报告与 Trace、Agent 工作流程见 [浏览器验证](docs/browser-verification.md)。

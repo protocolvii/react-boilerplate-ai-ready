@@ -74,3 +74,15 @@ npm run preview
 JS/React 改动执行 ESLint 和格式检查，CSS 改动执行 Stylelint；依赖、路由、全局配置变更执行生产构建。Gallery 注册改动执行 check:registry，主题变更执行 test:design，并在浏览器查看三预设浅深色、密度、1440 / 1024 / 390px、键盘和状态保持。真实接口与模拟接口的验证范围分开说明。
 
 仅文档改动检查对应文档格式与链接。避免格式化无关文件；shadcn/ui 目录已排除。交付说明实际修改、验证和未覆盖内容；用户未授权时不提交、推送或部署。
+
+## Browser Verification
+
+浏览器配置与操作见 [浏览器验证](docs/browser-verification.md)。项目使用 JavaScript 的 Playwright Test，不添加 TypeScript。
+
+- 新页面完成后实际在浏览器验证路由直达、布局、交互和 console 错误；关键交互在 `tests/e2e/` 添加 Playwright 测试。
+- 主题、公共组件和响应式变更检查 Design Playground，至少覆盖桌面/手机、浅深色与相关预设密度。
+- 无后端时复用现有 Mock；E2E 自动启动独立 3101 测试服务，不复用未知本地实例，不把模拟结果当真实后端验证。
+- 运行 `npm run test:e2e`，涉及生产路由和开发能力隔离时另运行 `npm run test:e2e:production`。生产验证独立构建，不能用 dev 通过代替。
+- 失败后读取截图、browser-log 和 Trace，调查原因；不得随意删除断言、skip、放宽视觉阈值或更新基准使测试通过。
+- 视觉候选可通过 `test:e2e:visual:capture` 生成，基准图片必须人工确认；Agent 未获明确授权不得更新或补建基准。
+- 测试产物位于 `artifacts/e2e/`，不提交日志、临时截图或 Trace。无法执行浏览器测试时，交付中说明原因和验证边界。

@@ -22,3 +22,9 @@ webpack-stats.json
 .env
 .env.*
 !.env.example
+
+# Playwright 生成产物（已审核的 visual/baselines 可提交）
+artifacts/
+playwright-report/
+test-results/
+playwright/.cache/

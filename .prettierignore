@@ -7,3 +7,9 @@ package-lock.json
 
 # 保留 shadcn CLI 生成源码的官方格式
 src/components/ui
+
+# Playwright 生成产物（已审核的 visual/baselines 可提交）
+artifacts/
+playwright-report/
+test-results/
+playwright/.cache/

@@ -83,9 +83,14 @@ export default [
     }
   },
   {
-    files: ['vite.config.mjs', 'vite/**/*.mjs', 'tests/**/*.mjs'],
+    files: ['vite.config.mjs', 'vite/**/*.mjs', 'tests/**/*.mjs', 'playwright*.config.js'],
     languageOptions: { globals: globals.node },
     // 当前 import resolver 不支持部分依赖的 package exports；实际解析由 Vite / Node 验证。
+    rules: { 'import/no-unresolved': 'off' }
+  },
+  {
+    files: ['tests/e2e/**/*.js'],
+    languageOptions: { globals: { ...globals.node, ...globals.browser } },
     rules: { 'import/no-unresolved': 'off' }
   },
   {
