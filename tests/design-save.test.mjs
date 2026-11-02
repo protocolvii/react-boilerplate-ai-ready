@@ -53,6 +53,7 @@ test('development save validates requests, rejects stale writes and only writes 
       return result;
     };
     const first = await call('GET');
+    assert.deepEqual(first.body.config.profiles, {});
     assert.equal((await call('POST', { revision: first.body.revision, config: config() }, { origin: 'https://evil.example' })).status, 403);
     assert.equal((await call('POST', { revision: 'stale', config: config() })).status, 409);
     assert.equal((await call('POST', { revision: first.body.revision, config: { ...config(), layout: 'bad' } })).status, 400);
@@ -65,4 +66,15 @@ test('development save validates requests, rejects stale writes and only writes 
   } finally {
     await rm(root, { recursive: true, force: true });
   }
+});
+
+test('saving imported snapshot replaces all old profiles and generated CSS', () => {
+  const current = { profiles: { 'modern-saas:light:default': { '--radius': '20px' }, 'creative-ai:dark:compact': { '--primary': 'red' } } };
+  const [json, css] = prepareDesign(config(), current, true);
+  assert.deepEqual(JSON.parse(json).profiles, config().profiles);
+  assert(!css.includes('--radius'));
+  assert(!css.includes('creative-ai'));
+  const [empty, emptyCss] = prepareDesign({ ...config(), profiles: {} }, current, true);
+  assert.deepEqual(JSON.parse(empty).profiles, {});
+  assert(!emptyCss.includes(':root'));
 });

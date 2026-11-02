@@ -1,5 +1,5 @@
-import React, { useId, useState } from 'react';
-import { Save, Undo2, RotateCcw, Download, Copy } from 'lucide-react';
+import React, { useId, useRef, useState } from 'react';
+import { Save, Undo2, RotateCcw, Download, Upload, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
@@ -45,9 +45,12 @@ function TokenField({ field, preview }) {
   );
 }
 export default function PreviewPanel({ preview, compact = false }) {
+  const importInput = useRef(null);
+  const [importError, setImportError] = useState('');
+  const [importing, setImporting] = useState(false);
   const [copyText, setCopyText] = useState('');
   const blocked = preview.invalid.length > 0;
-  const serialized = () => JSON.stringify(preview.exportConfig(), null, 2);
+  const serialized = () => JSON.stringify(preview.copyConfig(), null, 2);
   return (
     <section className={compact ? 'space-y-4' : 'ds-panel space-y-4 p-[var(--panel-space)]'} aria-label="样式微调">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -65,7 +68,7 @@ export default function PreviewPanel({ preview, compact = false }) {
                 preview.stash();
                 toast.success('预览已暂存，重新进入或刷新可恢复');
               } catch {
-                toast.error('浏览器存储不可用，仍可导出 JSON');
+                toast.error('浏览器存储不可用，可复制当前调整进行备份');
               }
             }}
           >
@@ -80,19 +83,58 @@ export default function PreviewPanel({ preview, compact = false }) {
             <RotateCcw />
             恢复项目配置
           </Button>
+          <input
+            ref={importInput}
+            type="file"
+            accept=".json,application/json"
+            className="hidden"
+            aria-label="导入项目设计配置文件"
+            onChange={async event => {
+              const file = event.target.files?.[0];
+              event.target.value = '';
+              if (!file) return;
+              setImporting(true);
+              setImportError('');
+              try {
+                if (file.size > 65536) throw new Error('配置文件不能超过 64 KB');
+                let config;
+                try {
+                  config = JSON.parse(await file.text());
+                } catch {
+                  throw new Error('无法解析 JSON 配置文件');
+                }
+                preview.importConfig(config);
+                toast.success('已导入预览，点击“保存到项目”后才会写入源码');
+              } catch (error) {
+                setImportError(error.message || '导入失败，当前预览未改变');
+              } finally {
+                setImporting(false);
+              }
+            }}
+          />
+          <Button variant="outline" size="sm" disabled={preview.saving || importing} onClick={() => importInput.current?.click()}>
+            <Upload />
+            {importing ? '导入中…' : '导入 JSON'}
+          </Button>
           <Button
             variant="outline"
             size="sm"
-            disabled={blocked}
-            onClick={() => {
-              const url = URL.createObjectURL(new Blob([serialized()], { type: 'application/json' }));
-              const link = document.createElement('a');
-              link.href = url;
-              link.download = 'design-playground.json';
-              document.body.appendChild(link);
-              link.click();
-              link.remove();
-              setTimeout(() => URL.revokeObjectURL(url), 1000);
+            disabled={preview.saving}
+            onClick={async () => {
+              try {
+                const saved = await preview.exportConfig();
+                const url = URL.createObjectURL(new Blob([JSON.stringify(saved, null, 2)], { type: 'application/json' }));
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'project-design.json';
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                toast.success('已导出项目已保存配置，不包含未保存调整');
+              } catch (error) {
+                toast.error(error.message || '导出失败');
+              }
             }}
           >
             <Download />
@@ -117,10 +159,16 @@ export default function PreviewPanel({ preview, compact = false }) {
           </Button>
         </div>
       </div>
+      <p className="text-xs text-muted-foreground">导出仅包含项目已保存配置。导入将完整恢复到预览，保存后会替换全部已保存的 Token 覆盖；可撤销导入或恢复项目配置。</p>
+      {importError && (
+        <p role="alert" className="text-sm text-destructive">
+          {importError}
+        </p>
+      )}
       <p className="text-xs text-muted-foreground">输入 CSS 值，例如 #2563eb、oklch(0.6 0.2 260)、14px、400、1.5、0 2px 8px #0002。颜色请同时检查对应文字的对比度。</p>
       {blocked && (
         <p role="alert" className="text-sm text-destructive">
-          有 {preview.invalid.length} 个无效 Token 值，请修正后暂存或导出。
+          有 {preview.invalid.length} 个无效 Token 值，请修正后暂存或保存。
         </p>
       )}
       <div className="divide-y rounded-lg border">

@@ -8,12 +8,12 @@ export const DESIGN_ENDPOINT = '/__design-project';
 const paths = ['src/design-system/project-design.json', 'src/design-system/tokens/project.css'];
 const revision = files => createHash('sha256').update(files.join('\0')).digest('hex');
 
-export function prepareDesign(input, current) {
+export function prepareDesign(input, current, replaceProfiles = false) {
   const normalized = normalizeDraft(input);
   if (!normalized || JSON.stringify(normalized.appearance) !== JSON.stringify(input.appearance) || normalized.layout !== input.layout) throw new Error('无效的外观或布局配置');
   if (Object.keys(normalized.profiles).length !== Object.keys(input.profiles).length) throw new Error('无效的主题分组');
   const allowed = new Set(FIELDS.map(field => field.token));
-  const profiles = structuredClone(current.profiles);
+  const profiles = replaceProfiles ? {} : structuredClone(current.profiles);
   for (const [key, tokens] of Object.entries(input.profiles)) {
     if (!tokens || typeof tokens !== 'object' || Array.isArray(tokens)) throw new Error('无效的 Token 分组');
     profiles[key] ||= {};
@@ -25,7 +25,7 @@ export function prepareDesign(input, current) {
     }
     if (!Object.keys(profiles[key]).length) delete profiles[key];
   }
-  const design = { ...normalized, profiles };
+  const design = { version: normalized.version, appearance: normalized.appearance, layout: normalized.layout, profiles };
   const css =
     '/* 由设计配置“保存到项目”生成；可通过 Git 审核与撤销。 */\n' +
     Object.entries(profiles)
@@ -60,7 +60,8 @@ export function designSave() {
         const files = paths.map(path => resolve(server.config.root, path));
         if (req.method === 'GET') {
           try {
-            return reply(200, { revision: revision(await Promise.all(files.map(path => readFile(path, 'utf8')))) });
+            const contents = await Promise.all(files.map(path => readFile(path, 'utf8')));
+            return reply(200, { revision: revision(contents), config: JSON.parse(contents[0]) });
           } catch {
             return reply(500, { error: '无法读取项目设计配置' });
           }
@@ -88,7 +89,8 @@ export function designSave() {
           if (input.revision !== revision(previous)) return reply(409, { error: '项目配置已被修改，请刷新页面后重试，避免覆盖其他改动' });
           let output;
           try {
-            output = prepareDesign(input.config, JSON.parse(previous[0]));
+            if (input.replaceProfiles !== undefined && typeof input.replaceProfiles !== 'boolean') throw new Error('无效的恢复模式');
+            output = prepareDesign(input.config, JSON.parse(previous[0]), input.replaceProfiles === true);
             output = await Promise.all(output.map((text, i) => format(text, { parser: i === 0 ? 'json' : 'css', singleQuote: true })));
           } catch (error) {
             return reply(400, { error: error.message });

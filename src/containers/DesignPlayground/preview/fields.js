@@ -86,7 +86,13 @@ export function normalizeDraft(input) {
       })
       .map(([key, values]) => [key, Object.fromEntries(Object.entries(values && typeof values === 'object' ? values : {}).filter(([token, value]) => allowed.has(token) && typeof value === 'string' && value.length <= 256))])
   );
-  return { version: 1, appearance: normalizeAppearance(input.appearance), layout: ['standard-admin', 'workspace', 'monitoring'].includes(input.layout) ? input.layout : 'standard-admin', profiles };
+  return {
+    ...(input.replaceProfiles === true ? { replaceProfiles: true } : {}),
+    version: 1,
+    appearance: normalizeAppearance(input.appearance),
+    layout: ['standard-admin', 'workspace', 'monitoring'].includes(input.layout) ? input.layout : 'standard-admin',
+    profiles
+  };
 }
 export function validValue(field, value, supports = CSS.supports) {
   return typeof value === 'string' && value.length <= 256 && !/[;{}]/.test(value) && (!value.trim() || supports(field.property, value));
@@ -97,4 +103,21 @@ export function readDraft(storage) {
   } catch {
     return null;
   }
+}
+
+// 导入严格校验，避免归一化时静默丢弃未知字段导致备份不完整。
+export function validateProjectConfig(input, supports) {
+  const normalized = normalizeDraft(input);
+  if (!normalized || Array.isArray(input.profiles) || !input.appearance || ['preset', 'colorMode', 'density'].some(key => normalized.appearance[key] !== input.appearance[key]) || normalized.layout !== input.layout)
+    throw new Error('配置版本、外观或布局无效');
+  const entries = Object.entries(input.profiles);
+  if (entries.length !== Object.keys(normalized.profiles).length) throw new Error('配置包含未知的主题分组');
+  for (const [, tokens] of entries) {
+    if (!tokens || typeof tokens !== 'object' || Array.isArray(tokens)) throw new Error('Token 分组格式无效');
+    for (const [token, value] of Object.entries(tokens)) {
+      const field = FIELDS.find(item => item.token === token);
+      if (!field || typeof value !== 'string' || /[<>@\\\n\r]|\/\*|url\s*\(|image-set\s*\(/i.test(value) || !validValue(field, value, supports)) throw new Error(`无效的 Token：${token}`);
+    }
+  }
+  return { version: normalized.version, appearance: normalized.appearance, layout: normalized.layout, profiles: normalized.profiles };
 }

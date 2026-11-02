@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { FIELDS, normalizeDraft, readDraft, validValue, profileKey } from '../src/containers/DesignPlayground/preview/fields.js';
+import { FIELDS, normalizeDraft, readDraft, validValue, profileKey, validateProjectConfig } from '../src/containers/DesignPlayground/preview/fields.js';
 
 test('drafts only restore known tokens, profiles and normalized appearance settings', () => {
   const result = normalizeDraft({
@@ -53,4 +53,24 @@ test('validation uses the actual CSS property and empty values follow source tok
     false
   );
   assert.equal(profileKey({ preset: 'modern-saas', resolvedMode: 'dark', density: 'compact' }), 'modern-saas:dark:compact');
+});
+
+test('import validates complete snapshots without silently dropping invalid data', () => {
+  const input = { version: 1, appearance: { preset: 'modern-saas', colorMode: 'light', density: 'default' }, layout: 'standard-admin', profiles: { 'modern-saas:light:default': { '--primary': '#123456' } } };
+  assert.deepEqual(
+    validateProjectConfig(input, () => true),
+    input
+  );
+  for (const patch of [
+    { version: 2 },
+    { profiles: [] },
+    { layout: 'unknown' },
+    { appearance: { ...input.appearance, colorMode: 'system' } },
+    { profiles: { 'bad:light:default': {} } },
+    { profiles: { 'modern-saas:light:default': { '--unknown': 'red' } } },
+    { profiles: { 'modern-saas:light:default': { '--primary': 'url(https://example.com)' } } }
+  ])
+    assert.throws(() => validateProjectConfig({ ...input, ...patch }, () => true));
+  assert.throws(() => validateProjectConfig(input, () => false));
+  assert.equal(normalizeDraft({ ...input, replaceProfiles: true }).replaceProfiles, true);
 });
