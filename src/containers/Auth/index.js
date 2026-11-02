@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'sonner';
 import { Button } from '../../components/ui/button';
@@ -8,12 +8,14 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
 import config from '../../config';
+import { getLoginDestination } from '../../utils/navigation';
 import { clearError, submit, login } from './actions';
 import { selectError, selectSubmitting, selectToken, selectExp } from './selectors';
 
 const Login = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
+  const location = useLocation();
+  const [minimumExpiry] = useState(() => Date.now() + 20 * 60 * 1000);
   const err = useSelector(selectError);
   const submitting = useSelector(selectSubmitting);
   const accessToken = useSelector(selectToken);
@@ -22,14 +24,6 @@ const Login = () => {
   useEffect(() => {
     dispatch(clearError());
   }, [dispatch]);
-
-  useEffect(() => {
-    const now = new Date();
-    const expired = now.setMinutes(now.getMinutes() + 20);
-    if (accessToken && !err && expires > expired) {
-      navigate('/', { replace: true });
-    }
-  }, [accessToken, err, expires, navigate]);
 
   useEffect(() => {
     if (err) {
@@ -58,6 +52,8 @@ const Login = () => {
     }
     handleLogin({ username: data.get('username').trim(), password: data.get('password') });
   };
+  if (accessToken && !err && expires > minimumExpiry) return <Navigate to={getLoginDestination(location.state?.from)} replace />;
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Helmet title={`登录 - ${config.app.title}`} />

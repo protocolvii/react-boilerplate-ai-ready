@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { createServer } from 'node:http';
 import { once } from 'node:events';
 import { test } from 'node:test';
-import { createMockMiddleware } from '../vite/mock-api.mjs';
+import { createMockMiddleware, mockApi } from '../vite/mock-api.mjs';
 import configure from '../vite.config.mjs';
 
 const hash = value => createHash('md5').update(value).digest('hex');
@@ -95,4 +95,44 @@ test('mock mode is opt-in, isolated from the normal proxy and forbidden in build
     if (previousStage === undefined) delete process.env.STAGE;
     else process.env.STAGE = previousStage;
   }
+});
+
+test('mock plugin retains sessions and password across Vite reconfiguration, isolated by project', async t => {
+  const root = `mock-reload-${Date.now()}`;
+  let middleware;
+  const configurePlugin = project =>
+    mockApi().configureServer({
+      config: { root: project, logger: { info() {} } },
+      middlewares: {
+        use(value) {
+          middleware = value;
+        }
+      }
+    });
+  configurePlugin(root);
+  const server = createServer((req, res) =>
+    middleware(req, res, () => {
+      res.writeHead(404);
+      res.end();
+    })
+  );
+  server.listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  t.after(() => new Promise(resolve => server.close(resolve)));
+  t.after(() => {
+    globalThis[Symbol.for('react-boilerplate:mock-api')].delete(root);
+    globalThis[Symbol.for('react-boilerplate:mock-api')].delete(`${root}-other`);
+  });
+  const base = `http://127.0.0.1:${server.address().port}`;
+  const logged = await fetch(`${base}/api/authorizations`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: 'admin', password: hash('admin123') }) });
+  const auth = await logged.json();
+  const headers = { 'Content-Type': 'application/json', Authorization: `Bearer ${auth.access_token}` };
+  const changed = await fetch(`${base}/api/user/password`, { method: 'PUT', headers, body: JSON.stringify({ old_password: hash('admin123'), new_password: hash('newpass123'), confirm_password: hash('newpass123') }) });
+  assert.equal(changed.status, 200);
+  configurePlugin(root);
+  assert.equal((await fetch(`${base}/api/user`, { headers })).status, 200);
+  const relogin = await fetch(`${base}/api/authorizations`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: 'admin', password: hash('newpass123') }) });
+  assert.equal(relogin.status, 200);
+  configurePlugin(`${root}-other`);
+  assert.equal((await fetch(`${base}/api/user`, { headers })).status, 401);
 });

@@ -403,6 +403,6 @@ SVG、图片、字体通过 Vite 原生导入或 CSS url() 使用；SVG 默认�
 
 ## 无后端联调
 
-使用 `npm run dev:mock` 启动本地模拟 API，默认端口为开发端口加 1，账号 admin / admin123。模拟登录、用户信息、token 刷新、修改密码和退出；修改密码和会话只存在于内存，重启后重置。无需修改 PrivateRoute、鉴权或业务 API 调用。
+使用 `npm run dev:mock` 启动本地模拟 API，默认端口为开发端口加 1，账号 admin / admin123。模拟登录、用户信息、token 刷新、修改密码和退出；修改密码和会话只存在于进程内存；Vite 内部重载时保留，停止并重新启动进程后重置。无需修改 PrivateRoute、鉴权或业务 API 调用。
 
 新页面需要模拟数据时，在 `vite/mock-api.mjs` 按相同请求和响应协议添加明确的路由，未知 /api 接口返回 404，不伪装所有请求成功。模拟接口不得替代真实接口验证。普通 dev 使用配置的后端代理；mock 不能用于 build 或 preview。

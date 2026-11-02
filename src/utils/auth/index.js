@@ -1,8 +1,33 @@
 import { selectToken, selectExp, selectTokenId, selectRefreshToken, selectRefreshing, selectRefreshErr, selectLastRefreshAt } from '../../containers/Auth/selectors';
-import { saveAuth, refreshAuthToken, logout } from '../../containers/Auth/actions';
+import { saveAuth, refreshAuthToken, logout, resetState } from '../../containers/Auth/actions';
 import { refreshTokenApi } from '../../containers/Auth/api';
 import { responseError } from '../api';
 import cache from '../cache';
+import { navigateReplace } from '../navigation';
+
+let invalidatingSession;
+// 后端已拒绝会话时，不能只跳登录页而继续保留旧 token。
+const invalidateSession = (dispatch, getState, rejectedToken) => {
+  if (rejectedToken && rejectedToken !== selectToken(getState())) return Promise.resolve();
+  if (!invalidatingSession) {
+    invalidatingSession = (async () => {
+      try {
+        await cache.clear();
+      } finally {
+        try {
+          localStorage.removeItem('accessToken');
+        } catch {
+          /* 不影响 Redux 清理。 */
+        }
+        dispatch(resetState());
+        navigateReplace('/login');
+      }
+    })().finally(() => {
+      invalidatingSession = undefined;
+    });
+  }
+  return invalidatingSession;
+};
 
 const parseAuth = auth => ({
   tokenId: auth.id,
@@ -148,4 +173,4 @@ const getToken = async (dispatch, getState) => {
   return Promise.reject('get token error');
 };
 
-export { refreshAuth, getAuthCache, setAuthCache, getToken, getOrRefreshToken };
+export { invalidateSession, refreshAuth, getAuthCache, setAuthCache, getToken, getOrRefreshToken };

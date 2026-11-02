@@ -1,5 +1,5 @@
 import hahoorequest from 'hahoorequest/lib/whatwg-fetch';
-import { getToken } from '../auth';
+import { getToken, invalidateSession } from '../auth';
 import { navigateReplace } from '../navigation';
 import config from '../../config';
 
@@ -34,9 +34,11 @@ const request = async (options, dispatch, getState) => {
     mode: 'cors',
     ...rest
   };
+  let requestToken;
   if (needAuth) {
     try {
       const token = await getToken(dispatch, getState);
+      requestToken = token;
       const headers = opts.headers || {};
       Object.assign(headers, {
         Authorization: `Bearer ${token}`
@@ -52,14 +54,18 @@ const request = async (options, dispatch, getState) => {
 
     const { errcode, errmsg } = res.body;
     if ((errcode && errcode !== 0) || (errmsg && errmsg !== 'ok')) {
-      if (errcode && (errcode === 100403 || errcode === 100404)) navigateReplace('/login');
+      if (needAuth && (errcode === 100403 || errcode === 100404)) {
+        await invalidateSession(dispatch, getState, requestToken).catch(() => {});
+      }
       return Promise.reject(responseError(res));
     }
     return Promise.resolve(res);
   } catch (e) {
     const errcode = e.errcode;
     if (errcode && errcode !== 0) {
-      if (errcode && (errcode === 100403 || errcode === 100404)) navigateReplace('/login');
+      if (needAuth && (errcode === 100403 || errcode === 100404)) {
+        await invalidateSession(dispatch, getState, requestToken).catch(() => {});
+      }
     }
     return Promise.reject(e);
   }

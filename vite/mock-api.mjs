@@ -4,9 +4,8 @@ const hash = value => createHash('md5').update(value).digest('hex');
 const expiresIn = 7200;
 
 // 只模拟现有鉴权协议，业务接口按实际页面需求另行添加。
-export function createMockMiddleware() {
-  const sessions = new Map();
-  let password = hash('admin123');
+export function createMockMiddleware(state = { sessions: new Map(), password: hash('admin123') }) {
+  const { sessions } = state;
 
   const respond = (res, status, body) => {
     res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
@@ -50,7 +49,7 @@ export function createMockMiddleware() {
     try {
       if (path === '/authorizations' && req.method === 'POST') {
         const body = await readJson(req);
-        if (body.username !== 'admin' || body.password !== password) return fail(res, 400, '用户名或密码错误');
+        if (body.username !== 'admin' || body.password !== state.password) return fail(res, 400, '用户名或密码错误');
         return ok(res, authData(createSession()));
       }
 
@@ -73,9 +72,9 @@ export function createMockMiddleware() {
           return ok(res, { id: 1, uuid: 'mock-user-admin', username: 'admin', user_type: 'admin', last_login_time: new Date().toISOString(), last_login_ip: '127.0.0.1' });
         }
         const body = await readJson(req);
-        if (body.old_password !== password) return fail(res, 400, '原密码错误');
+        if (body.old_password !== state.password) return fail(res, 400, '原密码错误');
         if (typeof body.new_password !== 'string' || !/^[a-f0-9]{32}$/.test(body.new_password) || body.new_password !== body.confirm_password) return fail(res, 400, '新密码与确认密码不一致');
-        password = body.new_password;
+        state.password = body.new_password;
         return ok(res);
       }
 
@@ -91,8 +90,13 @@ export function mockApi() {
     name: 'app-mock-api',
     apply: 'serve',
     configureServer(server) {
-      server.config.logger.info('[mock] 本地模拟后端已启用，账号：admin，密码：admin123；重启服务后重置。');
-      server.middlewares.use(createMockMiddleware());
+      // Vite 配置重载会重新创建插件；会话在同一进程、同一项目内延续。
+      const key = Symbol.for('react-boilerplate:mock-api');
+      const stores = (globalThis[key] ||= new Map());
+      const root = server.config.root;
+      if (!stores.has(root)) stores.set(root, { sessions: new Map(), password: hash('admin123') });
+      server.config.logger.info('[mock] 本地模拟后端已启用，账号：admin；初始密码：admin123。Vite 重载保留会话，停止进程后重置。');
+      server.middlewares.use(createMockMiddleware(stores.get(root)));
     }
   };
 }
