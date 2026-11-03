@@ -40,6 +40,7 @@
 - 用 bg-background、text-foreground、bg-card、border-border 等语义 Token；状态色不跟随品牌色改变含义。
 - 优先组合 PageHeader、MetricCard、StatusIndicator、SearchToolbar、FilterBar、DataTable、ConfirmDialog、EmptyState、SectionHeader 等公共组件。
 - 新页面或组件先检查项目组件与 Component Gallery，再查询缺失能力的 shadcn 官方 Registry、文档及组合示例，决定直接复用、必要封装或说明原因后自行实现；不要强行复用不适合的组件。详见 [组件发现与选型](docs/ai-design/component-development.md#组件发现与选型)。
+- 官方 Skill / MCP 仅是可选增强，不自动安装或改用户环境；没有时使用官方文档、仓库或 CLI，网络不可用则说明未核实项。入口和降级方式见 [shadcn 查询与可选工具](docs/shadcn-discovery.md)。
 - 页面优先使用 StandardAdminLayout / WorkspaceLayout / MonitoringLayout，允许动态布局时使用 PageLayout。它们已含顶部与侧栏，不重复挂载。
 - 新增可复用公共组件：编写 Preview，并加入 Component Registry；新增通用页面模板：编写独立预览，并加入 Page Registry。一次性页面内部组件不强制注册。
 - 注册文件位于 `src/containers/DesignPlayground/gallery/`。不要把开发注册表导入正式组件或业务入口，避免生产打包设计工具。

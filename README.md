@@ -22,6 +22,7 @@ AI 开发总入口见 [AGENTS.md](AGENTS.md)。按任务选择规范，不要求
 - [AI Design Guidelines](docs/ai-design-guidelines.md)：图片设计、原型、图片转代码、组件和业务开发四种独立能力。
 - [页面模板](docs/page-templates.md)：当前模板用途和复用边界。
 - [业务开发指南](docs/development.md)：路由、Redux、接口、表单与 Mock 详细示例。
+- [shadcn 查询与可选工具](docs/shadcn-discovery.md)：官方文档、仓库及 CLI 查询；Skill / MCP 可选，不要求安装。
 - [单元与组件测试](docs/unit-testing.md)：Vitest、React Testing Library 与既有 Node 测试的分工和示例。
 - [浏览器验证](docs/browser-verification.md)：Playwright、Mock E2E、视觉基准、报告和 Trace。
 
@@ -150,7 +151,9 @@ AGENTS.md                            AI 开发规范入口
 
 ## UI 和样式
 
-优先组合 `src/components/ui/` 下的 shadcn/ui 组件。添加组件：
+先检查项目公共组件和 Component Gallery，再查询缺失能力的官方文档、仓库或 CLI；官方 Skill / MCP 不是开发前提，也不会自动配置到用户环境。查询入口和示例见 [shadcn 查询与可选工具](docs/shadcn-discovery.md)。
+
+优先组合 `src/components/ui/` 下的 shadcn/ui 组件。确认组件缺失且适用后按需添加：
 
 ```bash
 npx shadcn@latest add dialog table select
