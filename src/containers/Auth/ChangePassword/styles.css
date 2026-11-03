@@ -1,0 +1,10 @@
+.formPlacement {
+  padding-top: clamp(var(--layout-gap), 8vh, calc(var(--panel-space) * 3));
+}
+
+/* 手机和矮屏减少额外留白，表单仍按内容自然撑高。 */
+@media (width < 768px), (height < 700px) {
+  .formPlacement {
+    padding-top: var(--layout-gap);
+  }
+}

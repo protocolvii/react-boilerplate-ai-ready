@@ -33,10 +33,10 @@ const Home = () => {
       <Helmet title={config.app.title} />
       <MainHeader />
       <MainMenu defaultSelectedKeys={['home']} defaultOpenKeys={['home']} />
-      <MainPage>
+      <MainPage fill>
         <PageHeader breadcrumb={breadcrumb} title="控制台" info="这里是介绍" />
-        <PageContent>
-          <PageSection>
+        <PageContent fill>
+          <PageSection fill>
             <div className={styles.content}>内容</div>
           </PageSection>
         </PageContent>

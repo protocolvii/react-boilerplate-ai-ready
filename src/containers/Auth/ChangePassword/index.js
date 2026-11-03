@@ -12,6 +12,7 @@ import { clearError, changePassword } from '../actions';
 import { selectError, selectSubmitting, selectOptSuccess } from '../selectors';
 import { MainHeader, MainMenu, PageHeader, PageContent, FormBox, MainPage, PageSection } from '../../../components';
 import config from '../../../config';
+import styles from './styles.css';
 const ChangePassword = () => {
   const pending = useRef(false);
   const form = useForm({ resolver: zodResolver(changePasswordSchema), defaultValues: { oldpassword: '', password: '', repassword: '' }, mode: 'onSubmit', reValidateMode: 'onChange' });
@@ -59,69 +60,71 @@ const ChangePassword = () => {
       <Helmet title={`修改密码 - ${config.app.title}`} />
       <MainHeader />
       <MainMenu />
-      <MainPage>
+      <MainPage fill>
         <PageHeader breadcrumb={[{ name: '首页', link: '/' }, { name: '修改密码' }]} title="修改密码" />
-        <PageContent>
-          <PageSection>
-            <FormBox>
-              <form noValidate onSubmit={onSubmit} className="space-y-3 pb-4" aria-busy={submitting || isSubmitting}>
-                <Field className="gap-2">
-                  <FieldLabel htmlFor="oldpassword">原密码</FieldLabel>
-                  <div className="space-y-1">
-                    <Input
-                      {...form.register('oldpassword')}
-                      id="oldpassword"
-                      type="password"
-                      autoComplete="current-password"
-                      aria-required="true"
-                      aria-invalid={!!errors.oldpassword}
-                      aria-describedby={errors.oldpassword ? 'oldpassword-error' : undefined}
-                    />
-                    <div className="min-h-4">
-                      <FieldError id="oldpassword-error" className="text-xs leading-4">
-                        {errors.oldpassword?.message}
-                      </FieldError>
+        <PageContent fill>
+          <PageSection fill>
+            <div className={styles.formPlacement}>
+              <FormBox>
+                <form noValidate onSubmit={onSubmit} className="space-y-3 pb-4" aria-busy={submitting || isSubmitting}>
+                  <Field className="gap-2">
+                    <FieldLabel htmlFor="oldpassword">原密码</FieldLabel>
+                    <div className="space-y-1">
+                      <Input
+                        {...form.register('oldpassword')}
+                        id="oldpassword"
+                        type="password"
+                        autoComplete="current-password"
+                        aria-required="true"
+                        aria-invalid={!!errors.oldpassword}
+                        aria-describedby={errors.oldpassword ? 'oldpassword-error' : undefined}
+                      />
+                      <div className="min-h-4">
+                        <FieldError id="oldpassword-error" className="text-xs leading-4">
+                          {errors.oldpassword?.message}
+                        </FieldError>
+                      </div>
                     </div>
-                  </div>
-                </Field>
-                <Field className="gap-2">
-                  <FieldLabel htmlFor="new-password">新密码</FieldLabel>
-                  <div className="space-y-1">
-                    <Input
-                      {...form.register('password')}
-                      id="new-password"
-                      type="password"
-                      autoComplete="new-password"
-                      aria-required="true"
-                      aria-invalid={!!errors.password}
-                      aria-describedby={errors.password ? 'new-password-error' : undefined}
-                      placeholder="6～20 位密码"
-                    />
-                    <div className="min-h-4">
-                      <FieldError id="new-password-error" className="text-xs leading-4">
-                        {errors.password?.message}
-                      </FieldError>
+                  </Field>
+                  <Field className="gap-2">
+                    <FieldLabel htmlFor="new-password">新密码</FieldLabel>
+                    <div className="space-y-1">
+                      <Input
+                        {...form.register('password')}
+                        id="new-password"
+                        type="password"
+                        autoComplete="new-password"
+                        aria-required="true"
+                        aria-invalid={!!errors.password}
+                        aria-describedby={errors.password ? 'new-password-error' : undefined}
+                        placeholder="6～20 位密码"
+                      />
+                      <div className="min-h-4">
+                        <FieldError id="new-password-error" className="text-xs leading-4">
+                          {errors.password?.message}
+                        </FieldError>
+                      </div>
                     </div>
-                  </div>
-                </Field>
-                <Field className="gap-2">
-                  <FieldLabel htmlFor="repassword">确认新密码</FieldLabel>
-                  <div className="space-y-1">
-                    <Input {...form.register('repassword')} id="repassword" type="password" autoComplete="new-password" aria-required="true" aria-invalid={!!errors.repassword} aria-describedby={errors.repassword ? 'repassword-error' : undefined} />
-                    <div className="min-h-4">
-                      <FieldError id="repassword-error" className="text-xs leading-4">
-                        {errors.repassword?.message}
-                      </FieldError>
+                  </Field>
+                  <Field className="gap-2">
+                    <FieldLabel htmlFor="repassword">确认新密码</FieldLabel>
+                    <div className="space-y-1">
+                      <Input {...form.register('repassword')} id="repassword" type="password" autoComplete="new-password" aria-required="true" aria-invalid={!!errors.repassword} aria-describedby={errors.repassword ? 'repassword-error' : undefined} />
+                      <div className="min-h-4">
+                        <FieldError id="repassword-error" className="text-xs leading-4">
+                          {errors.repassword?.message}
+                        </FieldError>
+                      </div>
                     </div>
+                  </Field>
+                  <div className="pt-1">
+                    <Button type="submit" disabled={submitting || isSubmitting}>
+                      {submitting || isSubmitting ? '提交中…' : '提交'}
+                    </Button>
                   </div>
-                </Field>
-                <div className="pt-1">
-                  <Button type="submit" disabled={submitting || isSubmitting}>
-                    {submitting || isSubmitting ? '提交中…' : '提交'}
-                  </Button>
-                </div>
-              </form>
-            </FormBox>
+                </form>
+              </FormBox>
+            </div>
           </PageSection>
         </PageContent>
       </MainPage>

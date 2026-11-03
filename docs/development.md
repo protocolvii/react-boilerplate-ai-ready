@@ -43,7 +43,8 @@ MainMenu 根据 URL 自动显示选中状态并展开祖先菜单，不接收 `d
 Helmet 从 `react-helmet-async` 导入，config 从 `@/config` 导入。面包屑格式是 `{ name, link }`，当前页面可以省略 link。
 
 - `PageHeader`：breadcrumb、title、info、actions、children、paddingBottom。
-- `PageSection`：children、paddingTop、minHeight、marginTop。
+- `PageSection`：children、paddingTop、minHeight、marginTop、fill。
+- 内容区需延伸到视口底部时，配合使用 `<MainPage fill>`、`<PageContent fill>`、`<PageSection fill>`。Flex 分配标题下方的剩余高度，底部保留现有页面间距；内容超出时自然撑高并滚动。默认不开启，不写死标题高度或限制表单高度。
 - `FormBox`：表单内容宽度与布局容器。
 - `PageSearch`、`ListToolbar`：搜索区和列表工具栏容器。
 - 业务分页从 `@/components` 导入 `Pagination`，参数是 **page、perPage、total、onChange**。不要使用其他组件库的 current、pageSize、showTotal 等参数。
