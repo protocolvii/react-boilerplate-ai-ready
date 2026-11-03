@@ -34,6 +34,8 @@ test('生产构建无 Playground、设计写入接口和 Mock API', async ({ pag
 test('生产首页与修改密码路由正常，登录后仍无设计入口', async ({ page }) => {
   await backendStub(page);
   await login(page, { heading: '首页' });
+  await expect(page.locator('header [data-slot="app-logo"]')).toBeVisible();
+  expect(await page.evaluate(async () => (await fetch(document.querySelector('link[rel="icon"]').href)).ok)).toBe(true);
   await expect(page.locator('header').getByRole('link', { name: '设计系统', exact: true })).toHaveCount(0);
   await expect(page.getByRole('link', { name: '打开设计系统', exact: true })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: '先确定项目外观', exact: true })).toHaveCount(0);

@@ -52,6 +52,28 @@ src/containers/DesignPlayground/  开发预览、配置面板、组件与页面�
 
 Token 目录和 main.css 是全局 CSS，其余业务 `.css` 仍默认使用 CSS Modules。不要在 Token 文件使用局部类名导出。
 
+## Branding：示例品牌与个性化
+
+默认终端窗口、`>_` 提示符与圆润 AI 星光仅是脚手架示例品牌，不要求新项目沿用 React Boilerplate AI Ready。产品名称和图形可独立修改；用户提供 PNG、SVG 等品牌资产时优先使用指定文件，不替用户强制设计另一套品牌。
+
+统一入口是 `src/config.js` 的 `createConfig` 返回值中的 `app`：
+
+```js
+app: {
+  title: '设备监测管理系统', // Header、登录页、网页标题统一读取
+  showLogo: true,          // false 仅隐藏页面中的图形，名称仍正常显示
+  logoSize: 28,            // 图形尺寸，单位 px
+  logoSrc: null           // null 使用默认 SVG；图片可填写 '/branding/company-logo.svg'
+}
+```
+
+- `AppLogo` 位于 `src/components/AppLogo/index.js`，负责默认 SVG 或替换图片，支持 size、className、src、label。默认装饰图形不重复朗读品牌名；单独使用时可传 label 提供可访问名称。
+- `BrandIdentity` 位于 `src/components/BrandIdentity/index.js`，组合图形与产品名，默认读取上述配置；Header 和登录页复用它。支持 name、showLogo、logoSize、logoSrc 以及 className / textClassName 局部覆盖。不要在多个页面分别硬编码名称或复制 SVG，不将 Branding 状态放入 Redux。
+- 替换图片：将用户资产放到 `public/branding/`，设置 `app.logoSrc` 为对应的 `/branding/...` URL；开发与构建均由 Vite 原生处理。`config.js` 同时在 Node 构建阶段读取，不在其中直接导入 PNG / SVG。需要使用 src 内资源时，可在品牌组件中通过 Vite 导入。
+- 调整默认矢量、全新 Logo 或单色风格时优先改 AppLogo。默认 SVG 使用 currentColor / text-primary，六种主题组合共享同一图形，不增加独立主题图片。className 可控制默认尺寸和外观，显式 size 优先于尺寸类。
+- Favicon 单独使用 `src/assets/branding/favicon.svg` 的简化图形，由 `src/template/index.html` 引用并经 Vite 处理。浏览器标签图标不继承应用 CSS Tokens，使用固定蓝色的透明背景图形；更换品牌时同步替换此文件或模板链接。showLogo / logoSrc 不自动更改 favicon。
+- 品牌示例不纳入普通业务 Component Gallery，无需新增 Registry 条目或编辑器。品牌修改后检查 Header、登录页、三套预设的浅深色、移动端长名称和 favicon；产品名应保留在隐藏 Logo 的状态下。
+
 ## Token 分层
 
 主题文件把原始颜色映射到语义变量；Tailwind 的 `@theme inline` 将这些变量映射为工具类；组件消费语义工具类或 CSS 变量。业务层不直接依赖预设名称。

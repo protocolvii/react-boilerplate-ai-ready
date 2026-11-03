@@ -9,8 +9,9 @@ import { Field, FieldLabel, FieldError } from '../../components/ui/field';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from './schema';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent } from '../../components/ui/card';
 import config from '../../config';
+import BrandIdentity from '../../components/BrandIdentity';
 import { getLoginDestination } from '../../utils/navigation';
 import { clearError, submit, login } from './actions';
 import { selectError, selectSubmitting, selectToken, selectExp } from './selectors';
@@ -62,9 +63,10 @@ const Login = () => {
     <main className="flex min-h-screen items-center justify-center bg-muted/40 p-4">
       <Helmet title={`登录 - ${config.app.title}`} />
       <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle className="break-all text-xl">{config.app.title}</CardTitle>
-          <CardDescription>输入账号密码登录管理后台</CardDescription>
+        <CardHeader className="grid-rows-1 pb-5">
+          <CardTitle className="text-xl">
+            <BrandIdentity logoSize={config.app.logoSize + 4} className="justify-center text-center" textClassName="whitespace-normal break-words" />
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <form noValidate onSubmit={onSubmit} className="space-y-3 pb-4" aria-busy={submitting || isSubmitting}>

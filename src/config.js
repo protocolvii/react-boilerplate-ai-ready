@@ -24,7 +24,13 @@ export const createConfig = (stage = 'dev') => {
     host,
     hotLoadPort,
     stage,
-    app: { title: 'React Boilerplate AI Ready' },
+    app: {
+      title: 'React Boilerplate AI Ready',
+      showLogo: true,
+      logoSize: 28,
+      // 自定义图片可放在 public/branding/，填写 /branding/logo.svg；为空时使用默认 SVG。
+      logoSrc: null
+    },
     ...environments[stage]
   };
 };

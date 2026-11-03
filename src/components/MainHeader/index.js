@@ -7,7 +7,7 @@ import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuIte
 import { logout } from '../../containers/Auth/actions';
 import { getMyInfo } from '../../containers/User/actions';
 import { selectUser } from '../../containers/User/selectors';
-import config from '../../config';
+import BrandIdentity from '../BrandIdentity';
 import { getOrRefreshToken } from '../../utils/auth';
 import { selectToken } from '../../containers/Auth/selectors';
 import { useLayout } from '../../design-system/layouts/context';
@@ -42,8 +42,8 @@ const MainHeader = () => {
         <Button variant="ghost" size="icon" className="ds-navigation-trigger shrink-0" onClick={() => setMobileOpen(true)} aria-label="打开导航" aria-expanded={mobileOpen} aria-controls="main-navigation-drawer">
           <Menu />
         </Button>
-        <Link to="/" className="truncate text-base font-semibold md:text-lg">
-          {config.app.title}
+        <Link to="/" className="min-w-0 text-base font-semibold md:text-lg">
+          <BrandIdentity />
         </Link>
       </div>
       <div className="flex shrink-0 items-center gap-1">

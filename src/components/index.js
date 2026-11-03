@@ -20,8 +20,12 @@ import PageSection from './PageSection';
 import FormBox from './FormBox';
 import ListToolbar from './ListToolbar';
 import Pagination from './Pagination';
+import AppLogo from './AppLogo';
+import BrandIdentity from './BrandIdentity';
 
 export {
+  AppLogo,
+  BrandIdentity,
   ValidationPopover,
   DatePicker,
   ProgressBar,

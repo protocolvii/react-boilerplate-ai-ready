@@ -45,6 +45,7 @@
 
 ## 设计与 Gallery
 
+- 品牌配置集中在 src/config.js 的 app（title、showLogo、logoSize、logoSrc），图形与名称由 AppLogo / BrandIdentity 复用。默认 Logo 是可替换演示资产，按用户要求替换、隐藏或使用指定品牌文件，不强制沿用脚手架品牌、不重复改各页面；品牌资产无需普通组件 Gallery。详见 [Branding 规范](docs/design-system.md#branding示例品牌与个性化)。
 - 当前 Design Profile 以源码和用户确认结果为准；默认 Modern SaaS / Light / Default / Standard Admin。不要擅自改动项目整体风格。
 - Preset、颜色模式、密度、布局互相独立；复用现有 AppearanceProvider / LayoutProvider，不创建第二套主题或配置系统。
 - 用 bg-background、text-foreground、bg-card、border-border 等语义 Token；状态色不跟随品牌色改变含义。
