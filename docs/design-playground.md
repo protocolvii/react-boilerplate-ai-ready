@@ -1,6 +1,6 @@
 # Design Playground
 
-这是长期存在于本地开发环境中的设计参考与验证工具。通过应用右上角调色板图标或 `/design-playground` 进入，生产与 staging 无入口和路由。它不调用 AI、不生成设计稿、不承载正式业务。
+这是长期存在于本地开发环境中的设计参考与验证工具。通过应用右上角开发工具菜单中的“设计系统”或 `/design-playground` 进入，生产与 staging 无入口和路由。它不调用 AI、不生成设计稿、不承载正式业务。
 
 ## 三个组成部分
 
@@ -49,7 +49,7 @@ Agent 先确认目标是基础主题、项目覆盖还是组件样式，再修�
 
 ### 开发和生产边界
 
-路由、顶部开发工具入口、lazy import 都由 `import.meta.env.DEV` 控制。`npm run dev` / `dev:mock` 的右上角调色板图标直接进入 Playground，不再提供外观设置弹出菜单。生产和 staging 构建不注册路由、不显示该图标，也不生成 Playground / ComponentGallery 专用 JS 分包。生产访问 `/design-playground` 显示 404。正式应用使用项目配置的默认外观，保留 Provider 与主题能力，但暂不向最终用户提供外观选择界面。
+路由、顶部开发工具入口、lazy import 都由 `import.meta.env.DEV` 控制。`npm run dev` / `dev:mock` 的右上角调色板图标打开开发工具菜单，提供“设计系统”和“使用向导”，不提供独立外观设置界面。生产和 staging 构建不注册路由、不显示该图标，也不生成 Playground / ComponentGallery 专用 JS 分包。生产访问 `/design-playground` 显示 404。正式应用使用项目配置的默认外观，保留 Provider 与主题能力，但暂不向最终用户提供外观选择界面。
 
 ## Component Registry：新增公共组件
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch, useStore } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { LogOut, KeyRound, User, Menu, Palette } from 'lucide-react';
+import { LogOut, KeyRound, User, Menu, Palette, BookOpen } from 'lucide-react';
 import { Button } from '../ui/button';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from '../ui/dropdown-menu';
 import { logout } from '../../containers/Auth/actions';
@@ -48,11 +48,27 @@ const MainHeader = () => {
       </div>
       <div className="flex shrink-0 items-center gap-1">
         {import.meta.env.DEV && (
-          <Button variant="ghost" size="icon" asChild>
-            <Link to="/design-playground" aria-label="设计系统" title="设计系统（开发工具）">
-              <Palette className="size-4" />
-            </Link>
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="开发工具" title="开发工具">
+                <Palette className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem asChild>
+                <Link to="/design-playground">
+                  <Palette />
+                  设计系统
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="/getting-started">
+                  <BookOpen />
+                  使用向导
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         )}
         {token ? (
           <DropdownMenu>

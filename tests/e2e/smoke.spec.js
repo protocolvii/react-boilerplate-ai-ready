@@ -4,7 +4,7 @@ import { login } from './helpers.js';
 test('Mock 登录后首页正常渲染，刷新保持首页', async ({ page }) => {
   await login(page);
   await page.reload();
-  await expect(page.getByRole('heading', { name: '控制台', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: '使用向导', exact: true })).toBeVisible();
   await expect(page).toHaveURL('/');
 });
 

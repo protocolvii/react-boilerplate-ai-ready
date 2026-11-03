@@ -91,7 +91,7 @@ test('桌面与触屏横竖屏导航正常，组件库和模板可切换', async
       await opener.click();
       const drawer = page.getByRole('dialog', { name: '工作区导航', exact: true });
       await expect(drawer).toBeVisible();
-      await expect(drawer.getByRole('link', { name: '控制台', exact: true })).toBeVisible();
+      await expect(drawer.getByRole('link', { name: '使用向导', exact: true })).toBeVisible();
       await page.keyboard.press('Escape');
       await expect(drawer).toBeHidden();
       await noPageOverflow(page);

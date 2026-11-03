@@ -17,9 +17,22 @@
 4. 需要菜单入口时，在 `src/components/MainMenu/items.js` 的 `menuItems` 数组中添加 `{ to: '/articles', label: '文章管理', icon: FileText }`，并从 `lucide-react` 导入图标。
 5. 页面使用 Redux 模块时，在 `src/reducers.js` 的 `combineReducers` 中注册 reducer，字段名必须与 selector 一致。
 
+### 首个业务模块与默认使用向导
+
+脚手架开发环境的 `/` 默认显示 `GettingStarted` 使用向导，`/getting-started` 是稳定的开发专用地址；生产首页暂由 `Start` 显示空状态。两个向导入口与页面分包均不进入生产构建。
+
+首次接入正式业务模块时，AI Agent 应同时：
+
+1. 在 `src/components/MainMenu/items.js` 用正式业务菜单替换默认“使用向导”，保留递归子菜单能力；业务菜单不能继续包在开发环境条件中。
+2. 将 `src/routes.js` 的 `/` 替换为业务首页，或用 React Router 跳转到已接入的首个业务路由，保留登录保护；有多个首页候选时先确认。
+3. 保留开发环境 `/getting-started`、`GettingStarted` 的条件 lazy 加载及右上角“开发工具 → 使用向导”，不要把向导当成业务功能删除或暴露给正式用户。
+4. 更新登录成功落点相关测试，验证业务首页、菜单、刷新及开发 / 生产差异。
+
+后续新增业务页面不必重复调整首页。向导本身无需 Redux，也不注册到 Page Gallery。
+
 MainMenu 根据 URL 自动显示选中状态并展开祖先菜单，不接收 `defaultSelectedKeys`、`defaultOpenKeys` 等参数。叶节点默认精确匹配，设置 `end: false` 可匹配详情等子路由。分组使用 `{ key, label, icon, children: [...] }`，支持递归子菜单；分组点击展开，叶节点 `to` 负责跳转。侧栏收起时使用 DropdownMenu 展示子导航，移动端在 Sheet 内展开。Playground 内部页签使用 `?view=`，与浏览器前进后退同步；不作为左侧业务子菜单。
 
-参考页面：`src/containers/Home/index.js` 的布局和 `src/containers/Auth/ChangePassword/index.js` 的完整表单交互。异步业务按 [Redux 模块模板](redux-development.md) 实现；可运行的组件、表单和页面组合示例见 Design Playground。
+参考页面：`src/containers/GettingStarted/index.js` 的布局和 `src/containers/Auth/ChangePassword/index.js` 的完整表单交互。异步业务按 [Redux 模块模板](redux-development.md) 实现；可运行的组件、表单和页面组合示例见 Design Playground。
 
 ## 页面布局与组件 API
 

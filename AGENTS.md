@@ -54,12 +54,13 @@
 - 页面优先使用 StandardAdminLayout / WorkspaceLayout / MonitoringLayout，允许动态布局时使用 PageLayout。它们已含顶部与侧栏，不重复挂载。
 - 新增可复用公共组件：编写 Preview，并加入 Component Registry；新增通用页面模板：编写独立预览，并加入 Page Registry。一次性页面内部组件不强制注册。
 - 注册文件位于 `src/containers/DesignPlayground/gallery/`。不要把开发注册表导入正式组件或业务入口，避免生产打包设计工具。
-- 设计系统仅开发环境可用，右上角图标直达，左侧不放设计菜单。生产不提供该路由、入口或外观选择界面。子菜单机制仍支持 children。
+- 设计系统与使用向导仅开发环境可用，从右上角开发工具下拉菜单进入；左侧不放设计菜单。生产不提供这些开发路由、入口或外观选择界面，向导按开发条件 lazy 加载。子菜单机制仍支持 children。
 - 项目默认外观和布局以 `src/design-system/project-design.json` 为准，不自动使用外观缓存或 System 模式。Playground 调整先临时预览；导出取已保存配置、复制取当前预览、导入先恢复预览、保存才同步项目 JSON 与生成 CSS，且不自动 Git 提交。覆盖顺序和操作边界见 [项目设计配置源码](docs/design-system.md#项目设计配置源码)；不集成 AI API、对话、图片服务或 Draft 数据库。
 
 ## 业务关键约束
 
 - `src/routes.js` 使用 `{ path, component, needAuth }`；业务后台默认 needAuth:true。路由组件从 containers 统一导出，不用其他路由配置 API。
+- 首个正式业务模块接入时，移除左侧默认“使用向导”菜单，用业务菜单替换，并将 `/` 的默认向导 / 空状态改为实际业务首页或使用 React Router 跳转到首个业务路由。保留 `/getting-started` 的开发专用路由及右上角向导入口，不删除向导源码，不影响后续查阅；未要求业务首页时先与用户确认入口。
 - 菜单配置在 `src/components/MainMenu/items.js`，分组使用 `{ key, label, icon, children }`，叶节点使用 to；根据 URL 选中，不传 Ant Design 菜单参数。
 - 业务接口与 Redux 按 [统一模块套路](docs/redux-development.md) 开发：领域内按需维护 api / actions / reducer / selectors，在 src/reducers.js 注册并与 selector 对齐。临时请求可用普通 thunk，表单草稿和弹窗保持本地；不要为每个接口另建模块。
 - action type 加模块大写前缀；createAction / createActionAsync、createReducer 的 REQUEST / SUCCESS / FAILURE 与 Immer 用法见业务开发指南，不套用其他 Redux 库示例。

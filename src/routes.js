@@ -1,16 +1,21 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { App, DesignPlayground, PrivateRoute, Home, NotFound, Login, ChangePassword } from './containers';
+import { App, DesignPlayground, PrivateRoute, Start, GettingStarted, NotFound, Login, ChangePassword } from './containers';
 
 export const routes = [
   {
     path: '/*',
     component: App,
     routes: [
-      { path: '/', component: Home, needAuth: true },
+      { path: '/', component: import.meta.env.DEV ? GettingStarted : Start, needAuth: true },
       { path: '/change-password', component: ChangePassword, needAuth: true },
       { path: '/login', component: Login },
-      ...(import.meta.env.DEV ? [{ path: '/design-playground', component: DesignPlayground }] : []),
+      ...(import.meta.env.DEV
+        ? [
+            { path: '/design-playground', component: DesignPlayground },
+            { path: '/getting-started', component: GettingStarted, needAuth: true }
+          ]
+        : []),
       { path: '*', component: NotFound }
     ]
   }

@@ -2,7 +2,7 @@ import { test, expect } from './fixtures.js';
 import { login, noPageOverflow, stablePage } from './helpers.js';
 
 for (const [route, name] of [
-  ['/', '控制台'],
+  ['/', '使用向导'],
   ['/change-password', '修改密码']
 ]) {
   test(`${name} 内容面板填满剩余高度，保留底部间距并容纳长内容`, async ({ page, isMobile }, testInfo) => {

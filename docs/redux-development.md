@@ -295,7 +295,7 @@ export default reducer;
 - `RESET_SUBMIT` 只清除本次提交结果，进入编辑 / 打开弹窗及消费结果后按需执行。
 - `CLEAR_ARTICLE_LIST` 只清列表，`INIT_DATA` 重置整个领域；共享模块不要在每个子组件挂载时全部重置。
 - 清理状态不等于取消请求；同一槽可能并发时按后面的 requestId 分支处理，不能认为 initData 可阻止旧响应回来。
-- 默认翻页替换 items；只有明确的“加载更多”才追加，并另行处理重置、去重和页序，不能复制旧 Home 示例的自动 concat 当成所有列表的规则。
+- 默认翻页替换 items；只有明确的“加载更多”才追加，并另行处理重置、去重和页序，不能将自动 concat 当成所有列表的规则。
 
 ### selectors.js
 
@@ -330,7 +330,7 @@ export const selectCurrentArticle = createSelector(selectArticle, data => ({
 ## 工程接入顺序
 
 1. 先确认接口方法、路径、参数、响应数据与业务错误；在现有领域按需建立四文件。
-2. 在 `src/reducers.js` 导入 reducer 并注册 `article`，与 selector 的 `state.article` 一致；保留 auth / home / user 和 RESET_STATE 全树清理。
+2. 在 `src/reducers.js` 导入 reducer 并注册 `article`，与 selector 的 `state.article` 一致；保留 auth / user 和 RESET_STATE 全树清理。
 3. 页面通过 actions 发起请求、通过 selectors 读状态；按 [页面接入规范](development.md#新增页面的接入步骤) 完成 containers 导出、路由和条件性的菜单，业务页面默认 needAuth:true。
 4. 缺后端时在 `vite/mock-api.mjs` 补同协议的明确路由；未知接口仍应 404。Gallery 本地示例不是这些接口的 Mock。
 5. 按任务测试状态机、交互与实际请求；不要因为四文件存在就声称功能已完成。
@@ -459,7 +459,7 @@ export const deleteArticleOnce = id => (dispatch, getState) => deleteArticleApi(
 - 普通 thunk：由调用方处理原始错误，不能套 `.failure.err`。第三方或表单逻辑的错误同样按其实际形状处理。
 - 服务器字段错误只有在接口和 request 实际传递时才能映射。当前 request 的业务错误标准化仅保留 status、statusText、errcode、errmsg；不要凭空解构 field_errors。确需字段级协议时先确认公共封装的适配范围和测试，再按 [表单规范](form-development.md#服务器错误) 映射已知字段，不绕过 request 重写鉴权。
 - 参考项目中“清错误顺便重置 loading / 成功”、统一 isFetching 控制所有操作、整包遍历 body 写状态、未 catch 的 dispatch、失败后仍 resolve、旧路由与 Ant Design API 均不作为新模块模板。
-- 当前 Home 中仍有教学或历史写法；以本文和实际契约为新代码规范，不机械复制历史实现，也不为统一文档重构现有 Auth / Home。
+- GettingStarted 是不需要接口状态的使用向导页，不创建 Redux 模块；新业务按本文和实际契约开发，不为统一写法重构现有鉴权流程。
 
 ## AI 完成清单
 

@@ -73,7 +73,9 @@ npm run format          # 格式化
 
 ## 多主题 Design System
 
-本地开发时通过右上角调色板图标直接进入设计系统，也可打开 `/design-playground` 无需登录预览三种预设：Modern SaaS、Industrial Pro、Creative AI。支持浅色 / 深色、三种信息密度及 Standard Admin / Workspace / Monitoring 布局。调整先在预览会话中生效，点击“保存到项目”后写入项目默认配置和 Token 覆盖，供后续开发与生产构建使用。
+本地默认显示“使用向导”，也可从右上角开发工具菜单再次打开。向导地址为 `/getting-started`，包含简短 AI 提示词与项目仓库链接，仅开发环境可用。首个业务模块接入时，将左侧向导菜单和默认首页替换为业务入口，具体步骤见 [业务开发指南](docs/development.md#首个业务模块与默认使用向导)。
+
+本地开发时通过右上角开发工具（调色板图标）菜单进入设计系统，也可打开 `/design-playground` 无需登录预览三种预设：Modern SaaS、Industrial Pro、Creative AI。支持浅色 / 深色、三种信息密度及 Standard Admin / Workspace / Monitoring 布局。调整先在预览会话中生效，点击“保存到项目”后写入项目默认配置和 Token 覆盖，供后续开发与生产构建使用。
 
 页面顶层分为“页面模板”和“组件库”。页面模板包含通用列表页、Dashboard、工业监测、静态 AI 工作台；组件库提供基础与公共组件的真实交互示例。示例使用静态数据，不接业务数据接口或 AI 服务，全局顶栏支持恢复已有登录态。
 

@@ -1,12 +1,12 @@
 import { expect } from './fixtures.js';
 
-export async function login(page) {
+export async function login(page, { heading = '使用向导' } = {}) {
   await page.goto('/login');
   await page.getByLabel('用户名', { exact: true }).fill('admin');
   await page.getByLabel('密码', { exact: true }).fill('admin123');
   await page.getByRole('button', { name: '登录', exact: true }).click();
   await expect(page).toHaveURL('/');
-  await expect(page.getByRole('heading', { name: '控制台', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: heading, exact: true })).toBeVisible();
 }
 export async function openConfig(page) {
   await page.getByRole('button', { name: '打开设计配置', exact: true }).click();
