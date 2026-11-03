@@ -19,7 +19,7 @@
 
 MainMenu 根据 URL 自动显示选中状态并展开祖先菜单，不接收 `defaultSelectedKeys`、`defaultOpenKeys` 等参数。叶节点默认精确匹配，设置 `end: false` 可匹配详情等子路由。分组使用 `{ key, label, icon, children: [...] }`，支持递归子菜单；分组点击展开，叶节点 `to` 负责跳转。侧栏收起时使用 DropdownMenu 展示子导航，移动端在 Sheet 内展开。Playground 内部页签使用 `?view=`，与浏览器前进后退同步；不作为左侧业务子菜单。
 
-参考页面：`src/containers/Home/index.js` 的布局和 `src/containers/Auth/ChangePassword/index.js` 的完整表单交互。`src/containers/sample/` 是示意代码，尚未接入页面导出、路由和 reducer；使用前检查相对路径与接口，不将其当成已经完成的业务模块。
+参考页面：`src/containers/Home/index.js` 的布局和 `src/containers/Auth/ChangePassword/index.js` 的完整表单交互。异步业务按 [Redux 模块模板](redux-development.md) 实现；可运行的组件、表单和页面组合示例见 Design Playground。
 
 ## 页面布局与组件 API
 

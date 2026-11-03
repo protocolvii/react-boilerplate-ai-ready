@@ -459,7 +459,7 @@ export const deleteArticleOnce = id => (dispatch, getState) => deleteArticleApi(
 - 普通 thunk：由调用方处理原始错误，不能套 `.failure.err`。第三方或表单逻辑的错误同样按其实际形状处理。
 - 服务器字段错误只有在接口和 request 实际传递时才能映射。当前 request 的业务错误标准化仅保留 status、statusText、errcode、errmsg；不要凭空解构 field_errors。确需字段级协议时先确认公共封装的适配范围和测试，再按 [表单规范](form-development.md#服务器错误) 映射已知字段，不绕过 request 重写鉴权。
 - 参考项目中“清错误顺便重置 loading / 成功”、统一 isFetching 控制所有操作、整包遍历 body 写状态、未 catch 的 dispatch、失败后仍 resolve、旧路由与 Ant Design API 均不作为新模块模板。
-- 当前 Home / sample 中仍有教学或历史写法，sample 未接路由和 reducer；以本文和实际契约为新代码规范，不机械复制尚未接入的示意文件，也不为统一文档重构现有 Auth / Home。
+- 当前 Home 中仍有教学或历史写法；以本文和实际契约为新代码规范，不机械复制历史实现，也不为统一文档重构现有 Auth / Home。
 
 ## AI 完成清单
 
