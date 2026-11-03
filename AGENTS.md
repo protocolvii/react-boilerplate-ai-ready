@@ -29,6 +29,8 @@
 
 只加载与任务匹配的 Skill；简单文案和局部样式修复不执行创建流程。不支持自动发现的 Agent 可直接读取上述文件，仍按本文和 docs 执行；不要求安装个人级工具。
 
+发现检查、调用示例及其他 Agent 的可选兼容方式见 [项目 Skills 使用与验证](docs/agent-skills.md)。
+
 ## 技术和文件约定
 
 - React 19、React Router 7、Redux 5、React Redux、Thunk、Reselect、Immer、redux-act-reducer；Vite、Tailwind CSS 4。

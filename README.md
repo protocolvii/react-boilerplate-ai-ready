@@ -23,6 +23,7 @@ AI 开发总入口见 [AGENTS.md](AGENTS.md)。按任务选择规范，不要求
 - [页面模板](docs/page-templates.md)：当前模板用途和复用边界。
 - [业务开发指南](docs/development.md)：路由、Redux、接口、表单与 Mock 详细示例。
 - [shadcn 查询与可选工具](docs/shadcn-discovery.md)：官方文档、仓库及 CLI 查询；Skill / MCP 可选，不要求安装。
+- [项目 Skills 使用与验证](docs/agent-skills.md)：页面与组件开发流程、Agent 发现检查和可选兼容方式。
 - [单元与组件测试](docs/unit-testing.md)：Vitest、React Testing Library 与既有 Node 测试的分工和示例。
 - [浏览器验证](docs/browser-verification.md)：Playwright、Mock E2E、视觉基准、报告和 Trace。
 
