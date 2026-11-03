@@ -5,7 +5,7 @@
 ## AI 开发入口
 
 1. 阅读本文与 AGENTS.md，再检查实际组件源码。
-2. 默认使用 Modern SaaS、浅色模式、Default 密度和 Standard Admin 布局。
+2. 先读取项目已保存的 Design Profile；未定制时默认 Modern SaaS、浅色模式、Default 密度和 Standard Admin 布局。
 3. 新页面优先组合已有组件，不复制一套基础组件，不按主题写三套 JSX。
 4. 使用语义颜色，不把品牌蓝、紫色或状态颜色硬编码到业务页面。
 5. 外观状态通过 Provider 更新，不在页面直接修改根 class、data 属性或 localStorage。
@@ -20,13 +20,13 @@
 | Industrial Pro | 设备与运维监测      | 蓝青色、小圆角、低阴影、等宽指标、紧致节奏       |
 | Creative AI    | AI 工作区与创作工具 | 紫色、较大圆角、柔和阴影、宽松节奏、局部品牌渐变 |
 
-每个预设均定义 Light / Dark。颜色模式默认为 Light，支持手动切换 Dark；旧配置中的 System 自动归一化为 Light。预设不会强制更改用户密度或布局；例如 Creative AI 也能使用 Compact 和 Monitoring。
+每个预设均定义 Light / Dark。颜色模式以 `project-design.json` 中的默认值为准，脚手架初始值为 Light；不再支持 System 或系统偏好监听，旧 System 等无效值按当前项目默认模式归一化。预设不会强制更改用户密度或布局；例如 Creative AI 也能使用 Compact 和 Monitoring。
 
 - 密度：`default`、`comfortable`、`compact`。
 - 布局：`standard-admin`、`workspace`、`monitoring`。
-- 外观持久化键：`react-boilerplate:appearance:v1`。
-- 布局持久化键：`react-boilerplate:layout:v1`。
-- 存储不可用时使用默认值；无效字段归一化。外观支持跨标签页同步。
+- 默认预设、颜色模式、密度和布局统一读取 `src/design-system/project-design.json`。
+- 外观和布局不自动读写 localStorage，不监听系统颜色偏好，也不进行跨标签页存储同步。刷新后以源码配置为准。
+- Playground 的“暂存调整”是单独的预览草稿，不是正式项目外观缓存；存储不可用不影响默认配置加载。
 
 ## 文件结构
 
@@ -34,7 +34,7 @@
 src/design-system/
   appearance/settings.js     预设注册、默认值、校验、首屏脚本生成
   appearance/context.js      useAppearance
-  appearance/index.js        AppearanceProvider、系统偏好监听与持久化
+  appearance/index.js        AppearanceProvider、会话状态与临时预览
   layouts/context.js         布局注册与 useLayout
   layouts/provider.js        布局选择、移动端导航状态
   layouts/index.js           三种布局与动态 PageLayout
@@ -44,6 +44,8 @@ src/design-system/
   tokens/industrial-pro.css   工业预设的浅深色语义变量
   tokens/creative-ai.css      AI 预设的浅深色语义变量
   tokens/density.css          密度与响应式布局适配
+  tokens/project.css          从已保存配置生成的分组 Token 覆盖
+  project-design.json         默认外观、布局与已保存 Token 覆盖数据
 src/assets/css/main.css       全局导入、Tailwind @theme 映射和基础元素
 src/containers/DesignPlayground/  开发预览、配置面板、组件与页面注册表
 ```
@@ -152,7 +154,7 @@ import { PageHeader, PageContent } from '@/components';
 
 分组不负责跳转，点击可展开或收起；进入叶节点路由时自动展开祖先并高亮选中项。叶节点默认精确匹配，`end: false` 允许匹配详情子路由。侧栏收起时点击分组图标显示浮层，更深层级使用子浮层；移动端在抽屉内缩进展开。使用原生按钮、嵌套列表和 aria-expanded / aria-current 提供键盘和选中语义。
 
-侧栏不放置设计系统入口，业务菜单的递归 children、自动展开、选中和折叠浮层能力仍保留。Playground 自身的 Tabs 使用 `?view=data|monitoring|workspace|components` 与浏览器历史同步。业务页面通常直接使用独立路由，菜单不替代路由注册与登录保护；查询参数匹配可通过 defaultSearch 指定缺省查询值。
+侧栏不放置设计系统入口，业务菜单的递归 children、自动展开、选中和折叠浮层能力仍保留。Playground 顶层为“页面模板”和“组件库”；预览地址为 `/design-playground?view=list|data|monitoring|workspace|components`，分别对应通用列表页、Dashboard、工业监测、AI 工作台和组件库，缺省展示通用列表页，选择与浏览器历史同步。业务页面通常直接使用独立路由，菜单不替代路由注册与登录保护；查询参数匹配可通过 defaultSearch 指定缺省查询值。
 
 ## 密度
 
@@ -182,7 +184,7 @@ DataTable 列定义为 `{ key, header, sortable, render, className, headerClassN
 
 ## Playground 与协作规范
 
-使用与注册方法见 [Design Playground](design-playground.md)，通用模板见 [页面模板](page-templates.md)，不同设计任务的选择见 [AI Design Guidelines](ai-design-guidelines.md)。开发工具继续使用现有 Provider 和右侧配置面板，不是另一套主题或正式设计配置。
+使用与注册方法见 [Design Playground](design-playground.md)，通用模板见 [页面模板](page-templates.md)，不同设计任务的选择见 [AI Design Guidelines](ai-design-guidelines.md)。开发工具继续使用现有 Provider 和右侧配置面板，不创建另一套主题；调整先临时预览，明确保存后才成为项目源码配置。
 
 ## 验证与扩展检查
 
@@ -194,7 +196,7 @@ npm run format:check
 npm run build
 ```
 
-浏览器检查至少覆盖三预设 × 浅深两模式、系统偏好实时变化、刷新持久化，以及 1440 / 1024 / 390px。验证切换预设和布局时输入、搜索与弹窗状态不丢失；检查键盘 Tab、Escape、焦点恢复和移动端导航。默认、舒适、紧凑分别检查输入高度、表格与容器间距。
+修改全局 Token 后，浏览器检查至少覆盖三预设 × 浅深两模式，以及 1440 / 1024 / 390px；验证保存后刷新采用源码配置、撤销源码后刷新恢复，旧浏览器偏好不应覆盖源码。不测试已删除的 System 模式或自动外观缓存。验证切换预设和布局时输入、搜索与弹窗状态不丢失；检查键盘 Tab、Escape、焦点恢复和移动端导航。默认、舒适、紧凑分别检查输入高度、表格与容器间距。
 
 检查关键文本与相邻背景达到 WCAG AA 普通文字 4.5:1；状态不能仅用颜色；图表提供可读摘要；启用 reduced motion 时减少动画。自动检查不能代替真实屏幕阅读器与完整键盘人工审查。
 
@@ -211,4 +213,22 @@ npm run build
 
 ## 项目设计配置源码
 
-`project-design.json` 提供默认外观和布局，`tokens/project.css` 在基础主题后加载，记录设计面板保存的分组覆盖。外观和布局不再自动读写浏览器缓存，刷新后统一跟随源码，Git 撤销配置后不会被旧偏好覆盖；Playground 的“恢复项目配置”以源码默认值为准。保存按钮将当前预览外观同时应用于当前会话。普通调整仍不自动写文件，生产端不包含保存接口。
+各层职责以实际源码为准：
+
+- `src/design-system/project-design.json`：项目默认外观、布局及已保存的 `profiles` 数据，是设计面板管理配置的权威来源。Provider 从它读取默认外观和布局；Token 覆盖数据由开发服务生成 CSS 后应用。
+- `src/design-system/tokens/base.css`、`density.css` 和三套预设 CSS：基础设计规则与语义 Token。
+- `src/design-system/tokens/project.css`：根据已保存 `profiles` 生成的 CSS，在基础 Token 后导入，按预设、颜色模式和密度选择性覆盖；它与基础 Token 一起进入生产构建。
+- Playground：使用现有 Provider 临时切换外观和布局，并以内联变量预览 Token。普通调整不写源码；离开时清理页面中的临时覆盖，显式暂存的草稿保留在浏览器，重新进入时恢复。
+
+就 Playground 管理的全局 Token 而言，普通预览的覆盖顺序是：**基础 Token → project.css 中匹配分组的覆盖 → 当前手动预览覆盖**。完整 JSON 导入则按完整恢复处理，预览先排除旧项目覆盖，避免导入文件中不存在的旧值残留。
+
+| 操作            | 数据来源或效果                                                           | 是否修改源码        |
+| --------------- | ------------------------------------------------------------------------ | ------------------- |
+| 导出 JSON       | 读取项目已保存配置，不包含当前未保存调整                                 | 否                  |
+| 复制给 AI Agent | 复制当前预览配置；其 profiles 为预览调整，不能等同于项目已保存的完整覆盖 | 否                  |
+| 保存到项目      | 将当前确认的配置写入 project-design.json，同时生成 project.css           | 是，不自动 Git 提交 |
+| 导入 JSON       | 校验文件后完整恢复到预览，明确保存后才同步项目 JSON 与 CSS               | 导入时否            |
+
+外观和布局不自动读写浏览器缓存，刷新后统一跟随源码；Git 撤销配置后不会被旧偏好覆盖。“恢复项目配置”仅放弃当前未保存调整及预览草稿，不撤销已经写入的源码。保存将确认的外观同时应用于当前会话，生产端不提供保存接口。
+
+不要单独修改生成的 project.css 后期待面板继续保留这些修改：下次保存会按 JSON 重新生成。修改已保存的覆盖数据时，必须同步 JSON 与生成 CSS；修改基础设计规则时先检查是否被已保存或临时覆盖遮挡。具体合并、完整恢复与备份边界见 [Playground 保存到项目](design-playground.md#保存到项目) 和 [JSON 备份与导入](design-playground.md#json-备份与导入)。
