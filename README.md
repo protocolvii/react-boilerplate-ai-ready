@@ -21,6 +21,7 @@ AI 开发总入口见 [AGENTS.md](AGENTS.md)。按任务选择规范，不要求
 - [Design Playground](docs/design-playground.md)：设计配置、组件 / 页面注册与验证。
 - [AI Design Guidelines](docs/ai-design-guidelines.md)：图片设计、原型、图片转代码、组件和业务开发四种独立能力。
 - [页面模板](docs/page-templates.md)：当前模板用途和复用边界。
+- [Redux 与异步接口开发](docs/redux-development.md)：领域四文件模板、列表详情、增删改、普通 thunk、错误和并发边界。
 - [业务开发指南](docs/development.md)：路由、Redux、接口、表单与 Mock 详细示例。
 - [shadcn 查询与可选工具](docs/shadcn-discovery.md)：官方文档、仓库及 CLI 查询；Skill / MCP 可选，不要求安装。
 - [项目 Skills 使用与验证](docs/agent-skills.md)：页面与组件开发流程、Agent 发现检查和可选兼容方式。

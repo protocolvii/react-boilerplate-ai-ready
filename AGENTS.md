@@ -9,6 +9,7 @@
 | 任务                           | 最小阅读路径                                                                                                                                                          |
 | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 普通业务页面                   | [设计系统](docs/design-system.md) 的布局 / 组件规则 + [业务开发指南](docs/development.md) 的页面接入及所用功能章节                                                    |
+| 新增或修改异步接口、Redux 模块 | [Redux 与异步接口开发](docs/redux-development.md) 的文件分工、模板及当前业务流程章节；表单和 Mock 按需追加                                                            |
 | 新增或提取公共组件             | 设计系统相关规则 + [组件开发](docs/ai-design/component-development.md)，需要收录时再读 [Component Registry](docs/design-playground.md#component-registry新增公共组件) |
 | 新增通用页面模板               | 设计系统布局规则 + [页面模板](docs/page-templates.md) + [Page Registry](docs/design-playground.md#page-registry新增通用页面模板)；普通业务页不走此分支                |
 | 图片或截图实现页面             | [Design to Code](docs/ai-design/design-to-code.md) + 设计系统；接入业务时追加开发指南相关章节                                                                         |
@@ -18,7 +19,7 @@
 | 工具逻辑或组件测试             | [单元与组件测试](docs/unit-testing.md)                                                                                                                                |
 | 页面交互、响应式或截图验证     | [浏览器验证](docs/browser-verification.md)                                                                                                                            |
 
-发生对应操作时才追加阅读：新增 API / Redux / Mock 看开发指南相关章节；复杂表单或统一校验反馈看 [表单开发](docs/form-development.md)；新增公共资产看对应 Gallery 注册规则；实施测试看对应测试文档。统一按 [任务收尾检查](docs/development.md#任务收尾检查) 核对，不适用项无需机械执行。
+发生对应操作时才追加阅读：新增 API / Redux 看 [异步业务规范](docs/redux-development.md)；Mock 看开发指南相关章节；复杂表单或统一校验反馈看 [表单开发](docs/form-development.md)；新增公共资产看对应 Gallery 注册规则；实施测试看对应测试文档。统一按 [任务收尾检查](docs/development.md#任务收尾检查) 核对，不适用项无需机械执行。
 
 用户可以直接要求图片、原型、图片转代码或业务开发，不强制先画图或先做原型。文档不绑定具体 Agent；不能假定其他工具自动读取 AGENTS.md，需要时引导其读取本文件。
 
@@ -60,10 +61,10 @@
 
 - `src/routes.js` 使用 `{ path, component, needAuth }`；业务后台默认 needAuth:true。路由组件从 containers 统一导出，不用其他路由配置 API。
 - 菜单配置在 `src/components/MainMenu/items.js`，分组使用 `{ key, label, icon, children }`，叶节点使用 to；根据 URL 选中，不传 Ant Design 菜单参数。
-- Redux 只用于需要共享或异步管理的状态；本地交互用 Hooks。模块按需建 actions / api / reducer / selectors，在 src/reducers.js 注册。
+- 业务接口与 Redux 按 [统一模块套路](docs/redux-development.md) 开发：领域内按需维护 api / actions / reducer / selectors，在 src/reducers.js 注册并与 selector 对齐。临时请求可用普通 thunk，表单草稿和弹窗保持本地；不要为每个接口另建模块。
 - action type 加模块大写前缀；createAction / createActionAsync、createReducer 的 REQUEST / SUCCESS / FAILURE 与 Immer 用法见业务开发指南，不套用其他 Redux 库示例。
 - API 通过 `@/utils/api` 的 request 调用，默认鉴权，公开接口才设 needAuth:false。成功数据在 res.body / action.res.body，失败在 action.err；错误用 `@/utils/error` 提取。
-- dispatch 异步 action 返回的 Promise 不是业务 res.body，必须处理 reject。不重复弹通知，不在 render 中 toast；Root 已有全局 Toaster。
+- createActionAsync 的 dispatch 成功值在 action.success.res.body，失败原因在 rejected.failure.err；普通 thunk 以自身返回值为准。默认 action 不携带调用参数或 requestId，必须处理 reject。不重复弹通知，不在 render 中 toast；Root 已有全局 Toaster。
 - 复杂业务表单推荐 React Hook Form + Zod，字段反馈复用官方 FieldError，在输入框下预留一行紧凑错误区域，避免校验时表单跳动；分页跳转等紧凑工具栏使用 ValidationPopover 浮层；操作反馈用根节点统一 Sonner，辅助说明用 Tooltip；详见 [表单开发](docs/form-development.md)。简单搜索、分页和独立开关不强制 RHF；采用自定义错误 UI 时仅该 form 使用 noValidate，不全局禁用原生校验。列表处理加载 / 失败 / 空数据、搜索与分页条件。
 - 组件内通过 React Router 导航，组件外用 `@/utils/navigation`；不要整页刷新替代站内跳转。
 - 登录、token 刷新、localforage 缓存、退出清理已有封装，常规业务不修改；权限仍需后端校验。

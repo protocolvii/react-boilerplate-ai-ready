@@ -53,161 +53,9 @@ Helmet 从 `react-helmet-async` 导入，config 从 `@/config` 导入。面包�
 
 ## Redux 模块：一套连贯的实现示例
 
-本地输入、弹窗开关等 UI 状态使用 useState。页面需要共享数据、接口状态或与现有 Redux 流程整合时，再创建 Redux 模块；不要为每个组件机械创建整套文件。
+完整四文件模板、命名、状态分工及列表 / 详情 / 编辑 / 删除 / 上传流程统一维护在 [Redux 与异步接口开发](redux-development.md)。先判断是否需要共享业务状态，再按领域扩展 api、actions、reducer、selectors，不为每个弹窗机械建模块。
 
-以下示例对应 `src/containers/Article/`。`/articles` 接口和响应字段仅为示例，实际开发先确认 API 契约，不把示例地址当作已有后端。
-
-### api.js
-
-```js
-import { request } from '@/utils/api';
-
-export const getListApi = (options, dispatch, getState) => request({ endpoint: '/articles', method: 'GET', qs: options }, dispatch, getState);
-
-export const saveItemApi = (values, dispatch, getState) => request({ endpoint: '/articles', method: 'POST', body: values }, dispatch, getState);
-```
-
-createActionAsync 会将调用参数依次传给 API 函数，并在末尾附加 dispatch、getState。因此上面的 getList 必须传入 options 对象，例如 `getList({ page: 1, per_page: 10 })`；saveItem 传入表单对象。
-
-API 函数直接返回 request 的 Promise，不必增加只做原样抛出的 try/catch，也不在 API 中弹通知或处理 reducer 状态。
-
-### actions.js
-
-```js
-import { createAction, createActionAsync } from 'redux-act-reducer';
-import { getListApi, saveItemApi } from './api';
-
-const prefix = 'ARTICLE';
-export const GET_LIST = `${prefix}_GET_LIST`;
-export const SAVE_ITEM = `${prefix}_SAVE_ITEM`;
-export const CLEAR_ERROR = `${prefix}_CLEAR_ERROR`;
-export const RESET_SUBMIT = `${prefix}_RESET_SUBMIT`;
-
-export const getList = createActionAsync(GET_LIST, getListApi);
-export const saveItem = createActionAsync(SAVE_ITEM, saveItemApi);
-export const clearError = createAction(CLEAR_ERROR);
-export const resetSubmit = createAction(RESET_SUBMIT);
-```
-
-普通 action 携带参数时使用 `createAction(TYPE, 'field')`，reducer 中从 `action.field` 读取。模块 action type 使用模块名大写前缀，避免跨模块冲突。
-
-### reducer.js
-
-```js
-import { produce } from 'immer';
-import { createReducer } from 'redux-act-reducer';
-import { getErrorMessage } from '@/utils/error';
-import { GET_LIST, SAVE_ITEM, CLEAR_ERROR, RESET_SUBMIT } from './actions';
-
-const initialState = {
-  items: [],
-  page: 1,
-  per_page: 10,
-  record_count: 0,
-  isFetching: false,
-  listFailed: false,
-  submitting: false,
-  editSuccess: false,
-  error: ''
-};
-
-const reducer = createReducer(
-  {
-    [CLEAR_ERROR](state) {
-      return produce(state, draft => {
-        draft.error = '';
-      });
-    },
-    [RESET_SUBMIT](state) {
-      return produce(state, draft => {
-        draft.editSuccess = false;
-      });
-    },
-    [GET_LIST](state, action) {
-      return {
-        REQUEST() {
-          return produce(state, draft => {
-            draft.isFetching = true;
-            draft.listFailed = false;
-            draft.error = '';
-          });
-        },
-        SUCCESS() {
-          return produce(state, draft => {
-            const data = action.res.body;
-            draft.isFetching = false;
-            draft.items = data.items;
-            draft.page = data.page;
-            draft.per_page = data.per_page;
-            draft.record_count = data.record_count;
-          });
-        },
-        FAILURE() {
-          return produce(state, draft => {
-            draft.isFetching = false;
-            draft.listFailed = true;
-            draft.error = getErrorMessage(action.err);
-          });
-        }
-      };
-    },
-    [SAVE_ITEM](state, action) {
-      return {
-        REQUEST() {
-          return produce(state, draft => {
-            draft.submitting = true;
-            draft.editSuccess = false;
-            draft.error = '';
-          });
-        },
-        SUCCESS() {
-          return produce(state, draft => {
-            draft.submitting = false;
-            draft.editSuccess = true;
-          });
-        },
-        FAILURE() {
-          return produce(state, draft => {
-            draft.submitting = false;
-            draft.editSuccess = false;
-            draft.error = getErrorMessage(action.err);
-          });
-        }
-      };
-    }
-  },
-  initialState
-);
-
-export default reducer;
-```
-
-异步 action 的 type 不变，subType 是 REQUEST / SUCCESS / FAILURE；使用以上 createReducer 嵌套处理方式，不套用其他 Redux 库的写法。加载状态和提交状态分别处理；失败必须结束 pending 状态。根据接口字段显式更新数据，避免把整个响应的任意字段写入状态。
-
-在 `src/reducers.js` 中导入 `article` 并加入已有 combineReducers，保留 auth、home、user 及 RESET_STATE 处理：
-
-```js
-import article from './containers/Article/reducer';
-// 在已有的 combineReducers({ auth, home, user, ... }) 中加入 article。
-```
-
-### selectors.js
-
-```js
-import { createSelector } from 'reselect';
-const selectArticle = state => state.article;
-export const selectError = createSelector(selectArticle, data => data.error);
-export const selectFetching = createSelector(selectArticle, data => data.isFetching);
-export const selectListFailed = createSelector(selectArticle, data => data.listFailed);
-export const selectSubmitting = createSelector(selectArticle, data => data.submitting);
-export const selectEditSuccess = createSelector(selectArticle, data => data.editSuccess);
-export const selectList = createSelector(selectArticle, data => ({
-  items: data.items,
-  page: data.page,
-  per_page: data.per_page,
-  record_count: data.record_count
-}));
-```
+下文 Article 片段使用该模板的 getArticleList、createArticle、clearError、resetSubmit，以及对应 selectors；它们是教学契约，不是脚手架已有接口。新增模块必须在 src/reducers.js 注册，才能使用 state.article；保留现有 RESET_STATE 清理。
 
 ## 请求、鉴权与异步错误
 
@@ -230,7 +78,7 @@ request 负责鉴权 token 注入及业务错误判断，返回完整响应，�
 异步请求必须处理 reject，避免 unhandled rejection。如果 reducer 已写入错误，组件 catch 不重复弹通知：
 
 ```js
-dispatch(getList({ page: 1, per_page: 10 })).catch(() => {
+dispatch(getArticleList({ page: 1, per_page: 10 })).catch(() => {
   // reducer 处理失败状态，错误由页面 effect 展示。
 });
 ```
@@ -260,20 +108,20 @@ useEffect(() => {
 - 列表展示加载、空数据和失败状态；失败时不要将旧数据伪装成新查询结果。
 - 简单列表可以使用语义化 HTML table；需要 shadcn Table 时先通过 CLI 添加，不假设它已经存在。不直接引入另一套表格或请求框架。
 
-以下片段放在标准页面布局内，getList、selectors 与上面的 Article 示例一致：
+以下片段放在标准页面布局内，getArticleList、selectors 与 [Redux 指南的 Article 模板](redux-development.md#四文件模板) 一致：
 
 ```jsx
 const [name, setName] = useState('');
 const [query, setQuery] = useState('');
-const { items, page, per_page, record_count } = useSelector(selectList);
-const isFetching = useSelector(selectFetching);
+const { items, page, per_page, record_count } = useSelector(selectArticleList);
+const isFetching = useSelector(selectIsFetching);
 const listFailed = useSelector(selectListFailed);
 const err = useSelector(selectError);
 const dispatch = useDispatch();
 
 useEffect(() => {
   dispatch(clearError());
-  dispatch(getList({ page: 1, per_page: 10 })).catch(() => {});
+  dispatch(getArticleList({ page: 1, per_page: 10 })).catch(() => {});
 }, [dispatch]);
 // 同时按上一节添加错误通知 effect。
 
@@ -281,10 +129,10 @@ const search = event => {
   event.preventDefault();
   const value = name.trim();
   setQuery(value);
-  dispatch(getList({ page: 1, per_page, name: value })).catch(() => {});
+  dispatch(getArticleList({ page: 1, per_page, name: value })).catch(() => {});
 };
 const changePage = (nextPage, nextSize) => {
-  dispatch(getList({ page: nextSize === per_page ? nextPage : 1, per_page: nextSize, name: query })).catch(() => {});
+  dispatch(getArticleList({ page: nextSize === per_page ? nextPage : 1, per_page: nextSize, name: query })).catch(() => {});
 };
 ```
 
@@ -325,24 +173,17 @@ const changePage = (nextPage, nextSize) => {
 - 提交时禁用提交按钮，处理 reject。保存失败保留输入；成功后按需求导航或重置表单。
 - 编辑表单先加载详情，再填充字段。异步 defaultValue 不会自动刷新已有输入，使用受控状态，或在详情就绪后挂载表单。
 
-使用上面 Article 模块的保存流程：
+使用 [Redux 指南的 Article 模板](redux-development.md#四文件模板) 保存；此处采用 await 成功后统一反馈，不再监听 editSuccess：
 
 ```jsx
 const dispatch = useDispatch();
 const navigate = useNavigate();
 const submitting = useSelector(selectSubmitting);
-const editSuccess = useSelector(selectEditSuccess);
 
 useEffect(() => {
   dispatch(clearError());
   dispatch(resetSubmit());
 }, [dispatch]);
-useEffect(() => {
-  if (!editSuccess) return;
-  toast.success('保存成功');
-  dispatch(resetSubmit());
-  navigate('/articles');
-}, [dispatch, editSuccess, navigate]);
 
 const submit = async event => {
   event.preventDefault();
@@ -354,7 +195,10 @@ const submit = async event => {
     return;
   }
   try {
-    await dispatch(saveItem({ name }));
+    await dispatch(createArticle({ name }));
+    toast.success('保存成功');
+    dispatch(resetSubmit());
+    navigate('/articles');
   } catch {
     /* reducer 与错误 effect 负责反馈 */
   }
@@ -375,7 +219,7 @@ const submit = async event => {
 </FormBox>
 ```
 
-表单还需按错误处理章节读取 selectError 并添加 effect。resetSubmit 应在进入页面和消费成功状态时调用，避免上次保存的 editSuccess 导致重入页面立即跳转。一个操作只弹一次成功提示，不同时在 await 后和 effect 中处理同一成功结果。
+表单还需按错误处理章节读取 selectError 并添加 effect。此片段在进入页面和成功消费后调用 resetSubmit，成功反馈只在 await 后执行；已有模块若使用成功标记 effect，需按 Redux 指南记录本组件的提交归属并消费重置，避免旧标记在重入时触发跳转。不要同时使用两套成功处理。
 
 ## shadcn/ui、样式与资源
 

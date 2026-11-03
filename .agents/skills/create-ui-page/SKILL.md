@@ -29,6 +29,7 @@ description: 在现有 React JavaScript 脚手架中新增业务页面、可交�
 ## 3. 实现与接入
 
 - 业务页面使用 `.js`，按需放在 `src/containers/<ModuleName>/index.js`。选择现有 StandardAdminLayout / WorkspaceLayout / MonitoringLayout 或 PageLayout，不重复创建顶部栏、侧栏和偏移计算。
+- 涉及真实或 Mock 异步业务时，按需读取 [Redux 与异步接口开发](../../../docs/redux-development.md)：先确认领域与契约，再按同一套 api / actions / reducer / selectors 分工实现；明确三阶段状态、Promise 包装、错误归属、保存后刷新及清理 / 并发边界。临时请求和本地 UI 不机械建 Redux。
 - 按交付目标实现表单、搜索、分页、弹窗等交互，覆盖实际涉及的加载、空数据、失败及重复提交状态。只有需要时才接入现有 API、Redux 或 Vite Mock；不修改鉴权绕过后端，不把静态演示宣称为真实接口验证。
 - 需要正式业务路由时同步 `src/containers/index.js`，在 `src/routes.js` 兜底路由之前配置 `{ path, component, needAuth }`，其中 component 是组件函数。业务后台默认 `needAuth: true`；菜单和 reducer 按需接入，不机械创建整套模块。
 - 原型也使用当前工程入口与既有登录保护，只有明确公开的页面才取消保护。仅用于 Gallery 的模板 Preview 不必额外新增业务路由。
