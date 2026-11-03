@@ -22,6 +22,13 @@
 
 用户可以直接要求图片、原型、图片转代码或业务开发，不强制先画图或先做原型。文档不绑定具体 Agent；不能假定其他工具自动读取 AGENTS.md，需要时引导其读取本文件。
 
+## 项目级 Skills
+
+- [create-ui-component](.agents/skills/create-ui-component/SKILL.md)：新增、提取公共组件，或扩展其重要交互与变体。
+- [create-ui-page](.agents/skills/create-ui-page/SKILL.md)：新增业务页面、可交互 React 原型、图片转页面或通用页面模板。
+
+只加载与任务匹配的 Skill；简单文案和局部样式修复不执行创建流程。不支持自动发现的 Agent 可直接读取上述文件，仍按本文和 docs 执行；不要求安装个人级工具。
+
 ## 技术和文件约定
 
 - React 19、React Router 7、Redux 5、React Redux、Thunk、Reselect、Immer、redux-act-reducer；Vite、Tailwind CSS 4。
