@@ -4,18 +4,21 @@
 
 ## 按任务阅读
 
-| 任务                               | 必须阅读                                                                             |
-| ---------------------------------- | ------------------------------------------------------------------------------------ |
-| 新增或调整任何 UI                  | [设计系统](docs/design-system.md)、[AI 设计协作总说明](docs/ai-design-guidelines.md) |
-| 调整主题、注册或验证示例           | [Design Playground](docs/design-playground.md)                                       |
-| 生成设计图片 / 多方案              | [Image Design](docs/ai-design/image-design.md)                                       |
-| 直接生成 HTML / React 原型         | [HTML / React Prototype](docs/ai-design/html-prototype.md)                           |
-| 图片或截图还原代码                 | [Design to Code](docs/ai-design/design-to-code.md)                                   |
-| 公共组件、专业组件、业务页面开发   | [Component Development](docs/ai-design/component-development.md)                     |
-| 新增可复用页面模板                 | [页面模板](docs/page-templates.md)、Design Playground                                |
-| 路由、Redux、API、表单或 Mock 联调 | [业务开发指南](docs/development.md) 中对应章节                                       |
-| 工具逻辑或组件测试                 | [单元与组件测试](docs/unit-testing.md)                                               |
-| 页面交互、响应式或截图验证         | [浏览器验证](docs/browser-verification.md)                                           |
+先读取本文件与目标源码，从下表选择最匹配的起点，只读相关章节；不要把所有匹配行展开为全文阅读清单。交付类型不明确时先看 [AI 设计任务分类](docs/ai-design-guidelines.md#根据用户目标选择能力)。
+
+| 任务                           | 最小阅读路径                                                                                                                                                          |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 普通业务页面                   | [设计系统](docs/design-system.md) 的布局 / 组件规则 + [业务开发指南](docs/development.md) 的页面接入及所用功能章节                                                    |
+| 新增或提取公共组件             | 设计系统相关规则 + [组件开发](docs/ai-design/component-development.md)，需要收录时再读 [Component Registry](docs/design-playground.md#component-registry新增公共组件) |
+| 新增通用页面模板               | 设计系统布局规则 + [页面模板](docs/page-templates.md) + [Page Registry](docs/design-playground.md#page-registry新增通用页面模板)；普通业务页不走此分支                |
+| 图片或截图实现页面             | [Design to Code](docs/ai-design/design-to-code.md) + 设计系统；接入业务时追加开发指南相关章节                                                                         |
+| 可交互 React 原型 / 仅生成图片 | 按目标选择 [原型](docs/ai-design/html-prototype.md) 或 [图片设计](docs/ai-design/image-design.md)，不强制串行执行                                                     |
+| 修改全局 Design Tokens         | 设计系统 + [Playground](docs/design-playground.md) 的覆盖、预览与验证规则                                                                                             |
+| 文案或局部样式修复             | 目标组件源码 + 设计系统相关规则；不自动执行页面创建、Gallery 注册或完整设计流程                                                                                       |
+| 工具逻辑或组件测试             | [单元与组件测试](docs/unit-testing.md)                                                                                                                                |
+| 页面交互、响应式或截图验证     | [浏览器验证](docs/browser-verification.md)                                                                                                                            |
+
+发生对应操作时才追加阅读：新增 API / Redux / Mock 看开发指南相关章节；新增公共资产看对应 Gallery 注册规则；实施测试看对应测试文档。统一按 [任务收尾检查](docs/development.md#任务收尾检查) 核对，不适用项无需机械执行。
 
 用户可以直接要求图片、原型、图片转代码或业务开发，不强制先画图或先做原型。文档不绑定具体 Agent；不能假定其他工具自动读取 AGENTS.md，需要时引导其读取本文件。
 
@@ -36,6 +39,7 @@
 - Preset、颜色模式、密度、布局互相独立；复用现有 AppearanceProvider / LayoutProvider，不创建第二套主题或配置系统。
 - 用 bg-background、text-foreground、bg-card、border-border 等语义 Token；状态色不跟随品牌色改变含义。
 - 优先组合 PageHeader、MetricCard、StatusIndicator、SearchToolbar、FilterBar、DataTable、ConfirmDialog、EmptyState、SectionHeader 等公共组件。
+- 新页面或组件先检查项目组件与 Component Gallery，再查询缺失能力的 shadcn 官方 Registry、文档及组合示例，决定直接复用、必要封装或说明原因后自行实现；不要强行复用不适合的组件。详见 [组件发现与选型](docs/ai-design/component-development.md#组件发现与选型)。
 - 页面优先使用 StandardAdminLayout / WorkspaceLayout / MonitoringLayout，允许动态布局时使用 PageLayout。它们已含顶部与侧栏，不重复挂载。
 - 新增可复用公共组件：编写 Preview，并加入 Component Registry；新增通用页面模板：编写独立预览，并加入 Page Registry。一次性页面内部组件不强制注册。
 - 注册文件位于 `src/containers/DesignPlayground/gallery/`。不要把开发注册表导入正式组件或业务入口，避免生产打包设计工具。
@@ -73,7 +77,7 @@ npm run build:staging
 npm run preview
 ```
 
-JS/React 改动执行 ESLint 和格式检查，CSS 改动执行 Stylelint；依赖、路由、全局配置变更执行生产构建。Gallery 注册改动执行 check:registry，主题变更执行 test:design，并在浏览器查看三预设浅深色、密度、1440 / 1024 / 390px、键盘和状态保持。真实接口与模拟接口的验证范围分开说明。
+按 [任务收尾检查](docs/development.md#任务收尾检查) 根据修改范围选择验证：JS/React 检查 ESLint 和格式，CSS 检查 Stylelint；公共组件与页面检查适用的测试及 Gallery，路由、依赖和全局配置检查构建。全局 Token 变更额外验证 Playground；局部样式不强制执行完整主题矩阵。真实接口与模拟接口的验证范围分开说明。
 
 仅文档改动检查对应文档格式与链接。避免格式化无关文件；shadcn/ui 目录已排除。交付说明实际修改、验证和未覆盖内容；用户未授权时不提交、推送或部署。
 
