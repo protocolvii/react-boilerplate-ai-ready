@@ -31,8 +31,10 @@ E2E_BROWSER_CHANNEL=chrome npm run test:e2e:visual:capture
 
 ## 测试范围与数据隔离
 
+- `auth-forms.spec.js`：登录 / 修改密码的统一字段校验、原生气泡禁用、服务端失败保留输入、成功重置的固定错误行、字段及按钮位置不变，以及分页浮层、焦点与 Escape 交互；修改密码成功使用浏览器局部接口桩，避免改变共享 Mock 密码。
 - `smoke.spec.js`：真实 Mock 登录、首页刷新、访客访问受保护路由、登录后返回原地址、错误提示。
 - `playground.spec.js`：三种预设、浅深色、三种密度、配置面板、主色即时预览、恢复项目配置；列表正常/空状态；模板和组件库切换；手机竖横屏导航、日期弹层、更多操作、无整页横向溢出。
+- `forms.spec.js`：RHF + Zod 表单校验、受控选择与日期、异步保存和失败反馈；分页整数 / 范围错误与跳转；桌面 / 手机、三种预设的浅深色及三个密度样例。详见 [表单开发](form-development.md)。
 - `visual/playground.spec.js`：三个主题组合的通用列表页和 DataTable 组件示例。
 - `production/app.spec.js`：生产 Playground 404、设计写入接口和 Mock API 不存在；首页、修改密码与鉴权保护仍正常。
 

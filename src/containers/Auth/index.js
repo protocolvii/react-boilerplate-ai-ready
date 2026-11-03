@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'sonner';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
+import { Field, FieldLabel, FieldError } from '../../components/ui/field';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { loginSchema } from './schema';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '../../components/ui/card';
 import config from '../../config';
 import { getLoginDestination } from '../../utils/navigation';
@@ -15,6 +18,9 @@ import { selectError, selectSubmitting, selectToken, selectExp } from './selecto
 const Login = () => {
   const dispatch = useDispatch();
   const location = useLocation();
+  const pending = useRef(false);
+  const form = useForm({ resolver: zodResolver(loginSchema), defaultValues: { username: '', password: '' }, mode: 'onSubmit', reValidateMode: 'onChange' });
+  const { errors, isSubmitting } = form.formState;
   const [minimumExpiry] = useState(() => Date.now() + 20 * 60 * 1000);
   const err = useSelector(selectError);
   const submitting = useSelector(selectSubmitting);
@@ -32,25 +38,23 @@ const Login = () => {
     }
   }, [dispatch, err]);
 
-  const handleLogin = async v => {
-    if (v.username && v.password) {
-      dispatch(submit(true));
-      try {
-        await dispatch(login(v.username, v.password));
-      } catch (e) {
-        // Error state is handled by the auth reducer.
-      }
+  const handleLogin = async values => {
+    dispatch(submit(true));
+    try {
+      await dispatch(login(values.username, values.password));
+    } catch {
+      // reducer 和错误 effect 统一处理服务端错误。
     }
   };
-
-  const onSubmit = event => {
+  const onSubmit = async event => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    if (!data.get('username').trim()) {
-      toast.error('请输入用户名');
-      return;
+    if (pending.current || submitting) return;
+    pending.current = true;
+    try {
+      await form.handleSubmit(handleLogin)(event);
+    } finally {
+      pending.current = false;
     }
-    handleLogin({ username: data.get('username').trim(), password: data.get('password') });
   };
   if (accessToken && !err && expires > minimumExpiry) return <Navigate to={getLoginDestination(location.state?.from)} replace />;
 
@@ -63,18 +67,43 @@ const Login = () => {
           <CardDescription>输入账号密码登录管理后台</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={onSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="username">用户名</Label>
-              <Input id="username" name="username" autoComplete="username" placeholder="请输入用户名" required />
+          <form noValidate onSubmit={onSubmit} className="space-y-3 pb-4" aria-busy={submitting || isSubmitting}>
+            <Field className="gap-2">
+              <FieldLabel htmlFor="username">用户名</FieldLabel>
+              <div className="space-y-1">
+                <Input {...form.register('username')} id="username" autoComplete="username" placeholder="请输入用户名" aria-required="true" aria-invalid={!!errors.username} aria-describedby={errors.username ? 'username-error' : undefined} />
+                <div className="min-h-4">
+                  <FieldError id="username-error" className="text-xs leading-4">
+                    {errors.username?.message}
+                  </FieldError>
+                </div>
+              </div>
+            </Field>
+            <Field className="gap-2">
+              <FieldLabel htmlFor="password">密码</FieldLabel>
+              <div className="space-y-1">
+                <Input
+                  {...form.register('password')}
+                  id="password"
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="请输入密码"
+                  aria-required="true"
+                  aria-invalid={!!errors.password}
+                  aria-describedby={errors.password ? 'password-error' : undefined}
+                />
+                <div className="min-h-4">
+                  <FieldError id="password-error" className="text-xs leading-4">
+                    {errors.password?.message}
+                  </FieldError>
+                </div>
+              </div>
+            </Field>
+            <div className="pt-1">
+              <Button type="submit" disabled={submitting || isSubmitting} className="w-full">
+                {submitting || isSubmitting ? '登录中…' : '登录'}
+              </Button>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">密码</Label>
-              <Input id="password" name="password" type="password" autoComplete="current-password" placeholder="请输入密码" required />
-            </div>
-            <Button type="submit" disabled={submitting} className="w-full">
-              {submitting ? '登录中…' : '登录'}
-            </Button>
           </form>
         </CardContent>
       </Card>

@@ -24,6 +24,7 @@ AI 开发总入口见 [AGENTS.md](AGENTS.md)。按任务选择规范，不要求
 - [业务开发指南](docs/development.md)：路由、Redux、接口、表单与 Mock 详细示例。
 - [shadcn 查询与可选工具](docs/shadcn-discovery.md)：官方文档、仓库及 CLI 查询；Skill / MCP 可选，不要求安装。
 - [项目 Skills 使用与验证](docs/agent-skills.md)：页面与组件开发流程、Agent 发现检查和可选兼容方式。
+- [表单开发](docs/form-development.md)：React Hook Form + Zod、FieldError、Sonner、Tooltip 与分页校验。
 - [单元与组件测试](docs/unit-testing.md)：Vitest、React Testing Library 与既有 Node 测试的分工和示例。
 - [浏览器验证](docs/browser-verification.md)：Playwright、Mock E2E、视觉基准、报告和 Trace。
 
@@ -108,6 +109,7 @@ npm run format          # 格式化
 - Vite 开发 Mock：模拟现有鉴权接口，业务调用入口与真实接口一致
 - Vitest、React Testing Library、user-event、jest-dom、jsdom：单元与组件测试
 - Node Test Runner：既有设计配置、数据处理与 Mock HTTP 测试
+- React Hook Form + Zod：复杂表单、业务校验与类型转换；FieldError 统一字段反馈
 - Playwright Test：页面交互、响应式、视觉比较与生产构建验证
 
 ```text
@@ -123,10 +125,11 @@ jsconfig.json                        编辑器路径别名与 JSX 配置
 src/template/index.html              HTML 模板
 src/index.js                         React 入口
 src/config.js                        应用与环境配置
-src/components/ui/                   shadcn/ui 基础组件
+src/components/ui/                   shadcn/ui 基础组件（含 Field / FieldError）
 src/components/                      页面布局和公共业务组件
 src/containers/                      登录、修改密码、控制台和业务模块
 src/containers/DesignPlayground/      开发态页面模板、组件库与设计配置面板
+src/containers/DesignPlayground/gallery/previews/FormExample/  RHF + Zod 可运行表单示例
 src/design-system/appearance/        外观状态与主题应用
 src/design-system/layouts/           标准后台、工作台和监测布局
 src/design-system/tokens/            全局主题、密度及项目覆盖 CSS

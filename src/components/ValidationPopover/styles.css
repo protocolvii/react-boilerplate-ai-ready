@@ -1,0 +1,4 @@
+/* 校验浮层没有交互内容；连同 Radix 定位容器一起透传点击，避免遮挡提交按钮。 */
+:global([data-radix-popper-content-wrapper]):has(.feedback) {
+  pointer-events: none;
+}

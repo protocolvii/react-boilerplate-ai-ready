@@ -1,9 +1,10 @@
-import React, { useId, useState } from 'react';
+import React, { useId, useRef, useState } from 'react';
 import { Activity } from 'lucide-react';
-import { DatePicker, ProgressBar, PageHeader, SectionHeader, MetricCard, EmptyState, SearchToolbar, FilterBar, DataTable, Pagination, ConfirmDialog, FormBox } from '../../../../components';
+import { ValidationPopover, DatePicker, ProgressBar, PageHeader, SectionHeader, MetricCard, EmptyState, SearchToolbar, FilterBar, DataTable, Pagination, ConfirmDialog } from '../../../../components';
 import { Button } from '../../../../components/ui/button';
 import { Input } from '../../../../components/ui/input';
 import { Label } from '../../../../components/ui/label';
+import FormExample from './FormExample';
 
 export function HeaderPreview() {
   return <PageHeader title="项目管理" info="标题、面包屑与操作区组合。" breadcrumb={[{ name: '项目管理' }]} actions={<Button variant="outline">导出</Button>} />;
@@ -150,35 +151,7 @@ export function ConfirmPreview() {
   );
 }
 export function FormPreview() {
-  const id = useId();
-  const [saved, setSaved] = useState(false);
-  return (
-    <FormBox>
-      <form
-        className="space-y-4"
-        onSubmit={event => {
-          event.preventDefault();
-          setSaved(true);
-        }}
-        onChange={() => setSaved(false)}
-      >
-        <div className="space-y-2">
-          <Label htmlFor={`${id}-name`}>表单项目名称</Label>
-          <Input id={`${id}-name`} name="name" required maxLength={80} />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor={`${id}-email`}>联系邮箱</Label>
-          <Input id={`${id}-email`} name="email" type="email" required />
-        </div>
-        <Button type="submit">提交表单示例</Button>
-        {saved && (
-          <p role="status" className="text-sm text-muted-foreground">
-            表单校验通过，示例不调用 API。
-          </p>
-        )}
-      </form>
-    </FormBox>
-  );
+  return <FormExample />;
 }
 
 export function DatePickerPreview() {
@@ -228,5 +201,33 @@ export function ProgressPreview() {
         <ProgressBar value={65} showValue={false} label="后台任务进度" />
       </div>
     </div>
+  );
+}
+
+export function ValidationPreview() {
+  const id = useId();
+  const input = useRef(null);
+  const [value, setValue] = useState('');
+  const [attempt, setAttempt] = useState(0);
+  const message = attempt && value.trim().length < 2 ? '请输入至少 2 个字符' : '';
+  return (
+    <form
+      noValidate
+      className="flex flex-wrap items-end gap-3"
+      onSubmit={event => {
+        event.preventDefault();
+        setAttempt(value => value + 1);
+        if (value.trim().length < 2) input.current?.focus();
+      }}
+    >
+      <div className="min-w-0 space-y-2">
+        <Label htmlFor={id}>校验气泡示例</Label>
+        <ValidationPopover message={message} attempt={attempt}>
+          <Input id={id} ref={input} value={value} onChange={event => setValue(event.target.value)} placeholder="输入至少 2 个字符" />
+        </ValidationPopover>
+      </div>
+      <Button type="submit">检查输入</Button>
+      <p className="w-full text-sm text-muted-foreground">错误浮层不占空间；聚焦错误字段查看，Escape 或点击其他区域关闭，再次提交可重新提示。</p>
+    </form>
   );
 }

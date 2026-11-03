@@ -4,6 +4,14 @@ const business = name => lazy(() => import('./previews/BusinessPreviews.js').the
 
 // preview 是真实 React 组件；同一组密切相关的基础组件可共用一个示例。
 export const componentRegistry = [
+  {
+    id: 'validation-popover',
+    name: '校验气泡',
+    category: 'Feedback',
+    description: '基于 shadcn Popover 的字段校验反馈，不占布局空间，支持焦点、键盘和触屏。',
+    tags: ['ValidationPopover', 'FieldError', 'Validation'],
+    preview: business('ValidationPreview')
+  },
   { id: 'buttons', name: '按钮与操作', category: 'Basic', description: 'Button 的变体、尺寸、禁用与加载状态，以及 Tooltip。', tags: ['Button', 'Tooltip'], preview: basic('ButtonPreview') },
   { id: 'inputs', name: '输入与校验', category: 'Form', description: 'Input、Textarea、Label 与错误关联。', tags: ['Input', 'Textarea', 'Label'], preview: basic('InputPreview') },
   { id: 'date-picker', name: '日期选择', category: 'Form', description: 'DatePicker 的日期、范围约束、禁用与错误状态，基于 shadcn Calendar 与 Popover。', tags: ['DatePicker', 'Date', '日期'], preview: business('DatePickerPreview') },
@@ -20,5 +28,5 @@ export const componentRegistry = [
   { id: 'search-toolbar', name: '搜索与筛选', category: 'Business', description: 'SearchToolbar 与 FilterBar 区分输入草稿和已提交查询。', tags: ['SearchToolbar', 'FilterBar'], preview: business('SearchPreview') },
   { id: 'data-table', name: '通用表格', category: 'Business', description: 'DataTable 的排序、分页、加载、失败与空状态。', tags: ['DataTable', 'Table', 'Pagination'], preview: business('TablePreview') },
   { id: 'confirm-dialog', name: '确认操作', category: 'Feedback', description: 'ConfirmDialog 的成功与失败状态。', tags: ['ConfirmDialog', 'AlertDialog'], preview: business('ConfirmPreview') },
-  { id: 'form', name: '表单组合', category: 'Form', description: 'FormBox、原生 form、浏览器校验与提交反馈。', tags: ['FormBox', 'Input', 'Label', 'Button'], preview: business('FormPreview') }
+  { id: 'form', name: '表单组合', category: 'Form', description: 'React Hook Form + Zod、FieldError、受控字段、异步回填与提交反馈。', tags: ['Form', 'Field', 'FieldError', 'FormBox', 'Sonner'], preview: business('FormPreview') }
 ];

@@ -30,16 +30,18 @@ npm run test:mock          # 原有 Mock HTTP 测试，需要本地端口监听�
 npm run test:e2e           # 独立运行 Playwright，不包含在 npm test 中
 ```
 
-本配置使用兼容项目既有 Node 22.12 / 24.0 要求的 jsdom 28，不因测试抬高项目的 Node 最低版本；显式导入 Vitest API，不依赖全局 describe/it/expect。`tests/setup.js` 提供 jest-dom 匹配器；每个测试结束后 cleanup DOM、清理 localStorage/sessionStorage、恢复真实定时器，配置自动清理 mock 调用记录和恢复 spy。不要无依据地添加 matchMedia、ResizeObserver 等全局假实现以掩盖浏览器问题，确有需要时按被测组件用途提供最小实现。
+本配置使用兼容项目既有 Node 22.12 / 24.0 要求的 jsdom 28，不因测试抬高项目的 Node 最低版本；显式导入 Vitest API，不依赖全局 describe/it/expect。`tests/setup.js` 提供 jest-dom 匹配器；每个测试结束后 cleanup DOM、清理 localStorage/sessionStorage、恢复真实定时器，配置自动清理 mock 调用记录和恢复 spy。不要无依据地添加 matchMedia、ResizeObserver 等全局假实现以掩盖浏览器问题，确有需要时按被测组件用途提供最小实现。当前 setup 为 Radix Switch / Popover Arrow 提供 jsdom 缺少的 ResizeObserver 空实现，仅支持组件挂载，不模拟布局或定位。
 
 没有启用 HTTP 拦截器或全局 fetch mock。测试只使用已有纯函数、selector 和真实组件；表单中注入的回调可通过 vi.fn 控制成功、失败与 pending，不需要启动 Vite Mock。需要真实协议验证时继续运行现有 Mock HTTP 或 Playwright 测试。
 
-## 首批示例
+## 示例
 
 - `error.test.js`：业务错误优先级、原生 Error、字符串、HTTP 错误和缺失数据兜底。
 - `auth-selectors.test.js`：按收到 token 的时间和有效秒数计算到期时间，缺失会话、字符串缓存字段和刷新后新状态。
 - `SearchToolbar.test.jsx`：受控输入、输入草稿与提交分离、Enter/按钮提交、独立工具操作不误触搜索。
+- `ValidationPopover.test.jsx`：聚焦显示、Escape / 外部关闭、再次提交重开、错误关联和输入 ref 保持。
 - `ConfirmDialog.test.jsx`：取消不提交、异步 pending 期间禁用操作、防重复提交、成功关闭、失败保留并允许重试。
+- 表单示例：`form-schema.test.js` 校验数字转换、缺失值、范围、日期与跨字段规则；`FormExample.test.jsx` 检查字段反馈、受控选择、回填 / reset、失败与重复提交；`Pagination.test.jsx` 检查跳转错误、最新范围和原有回调协议。实现与规则见 [表单开发](form-development.md)。
 
 Appearance 和 Mock 数据处理已有 Node 测试；本次不为凑示例数量添加虚假业务模块，也不复制它们的断言。
 

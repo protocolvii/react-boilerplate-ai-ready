@@ -24,6 +24,8 @@ description: 在现有 React JavaScript 脚手架中新增业务页面、可交�
 - 按 [shadcn 查询指南](../../../docs/shadcn-discovery.md) 使用当前可用的官方工具、文档、仓库或 CLI。官方 Skill / MCP 可选，不自动安装或改用户配置；未能在线核实的选型要说明。保持当前 Radix、JavaScript / JSX 和别名配置，不覆盖定制组件或批量安装。
 - 日期选择先检查 Calendar + Popover，进度先检查 Progress；DataTable 是否组合 TanStack Table 取决于实际功能，不为了页面开发更换现有表格实现。
 
+涉及复杂业务表单或字段反馈时，按需阅读 [表单开发](../../../docs/form-development.md)，复用 RHF + Zod、FieldError、Sonner 和 Tooltip；简单搜索、分页、独立开关不强制 RHF。
+
 ## 3. 实现与接入
 
 - 业务页面使用 `.js`，按需放在 `src/containers/<ModuleName>/index.js`。选择现有 StandardAdminLayout / WorkspaceLayout / MonitoringLayout 或 PageLayout，不重复创建顶部栏、侧栏和偏移计算。

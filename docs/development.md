@@ -314,9 +314,11 @@ const changePage = (nextPage, nextSize) => {
 
 ## 表单、新增与编辑
 
+复杂业务表单推荐 React Hook Form + Zod，统一 FieldError、Sonner 和 Tooltip 的使用见 [表单开发](form-development.md)。简单原生表单可按下面方式实现，不批量迁移旧页面。
+
 表单使用原生 form 和 shadcn Input、Label、Button；不使用 Form.Item、Input.Password、loading、htmlType 等其他组件库 API。密码输入使用 `<Input type="password" />`，提交按钮使用 `type="submit"` 与 disabled。
 
-- 每个字段设置唯一 id、label 和 name；用 required、minLength、maxLength、type 校验基本输入。
+- 每个字段设置唯一 id、label 和 name；简单原生表单可用 required、minLength、maxLength、type 校验基本输入。采用 schema 和统一字段错误时使用 noValidate，避免重复原生气泡。
 - 使用 FormData 获取值，字符串按业务规则 trim，数字/布尔/文件显式转换；不要把缺失值、空字符串与 0 混为一谈。
 - 跨字段和业务校验失败时显示具体原因，设置 aria-invalid、aria-describedby，必要时用 role="alert"。
 - 提交时禁用提交按钮，处理 reject。保存失败保留输入；成功后按需求导航或重置表单。

@@ -1,3 +1,4 @@
+import ValidationPopover from './ValidationPopover';
 import DatePicker from './DatePicker';
 import ProgressBar from './ProgressBar';
 import MetricCard from './MetricCard';
@@ -21,6 +22,7 @@ import ListToolbar from './ListToolbar';
 import Pagination from './Pagination';
 
 export {
+  ValidationPopover,
   DatePicker,
   ProgressBar,
   MetricCard,

@@ -166,17 +166,18 @@ import { PageHeader, PageContent } from '@/components';
 
 基础组件位于 `src/components/ui/`，遵循官方 API，优先使用 variant、size、asChild 等组合方式。高级业务组件从 `@/components` 导入：
 
-| 组件            | 主要 props                                                                                 |
-| --------------- | ------------------------------------------------------------------------------------------ |
-| PageHeader      | title、info、breadcrumb、actions、children                                                 |
-| SectionHeader   | title、description、actions、id                                                            |
-| MetricCard      | label、value、detail、icon、className                                                      |
-| StatusIndicator | tone、label、className                                                                     |
-| EmptyState      | title、description、actions                                                                |
-| SearchToolbar   | value、onChange、onSubmit、placeholder、actions、children                                  |
-| FilterBar       | summary、children                                                                          |
-| DataTable       | columns、rows、rowKey、sort、onSort、loading、caption、emptyTitle、emptyActions、className |
-| ConfirmDialog   | open、onOpenChange、title、description、confirmLabel、onConfirm                            |
+| 组件              | 主要 props                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------ |
+| PageHeader        | title、info、breadcrumb、actions、children                                                 |
+| SectionHeader     | title、description、actions、id                                                            |
+| MetricCard        | label、value、detail、icon、className                                                      |
+| StatusIndicator   | tone、label、className                                                                     |
+| EmptyState        | title、description、actions                                                                |
+| SearchToolbar     | value、onChange、onSubmit、placeholder、actions、children                                  |
+| FilterBar         | summary、children                                                                          |
+| DataTable         | columns、rows、rowKey、sort、onSort、loading、caption、emptyTitle、emptyActions、className |
+| ConfirmDialog     | open、onOpenChange、title、description、confirmLabel、onConfirm                            |
+| ValidationPopover | message、attempt、errorId、className、children（单个可聚焦控件）；不占布局的字段校验气泡   |
 
 DataTable 列定义为 `{ key, header, sortable, render, className, headerClassName }`，render 接收整行数据；排序和分页由页面控制。它不是完整表格引擎，不隐式请求接口。ConfirmDialog 等待 onConfirm 的 Promise，处理中禁用重复操作，失败保留对话框并显示错误。
 

@@ -20,6 +20,8 @@ description: 新增、提取可复用的 React 公共 UI 或专业业务组件�
 - 公共业务组件放在 `src/components/<Name>/index.js`，通过 `src/components/index.js` 命名导出；shadcn CLI 基础组件保持 `src/components/ui/` 的官方 `.jsx` 文件及直接导入方式，不为导出形式统一而额外包装。
 - 复用语义 Token 和现有组件。修改已有组件 API 时同步调用方与使用示例；不顺带改变全局 Design Profile、鉴权或工具链。
 
+涉及复杂业务表单或字段反馈时，按需阅读 [表单开发](../../../docs/form-development.md)，复用 RHF + Zod、FieldError、Sonner 和 Tooltip；简单搜索、分页、独立开关不强制 RHF。
+
 ## 3. 同步 Component Gallery
 
 - 纳入公共组件体系时，按 [Component Registry](../../../docs/design-playground.md#component-registry新增公共组件) 编写真实可交互 Preview，在 `src/containers/DesignPlayground/gallery/component-registry.js` 注册或补充现有分类。

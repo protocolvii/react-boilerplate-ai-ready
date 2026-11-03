@@ -1,21 +1,26 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'sonner';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
-import { Label } from '../../../components/ui/label';
+import { Field, FieldLabel, FieldError } from '../../../components/ui/field';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { changePasswordSchema } from '../schema';
 import { clearError, changePassword } from '../actions';
 import { selectError, selectSubmitting, selectOptSuccess } from '../selectors';
 import { MainHeader, MainMenu, PageHeader, PageContent, FormBox, MainPage, PageSection } from '../../../components';
 import config from '../../../config';
 const ChangePassword = () => {
-  const formRef = useRef(null);
+  const pending = useRef(false);
+  const form = useForm({ resolver: zodResolver(changePasswordSchema), defaultValues: { oldpassword: '', password: '', repassword: '' }, mode: 'onSubmit', reValidateMode: 'onChange' });
+  const { errors, isSubmitting } = form.formState;
+  const { reset } = form;
   const dispatch = useDispatch();
   const err = useSelector(selectError);
   const submitting = useSelector(selectSubmitting);
   const optSuccess = useSelector(selectOptSuccess);
-  const [formError, setFormError] = useState('');
   useEffect(() => {
     dispatch(clearError());
   }, [dispatch]);
@@ -28,23 +33,25 @@ const ChangePassword = () => {
   useEffect(() => {
     if (optSuccess) {
       toast.success('密码修改成功');
-      setFormError('');
-      formRef.current?.reset();
+      reset();
       dispatch(clearError());
     }
-  }, [dispatch, optSuccess]);
-  const onSubmit = async event => {
-    event.preventDefault();
-    const values = Object.fromEntries(new FormData(event.currentTarget));
-    if (values.password !== values.repassword) {
-      setFormError('两次密码输入不一致');
-      return;
-    }
-    setFormError('');
+  }, [dispatch, optSuccess, reset]);
+  const save = async values => {
     try {
       await dispatch(changePassword(values.oldpassword, values.password, values.repassword));
     } catch {
-      /* reducer handles API errors */
+      /* reducer 和错误 effect 负责反馈 */
+    }
+  };
+  const onSubmit = async event => {
+    event.preventDefault();
+    if (pending.current || submitting) return;
+    pending.current = true;
+    try {
+      await form.handleSubmit(save)(event);
+    } finally {
+      pending.current = false;
     }
   };
   return (
@@ -57,27 +64,62 @@ const ChangePassword = () => {
         <PageContent>
           <PageSection>
             <FormBox>
-              <form ref={formRef} onSubmit={onSubmit} className="space-y-5">
-                <div className="space-y-2">
-                  <Label htmlFor="oldpassword">原密码</Label>
-                  <Input id="oldpassword" name="oldpassword" type="password" autoComplete="current-password" required />
+              <form noValidate onSubmit={onSubmit} className="space-y-3 pb-4" aria-busy={submitting || isSubmitting}>
+                <Field className="gap-2">
+                  <FieldLabel htmlFor="oldpassword">原密码</FieldLabel>
+                  <div className="space-y-1">
+                    <Input
+                      {...form.register('oldpassword')}
+                      id="oldpassword"
+                      type="password"
+                      autoComplete="current-password"
+                      aria-required="true"
+                      aria-invalid={!!errors.oldpassword}
+                      aria-describedby={errors.oldpassword ? 'oldpassword-error' : undefined}
+                    />
+                    <div className="min-h-4">
+                      <FieldError id="oldpassword-error" className="text-xs leading-4">
+                        {errors.oldpassword?.message}
+                      </FieldError>
+                    </div>
+                  </div>
+                </Field>
+                <Field className="gap-2">
+                  <FieldLabel htmlFor="new-password">新密码</FieldLabel>
+                  <div className="space-y-1">
+                    <Input
+                      {...form.register('password')}
+                      id="new-password"
+                      type="password"
+                      autoComplete="new-password"
+                      aria-required="true"
+                      aria-invalid={!!errors.password}
+                      aria-describedby={errors.password ? 'new-password-error' : undefined}
+                      placeholder="6～20 位密码"
+                    />
+                    <div className="min-h-4">
+                      <FieldError id="new-password-error" className="text-xs leading-4">
+                        {errors.password?.message}
+                      </FieldError>
+                    </div>
+                  </div>
+                </Field>
+                <Field className="gap-2">
+                  <FieldLabel htmlFor="repassword">确认新密码</FieldLabel>
+                  <div className="space-y-1">
+                    <Input {...form.register('repassword')} id="repassword" type="password" autoComplete="new-password" aria-required="true" aria-invalid={!!errors.repassword} aria-describedby={errors.repassword ? 'repassword-error' : undefined} />
+                    <div className="min-h-4">
+                      <FieldError id="repassword-error" className="text-xs leading-4">
+                        {errors.repassword?.message}
+                      </FieldError>
+                    </div>
+                  </div>
+                </Field>
+                <div className="pt-1">
+                  <Button type="submit" disabled={submitting || isSubmitting}>
+                    {submitting || isSubmitting ? '提交中…' : '提交'}
+                  </Button>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="new-password">新密码</Label>
-                  <Input id="new-password" name="password" type="password" minLength={6} maxLength={20} autoComplete="new-password" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="repassword">确认新密码</Label>
-                  <Input id="repassword" name="repassword" type="password" minLength={6} maxLength={20} autoComplete="new-password" aria-invalid={!!formError} aria-describedby={formError ? 'password-error' : undefined} required />
-                </div>
-                {formError && (
-                  <p id="password-error" role="alert" className="text-sm text-destructive">
-                    {formError}
-                  </p>
-                )}
-                <Button type="submit" disabled={submitting}>
-                  {submitting ? '提交中…' : '提交'}
-                </Button>
               </form>
             </FormBox>
           </PageSection>
