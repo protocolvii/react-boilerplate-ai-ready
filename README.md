@@ -1,4 +1,8 @@
-# react-boilerplate-ai-ready
+<p align="center">
+  <img src="src/assets/branding/favicon.svg" alt="React Boilerplate AI Ready Logo" width="88" height="88" />
+</p>
+
+<h1 align="center">React Boilerplate AI Ready</h1>
 
 面向 AI 协作开发的 React 管理后台脚手架，使用 Vite、shadcn/ui 和 Tailwind CSS，提供页面布局、路由、Redux 状态管理与请求鉴权封装。
 
