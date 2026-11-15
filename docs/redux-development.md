@@ -352,7 +352,32 @@ try {
 
 request 返回完整 res，reducer 的 SUCCESS 读取 `action.res.body`，FAILURE 读取 `action.err`。dispatch 返回 `{ request, success }` 或 reject `{ request, failure }`，不是 res、res.body 或 Toolkit 的 payload；不要调用 `.unwrap()`。默认 action 不携带原始 args、id、qs、payload、meta 或 requestId，不能在 reducer 凭空读取 `action.id` 来标记正在删哪一行。
 
-### 列表、搜索和分页
+### URL 就是页面状态
+
+页面状态默认放 URL，不要只存在组件 state 里。判据只有一条：**刷新之后，用户是否希望还是这一屏**。
+
+该进 URL 的：
+
+```
+选择      当前班级 / 项目 / 课程等页面级筛选目标
+筛选      已提交的搜索词、状态、标签
+分页      page / per_page
+视图      Tab、展开的子列表、图表粒度（按月 / 按周）
+时间范围  本学年 / 本学期 / 自定义区间
+```
+
+不该进 URL 的：弹窗开关、行勾选、表单草稿、编辑器里的临时内容——这些刷新后本来就该消失。
+
+**读写只用 React Router 的 `useSearchParams`。** 不要再封一层读 query 的工具：自封装的读取拿的是 `location.search` 快照，路由变化不会触发重渲染，也没有写入能力，最后仍要回到 `setSearchParams`，等于同一份逻辑维护两遍。
+
+四个容易漏的时机：
+
+1. **异步默认值** —— 选项列表是异步来的，“实际生效项”要等数据回来才知道。等数据到了再写 URL；URL 里已有合法值时，加载期间不要清掉它。
+2. **非法值纠正** —— URL 里的 id 不存在或无权访问时，回落第一个可用值并**改写 URL**，不要让地址栏和页面内容不一致。
+3. **父级切换清子级** —— 切父级（班级、项目）要同时清掉下级选择与搜索词，URL 参数一并移除。
+4. **单一触发点** —— URL 驱动时 effect 监听解析后的条件，交互事件只改 URL；不要让 effect 和按钮 handler 同时发相同请求。
+
+列表页在此基础上：
 
 - 常规可返回 / 分享的路由列表优先将已提交条件、page、per_page 放 URL，使用 React Router 7 的 useSearchParams / useNavigate；输入草稿与已提交条件分开。
 - 从 URL 解析数字、枚举和布尔，校验异常值；搜索及修改每页数量从第 1 页开始。翻页保留全部已提交筛选，不把尚未提交的输入当成查询。
