@@ -10,6 +10,7 @@
 | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 普通业务页面                   | [设计系统](docs/design-system.md) 的布局 / 组件规则 + [业务开发指南](docs/development.md) 的页面接入及所用功能章节                                                    |
 | 新增或修改异步接口、Redux 模块 | [Redux 与异步接口开发](docs/redux-development.md) 的文件分工、模板及当前业务流程章节；表单和 Mock 按需追加                                                            |
+| 页面状态 / URL 参数            | [Redux 与异步接口开发](docs/redux-development.md#url-就是页面状态)：哪些状态该进 URL、统一用 `useSearchParams`、异步默认值与非法值处理 |
 | 新增或提取公共组件             | 设计系统相关规则 + [组件开发](docs/ai-design/component-development.md)，需要收录时再读 [Component Registry](docs/design-playground.md#component-registry新增公共组件) |
 | 新增通用页面模板               | 设计系统布局规则 + [页面模板](docs/page-templates.md) + [Page Registry](docs/design-playground.md#page-registry新增通用页面模板)；普通业务页不走此分支                |
 | 图片或截图实现页面             | [Design to Code](docs/ai-design/design-to-code.md) + 设计系统；接入业务时追加开发指南相关章节                                                                         |
